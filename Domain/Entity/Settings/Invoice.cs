@@ -1,6 +1,7 @@
 ﻿using Domain.CommonServices;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 namespace Domain.Entity.Settings
 {
     public class Invoice
@@ -61,7 +62,8 @@ namespace Domain.Entity.Settings
         public string? Email { get; set; }
         public string? MobileNo { get; set; }
         public string? InvoiceTypeName { get; set; }
-        
+        [NotMapped]
+        public string? DeliverAddress { get; set; }
 
         //private void RecalculateTotalPayable()
         //{

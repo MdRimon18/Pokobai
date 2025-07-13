@@ -428,13 +428,141 @@
                                 <div class="col-auto d-flex">
                                 <a class="btn btn-outline-primary btn-sm me-1 mb-1 spa-link" onclick="postItemsToApi()">Create Invoice</a>
 
-                                <a   class="btn btn-outline-primary btn-sm me-1 mb-1 spa-link"   onclick="ShippingWithPayment()">Shipping</a>
+                              @*   <a   class="btn btn-outline-primary btn-sm me-1 mb-1 spa-link"   onclick="ShippingWithPayment()">Shipping</a> *@
 
                                     <button class="btn btn-outline-secondary me-1 mb-1" type="button">Refresh</button>
                                 </div>
                             </div>
                         </form>
                         <div class="row mt-4">
+
+                        <div class="col-xl-12">
+                            <div class=" mb-3">
+                                <div class="card-header bg-body-tertiary">
+                                    <div class="row flex-between-center">
+                                        <div class="col-sm-auto">
+                                            <h5 class="mb-2 mb-sm-0"> Shipping Address</h5>
+                                        </div>
+
+                                       @*  <div class="col-sm-auto">
+                                            <a class="btn btn-falcon-default btn-sm" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"
+                                               aria-controls="offcanvasRight" onclick="resetUserAddressForm()">
+                                                <span class="fas fa-plus me-2" data-fa-transform="shrink-2"></span>
+                                                Add New Address
+                                            </a>
+                                        </div> *@
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row" >
+                                        <div class="col-md-12 mb-3 mb-md-0">
+                                   <div class="form-check mb-0 custom-radio radio-select">
+                                <input class="form-check-input" id="address-1" type="radio" name="clientName" checked="checked" />
+                              <label class="form-check-label mb-0 fw-bold d-block" for="address-1">
+                                @Model.CustomerName
+
+                                <span class="radio-select-content"><span> 
+
+                                    @Model.Invoice.DeliverAddress
+                                     </span>
+                                </span></label> 
+                        </div>
+                    </div>
+                        
+                                    </div>
+                                </div>
+                            </div>
+
+
+                           
+                                <div class="card-header bg-body-tertiary">
+                                    <h5 class="mb-0">Payment Method</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mt-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input payment-option" type="checkbox" id="cod" onclick="togglePayment('cod')" checked />
+                                            <label class="form-check-label" for="cod">Cash on Delivery</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input payment-option" type="checkbox" id="bank" onclick="togglePayment('bank')" />
+                                            <label class="form-check-label" for="bank">Bank</label>
+                                        </div>
+                                    </div>
+
+                                    <form>
+                                        <div id="bank-info" class="d-none mt-3">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="radio" id="credit-card" name="payment-method" checked />
+                                                <label class="form-check-label" for="credit-card">Credit Card</label>
+                                            </div>
+                                            <div class="row gx-0 ps-2 mb-4">
+                                                <div class="col-sm-8 px-3">
+                                                    <div class="mb-3">
+                                                        <label class="form-label text-uppercase fw-semi-bold" for="inputNumber">Card Number</label>
+                                                        <input class="form-control" id="inputNumber" type="text" placeholder="•••• •••• •••• ••••" />
+                                                    </div>
+                                                    <div class="row align-items-center">
+                                                        <div class="col-6">
+                                                            <label class="form-label text-uppercase fw-semi-bold">Exp Date</label>
+                                                            <input class="form-control" type="text" placeholder="mm/yyyy" />
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <label class="form-label text-uppercase fw-semi-bold">CVV</label>
+                                                            <input class="form-control" type="text" placeholder="123" maxlength="3" pattern="[0-9]{3}" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-4 ps-3 text-center pt-2 d-none d-sm-block">
+                                                    <div class="rounded-1 p-2 mt-3 bg-100">
+                                                        <div class="text-uppercase fs-11 fw-bold">We Accept</div>
+                                                        <img src="../../assets/img/icons/icon-payment-methods-grid.png" alt="" width="120" />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-check d-flex align-items-center">
+                                                <input class="form-check-input" type="radio" id="paypal" name="payment-method" />
+                                                <label class="form-check-label mb-0 ms-2" for="paypal">
+                                                    <img src="../../assets/img/icons/icon-paypal-full.png" height="20" alt="" />
+                                                </label>
+                                            </div>
+
+                                            <!-- Cash on Delivery and Bank Checkboxes -->
+
+
+                                        </div>
+
+
+                                        <div class="border-bottom border-dashed my-5"></div>
+
+                                     
+                                    </form>
+                                </div>
+                          
+
+
+                            <script>
+                                function togglePayment(selectedOption) {
+                                    let cod = document.getElementById("cod");
+                                    let bank = document.getElementById("bank");
+                                    let bankInfo = document.getElementById("bank-info");
+
+                                    if (selectedOption === "cod") {
+                                        bank.checked = false;
+                                        bankInfo.classList.add("d-none");
+                                    } else if (selectedOption === "bank") {
+                                        cod.checked = false;
+                                        bankInfo.classList.remove("d-none");
+                                    }
+                                }
+
+                                // Ensure Cash on Delivery is selected by default
+                                document.addEventListener("DOMContentLoaded", function () {
+                                    togglePayment('cod');
+                                });
+                            </script>
+                        </div>
                         </div>
 
                     </div>
@@ -505,8 +633,8 @@
                 <div class="col-md-5 col-xl-12 col-xxl-5 ps-lg-4 ps-xl-2 ps-xxl-5 text-center text-md-start text-xl-center text-xxl-start">
                     <div class="border-bottom border-dashed d-block d-md-none d-xl-block d-xxl-none my-4"></div>
                 <div class="fs-7 fw-bold">All Total: <span class="text-primary" id="TotalPayableLabel">0 tk</span></div>
-                    <a href="#" class="btn btn-success mt-3 px-5" type="submit" data-spa="Invoice/PrintInvoice">Confirm &amp; Pay</a>
-                    <p class="fs-10 mt-3 mb-0">By clicking <strong>Confirm & Pay </strong> button you agree to the <a href="#!">Terms &amp; Conditions</a></p>
+                    <a   class="btn btn-success mt-3 px-5" data-spa="Invoice/PrintInvoice">Confirm &amp; Pay</a>
+                    <p class="fs-10 mt-3 mb-0">By clicking <strong>Confirm & Pay </strong> button you agree to the <a >Terms &amp; Conditions</a></p>
                 </div>
             </div>
          
