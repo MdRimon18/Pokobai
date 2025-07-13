@@ -1,0 +1,193 @@
+﻿@using Domain.CommonServices
+@using Domain.Entity.Settings
+@model Colors
+@* <div class="row" id="ProductSettingsLoader" style="display: none;">
+    <div class="d-flex justify-content-center align-items-center" style="height: 100%;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+</div> *@
+<div class="row">
+    <div class="col-6">
+        <h5 class="mb-4 text-dark dark__text-light">@(Model.ColorId > 0 ? "Update" : "New") Color</h5>
+    </div>
+    @if (Model.ColorId > 0){
+        <div class="col-6 text-end">
+            <button class="btn btn-sm btn-outline-primary" onclick="AddUnitNewForm()">New</button>
+        </div>
+    }
+  
+</div>
+
+
+<form asp-action="SaveOrUpdate" method="post" name="SaveOrUpdateProductColors" id="ProductColorForm">
+    @Html.AntiForgeryToken()
+    <div class="row gx-2">
+        <!-- Event Title -->
+        <div class="col-12 mb-3">
+            <label class="form-label text-dark dark__text-light" for="event-name">Color Name</label>
+            <input class="form-control shadow-none bg-white dark__bg-1100 text-dark dark__text-light"
+                   asp-for="ColorIdName"
+                   type="text"
+                   placeholder="Color Name" />
+            <span class="text-danger" asp-validation-for="ColorIdName"></span>
+        </div>
+
+
+        <!-- Divider -->
+        <div class="col-12">
+            <div class="border-bottom border-dashed my-3"></div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="col-12 text-end">
+             
+            <input type="hidden" asp-for="ColorId" />
+            
+            <button type="submit" class="btn btn-primary btn-sm me-2">@(Model.ColorId > 0 ? "Update" : "Save")</button>
+            <button type="button" onclick="OnRefresh()" class="btn btn-secondary btn-sm me-2">Refresh</button>
+            
+            @if (Model.ColorId > 0)
+            {
+                <button type="button" onclick="OnDeleteProductClr('@Model.ColorId')"
+                        class="btn btn-danger btn-sm">
+                    Delete
+                </button>
+            }
+           
+            @*  <button type="button" class="btn btn-danger btn-sm">
+                        <i class="fa fa-trash me-1"></i> 
+                    </button> *@
+        </div>
+    </div>
+</form>
+<div data-product-size-name="@Model.ColorIdName">
+    <!-- Existing form content -->
+</div>
+
+<script>
+   
+    $(document).ready(function () {
+       
+        $('form[name="SaveOrUpdateProductColors"]').submit(function (e) {
+            
+            e.preventDefault(); // Prevent the default form submission
+             const loaderSelector = '#ProductSettingsLoader';
+              $(loaderSelector).show();
+                const submitButton = $(this).find('button[type="submit"]');
+                   submitButton.prop('disabled', true);
+            $.ajax({
+                
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (result) {
+                    // Check if Model.Id is not an empty GUID correctly in JavaScript
+                    console.log(result)
+                    var modelId = '@Model.ColorId';
+                    if (modelId !== '0') {
+                        
+                        showSuccessToast('@MessageManager.UpdateSuccess');
+                    } else {
+                        showSuccessToast('@MessageManager.SaveSuccess');
+                        AddUnitNewForm();
+                    }
+
+                    $('#SearchResultContainer').html(result);
+
+
+                },
+                    error: function (xhr) {
+                    if (xhr.status === 400) {
+                        showDangerToast('@MessageManager.SaveFaild');
+                        $('#AddContainer').html(xhr.responseText); // Show validation errors
+                    } else if (xhr.status === 409) { // Conflict
+                        // Parse the response if necessary to extract additional data
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(xhr.responseText, 'text/html');
+                          const productSizeName = doc.querySelector('[data-product-size-name]').dataset.productSizeName;
+
+                        showDangerToast(`${productSizeName} @MessageManager.Exist`);
+                        $('#AddContainer').html(xhr.responseText);
+                    } else {
+                        showDangerToast('@MessageManager.SaveFaild');
+                    }
+                }
+                ,
+                complete: function () {
+                    // Hide the loader
+                    $(loaderSelector).hide();
+                    submitButton.prop('disabled', false);
+                }
+            });
+        });
+    });
+</script>
+
+
+<script>
+    function OnRefresh(){
+        $('#ProductColorForm')[0].reset();
+    }
+    function AddUnitNewForm() {
+
+        $.ajax({
+            url: '/ProductColor/AddNewForm', // Your action URL
+            type: 'GET', // Use GET method
+            //   data:, // Send the model object as query string parameters
+            success: function (result) {
+
+                $('#AddContainer').html(result);
+            },
+            error: function (xhr, status, error) {
+                showDangerToast('Form Reset Faild');
+            }
+        });
+    }
+
+   
+</script>
+ 
+<script>
+    function OnDeleteProductClr(id) {
+        Swal.fire({
+            title: `Are you sure you want to delete the item with ID ${id}?`,
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/ProductColor/Delete', // Your action URL
+                    type: 'POST',
+                    data: { id: id }, // Data sent to the server
+                    success: function (response) {
+                        // Success message
+                        Swal.fire(
+                            'Deleted!',
+                            'Your file has been deleted.',
+                            'success'
+                        ).then(() => {
+                            // Reload content or execute additional actions
+                            $('#SearchResultContainer').html(response);
+                            AddUnitNewForm(); // Optional additional call
+                        });
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error('Error:', textStatus, errorThrown);
+                        Swal.fire(
+                            'Error!',
+                            'An error occurred while deleting. Please try again.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    }
+</script>

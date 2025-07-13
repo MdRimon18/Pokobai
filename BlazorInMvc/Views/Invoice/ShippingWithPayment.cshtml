@@ -1,0 +1,447 @@
+﻿<style>
+    /* Responsive width for offcanvas */
+    @@media (max-width: 768px) {
+        #offcanvasRight {
+            width: 100% !important;
+        }
+    }
+
+    @@media (max-width: 1024px) {
+        #offcanvasRight {
+            width: 50% !important;
+        }
+    }
+
+    @@media (min-width: 1025px) {
+        #offcanvasRight {
+            width: 30% !important;
+        }
+    }
+
+    /* Ensure offcanvas has scrolling enabled */
+    #offcanvasRight {
+        overflow-y: auto;
+        max-height: 100vh; /* Prevents overflow */
+        padding-bottom: 20px;
+    }
+</style>
+<div aria-live="polite" aria-atomic="true" class="position-relative" style="z-index: 9999;">
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <!-- Single Reusable Toast -->
+        <div id="globalToast" class="toast align-items-center text-white d-none" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body"></div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row g-3">
+    <div class="col-xl-4 order-xl-1">
+        <div class="card">
+            <div class="card-header bg-body-tertiary d-flex flex-between-center">
+                <h5 class="mb-0">Order Summary (<span class="fw-bold" id="total-quantity">0</span>)</h5>
+                <a class="btn btn-falcon-default btn-sm text-600"  onclick="loadPage('/Invoice/Create?key =79f7dd49-0e5f-4b04-952a-849e2cd95614')">
+                    <span class="fas fa-pencil-alt"></span>
+                </a>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless fs-10 mb-0" id="order-summary-table">
+                    <!-- Dynamic content will be injected here -->
+                </table>
+            </div>
+            @*  <div class="card-footer d-flex justify-content-between bg-body-tertiary">
+                <div class="fw-semi-bold">Total Items</div>
+                <div class="fw-bold" id="total-quantity">0</div>
+            </div> *@
+            <div class="card-footer d-flex justify-content-between bg-body-tertiary">
+                <div class="fw-semi-bold">Payable Total</div>
+                <div class="fw-bold" id="payable-total">$0.00</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-8">
+        <div class="card mb-3">
+            <div class="card-header bg-body-tertiary">
+                <div class="row flex-between-center">
+                    <div class="col-sm-auto">
+                        <h5 class="mb-2 mb-sm-0">Your Shipping Address</h5>
+                    </div>
+
+                    <div class="col-sm-auto">
+                        <a class="btn btn-falcon-default btn-sm" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"
+                           aria-controls="offcanvasRight" onclick="resetUserAddressForm()">
+                            <span class="fas fa-plus me-2" data-fa-transform="shrink-2"></span>
+                            Add New Address
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row" id="address-container">
+                    @* <div class="col-md-12 mb-3 mb-md-0">
+                        <div class="form-check mb-0 custom-radio radio-select">
+                            <input class="form-check-input" id="address-1" type="radio" name="clientName" checked="checked" />
+                            <label class="form-check-label mb-0 fw-bold d-block" for="address-1">
+                                Antony Hopkins
+
+                                <span class="radio-select-content"><span> 
+                                    2392 Main Avenue,<br />Pensaukee,<br />New Jersey 02139
+                                    <span class="d-block mb-0 pt-2">+(856) 929-229</span></span>
+                                </span></label><a class="fs-10" href="#!">Edit</a>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="position-relative">
+                            <div class="form-check mb-0 custom-radio radio-select">
+                                <input class="form-check-input" id="address-2" type="radio" name="clientName" />
+                                <label class="form-check-label mb-0 fw-bold d-block" for="address-2">Robert Bruce<span class="radio-select-content"><span>3448 Ile De France St #242<br />Fort Wainwright, <br />Alaska, 99703<span class="d-block mb-0 pt-2">+(901) 637-734</span></span></span></label><a class="fs-10" href="#!">Edit</a>
+                            </div>
+                        </div>
+                    </div> *@
+                </div>
+            </div>
+        </div>
+
+
+        <div class="card">
+            <div class="card-header bg-body-tertiary">
+                <h5 class="mb-0">Payment Method</h5>
+            </div>
+            <div class="card-body">
+                <div class="mt-3">
+                    <div class="form-check">
+                        <input class="form-check-input payment-option" type="checkbox" id="cod" onclick="togglePayment('cod')" checked />
+                        <label class="form-check-label" for="cod">Cash on Delivery</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input payment-option" type="checkbox" id="bank" onclick="togglePayment('bank')" />
+                        <label class="form-check-label" for="bank">Bank</label>
+                    </div>
+                </div>
+
+                <form>
+                    <div id="bank-info" class="d-none mt-3">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" id="credit-card" name="payment-method" checked />
+                            <label class="form-check-label" for="credit-card">Credit Card</label>
+                        </div>
+                        <div class="row gx-0 ps-2 mb-4">
+                            <div class="col-sm-8 px-3">
+                                <div class="mb-3">
+                                    <label class="form-label text-uppercase fw-semi-bold" for="inputNumber">Card Number</label>
+                                    <input class="form-control" id="inputNumber" type="text" placeholder="•••• •••• •••• ••••" />
+                                </div>
+                                <div class="row align-items-center">
+                                    <div class="col-6">
+                                        <label class="form-label text-uppercase fw-semi-bold">Exp Date</label>
+                                        <input class="form-control" type="text" placeholder="mm/yyyy" />
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label text-uppercase fw-semi-bold">CVV</label>
+                                        <input class="form-control" type="text" placeholder="123" maxlength="3" pattern="[0-9]{3}" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4 ps-3 text-center pt-2 d-none d-sm-block">
+                                <div class="rounded-1 p-2 mt-3 bg-100">
+                                    <div class="text-uppercase fs-11 fw-bold">We Accept</div>
+                                    <img src="../../assets/img/icons/icon-payment-methods-grid.png" alt="" width="120" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-check d-flex align-items-center">
+                            <input class="form-check-input" type="radio" id="paypal" name="payment-method" />
+                            <label class="form-check-label mb-0 ms-2" for="paypal">
+                                <img src="../../assets/img/icons/icon-paypal-full.png" height="20" alt="" />
+                            </label>
+                        </div>
+
+                        <!-- Cash on Delivery and Bank Checkboxes -->
+
+
+                    </div>
+
+
+                    <div class="border-bottom border-dashed my-5"></div>
+
+                    <div class="row">
+                        <div class="col-md-7 col-xl-12 col-xxl-7 px-md-3">
+                            <div class="d-flex">
+                                <img class="me-3" src="../../assets/img/icons/shield.png" alt="" width="60" height="60" />
+                                <div class="flex-1">
+                                    <h5 class="mb-2">Buyer Protection</h5>
+                                    <div class="form-check">
+                                        <input class="form-check-input" id="protection-option-1" type="checkbox" checked />
+                                        <label class="form-check-label" for="protection-option-1">
+                                            <strong>Full Refund</strong> If you don't receive your order
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" id="protection-option-2" type="checkbox" checked />
+                                        <label class="form-check-label" for="protection-option-2">
+                                            <strong>Full or Partial Refund</strong> If the product is not as described
+                                        </label>
+                                    </div>
+                                    <a class="fs-10 ms-3 ps-2" href="/Home/SignUp">Learn More<span class="fas fa-caret-right ms-1"></span></a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-5 col-xl-12 col-xxl-5 ps-lg-4 text-center text-md-start">
+                            <div class="fs-7 fw-semi-bold">All Total: <span class="text-primary" id="AllTotal">$3320</span></div>
+                            <a id="confirmPayBtn" class="btn btn-success mt-3 px-5">Confirm &amp; Pay</a>
+                            <p class="fs-10 mt-3 mb-0">
+                                By clicking <strong>Confirm & Pay</strong> button you agree to the
+                                <a>Terms & Conditions</a>
+                            </p>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+        <script>
+            function togglePayment(selectedOption) {
+                let cod = document.getElementById("cod");
+                let bank = document.getElementById("bank");
+                let bankInfo = document.getElementById("bank-info");
+
+                if (selectedOption === "cod") {
+                    bank.checked = false;
+                    bankInfo.classList.add("d-none");
+                } else if (selectedOption === "bank") {
+                    cod.checked = false;
+                    bankInfo.classList.remove("d-none");
+                }
+            }
+
+            // Ensure Cash on Delivery is selected by default
+            document.addEventListener("DOMContentLoaded", function () {
+                togglePayment('cod');
+            });
+        </script>
+    </div>
+</div>
+
+
+
+@* <script src="~/assets/js/jquery-3.6.0.min.js"></script> *@
+<script>
+    $(document).ready(function () {
+        const apiUrl = "/api/ItemCard";
+
+        function loadOrderSummary() {
+            $.get(`${apiUrl}/GetItemCart`, function (response) {
+                if (response.isSuccess) {
+                    let items = response.result;
+
+
+                    let tableHtml = "";
+                    let subtotal = 0;
+                    let discount = 55; // Assume a fixed discount
+                    let shipping = 20; // Assume a fixed shipping charge
+                    let total = 0;
+                    let totalQuantity = 0;
+
+                    items.forEach(item => {
+                        console.log(item)
+                        let itemTotal = item.quantity * item.price;
+                        subtotal += itemTotal;
+                        totalQuantity += item.quantity; // Count total quantity
+                         // <div class="text-400 fw-normal fs-11">${item.description || "No details available"}</div>
+                        tableHtml += `
+                            <tr class="border-bottom">
+                                <th class="ps-0 pt-0">
+                                    ${item.productName} x ${item.quantity}
+
+                                </th>
+                                <th class="pe-0 text-end pt-0">${itemTotal.toFixed(2)}</th>
+                            </tr>`;
+                    });
+
+                    total = subtotal - discount + shipping;
+
+                    // Append subtotal, discount, shipping, and total rows
+                    tableHtml += `
+                        <tr class="border-bottom">
+                            <th class="ps-0">Subtotal</th>
+                            <th class="pe-0 text-end">$${subtotal.toFixed(2)}</th>
+                        </tr>
+                        <tr class="border-bottom">
+                            <th class="ps-0">Coupon: <span class="text-success">40SITEWIDE</span></th>
+                            <th class="pe-0 text-end">-$${discount.toFixed(2)}</th>
+                        </tr>
+                        <tr class="border-bottom">
+                            <th class="ps-0">Shipping</th>
+                            <th class="pe-0 text-end">$${shipping.toFixed(2)}</th>
+                        </tr>
+                        <tr>
+                            <th class="ps-0 pb-0">Total</th>
+                            <th class="pe-0 text-end pb-0">$${total.toFixed(2)}</th>
+                        </tr>`;
+
+                    // Inject the generated table content
+                    $("#order-summary-table").html(tableHtml);
+                    $("#payable-total").text(`Tk. ${total.toFixed(2)}`);
+                    $("#AllTotal").text(`Tk. ${total.toFixed(2)}`);
+
+                    $("#total-quantity").text(totalQuantity); // Update total quantity
+
+                  } else {
+                    alert(response.message || "Failed to load order summary.");
+                  }
+
+
+
+            });
+        }
+
+        // Load order summary on page load
+        loadOrderSummary();
+        
+           function LoadAddresses() {
+            $.ajax({
+                url: '/api/UserAddressBook/GetAllAddresses', // Adjust the API endpoint as needed
+                type: 'GET',
+                success: function (response) {
+                    // Ensure response is successful
+                    if (response.isSuccess) {
+                        // Clear any existing addresses in the target element by ID
+                        $('#address-container').empty();
+
+                        // Iterate through each address and create dynamic HTML
+                        response.response.forEach(function (address, index) {
+                            // Create the HTML for each address
+                            var addressHtml = `
+                                <div class="col-md-12 mb-3 mb-md-0">
+                                    <div class="form-check mb-0 custom-radio radio-select">
+                                        <input class="form-check-input" id="address-${index + 1}" type="radio" name="clientName" ${index === 0 ? 'checked="checked"' : ''} />
+                                        <label class="form-check-label mb-0 fw-bold d-block" for="address-${index + 1}">
+                                            ${address.addressType} Address
+                                            <span class="radio-select-content">
+                                                <span>
+                                                    ${address.address},<br />
+                                                    ${address.city},<br />
+                                                    ${address.state} ${address.postalCode},<br />
+                                                    ${address.country} <br />
+                                                    <span class="d-block mb-0 pt-2">${address.phoneNumber}</span>
+                                                </span>
+                                            </span>
+                                        </label>
+                                        <a class="fs-10 edit-address-link" href="javascript:void(0);" data-id="${address.addressID}" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Edit</a>
+                                    </div>
+                                </div>
+                            `;
+                            // Append the new address HTML to the element with ID 'address-container'
+                            $('#address-container').append(addressHtml);
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error fetching addresses: ", error);
+                }
+            });
+
+           }
+
+           LoadAddresses();
+    });
+
+
+</script>
+
+
+
+ 
+<script>
+    $(document).on('click', '#confirmPayBtn', function (e) {
+        e.preventDefault(); // Prevent default anchor behavior if needed
+             // Get the selected address ID
+              var selectedAddressId = $('input[name="clientName"]:checked')
+                  .closest('.form-check')
+                  .find('.edit-address-link')
+                  .data('id');
+
+
+          console.log("Selected Address ID:", selectedAddressId);
+              $.ajax({
+              url: '/api/User/GetCurrentUserId',
+              type: 'GET',
+              success: function (response) {
+                console.log("Current User ID:", response.currentUserId);
+                response.currentUserId=0;
+
+                if(response.currentUserId>0){
+
+                  if (!selectedAddressId) {
+                      alert("Please select an address before proceeding.");
+                      return;
+                  }
+                         $.ajax({
+                          url: '/api/Order/Place',
+                          type: 'GET',  // Change to 'POST' if necessary
+                          data: { AddressId: selectedAddressId ,UserId:response.currentUserId},
+                          success: function (orderResponse) {
+                              console.log(orderResponse)
+                              console.log("Order placed successfully.");
+                              // Handle response (e.g., redirect, show a message)
+                             // window.location.href = '/Home/ThankYou?orderId=' + orderResponse.OrderId;
+                          window.location.href = '/Home/ThankYou';
+                          },
+                          error: function (xhr, status, error) {
+                              console.error("Error placing order:", error);
+                          }
+                      });
+                }else{
+                    window.location.href = '/Home/SignUp';
+                }
+            },
+            error: function (xhr) {
+                console.error("Error fetching user ID:", xhr.responseText);
+            }
+        });
+      // Call the controller action via AJAX
+      // $.ajax({
+      //     url: '/Order/Place',
+      //     type: 'GET',  // Change to 'POST' if necessary
+      //     data: { AddressId: selectedAddressId },
+      //     success: function (response) {
+      //         console.log("Order placed successfully.");
+      //         // Handle response (e.g., redirect, show a message)
+      //         //window.location.href = '/Order/Place?AddressId=' + selectedAddressId;
+      //     },
+      //     error: function (xhr, status, error) {
+      //         console.error("Error placing order:", error);
+      //     }
+      // });
+    });
+        // $(document).on('change', 'input[name="clientName"]', function () {
+        // var selectedAddressId = $(this).closest('.form-check').find('.edit-address-link').data('id');
+        // console.log("Selected Address ID:", selectedAddressId);
+
+        // if(items.length>0){
+        //               let customerId= items[0].customerId;
+        //               console.log(customerId)
+        //                // Select the anchor tag using ID
+        //                 let confirmButton = $("#confirmPayBtn");
+
+
+        //                     // Update href based on customerId
+        //                  if (customerId === 0) {
+        //                   confirmButton.attr("href", "/Home/SignUp");
+        //                  } else {
+        //                     confirmButton.attr("href", "/Home/ThankYou?customerId=" + customerId);
+        //                  }
+
+        //           }
+        //  });
+
+
+</script>
+ 

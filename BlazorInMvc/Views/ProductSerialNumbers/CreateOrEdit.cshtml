@@ -1,0 +1,197 @@
+﻿@using Domain.Entity.Settings
+@model ProductSerialNumbers
+<main class="main" id="top">
+    <div class="container" data-layout="container">
+        <div class="content">
+            <div class="row g-0">
+               @*  <div class="col-lg-8 pe-lg-2">
+                    <div class="card mb-3 mb-lg-0">
+                        <div class="card-body">
+                            <div class="kanban-column-header">
+                                <h5 class="fs-9 mb-0">Product Serial List<span class="text-500">(@Model..Count())</span></h5>
+                                <div class="dropdown font-sans-serif btn-reveal-trigger">
+                                    <button class="btn btn-sm btn-reveal py-0 px-2" type="button" id="kanbanColumn0" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="fas fa-ellipsis-h"></span></button>
+                                    <div class="dropdown-menu dropdown-menu-end py-0" aria-labelledby="kanbanColumn0">
+                                        <a class="dropdown-item" href="@Url.Action("Edit", "ProductSerialNumbers")">Add Card</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="kanban-items-container scrollbar">
+                                <div class="kanban-item">
+                                    <div class="col-lg-3 col-md-3 col-sm-12 col-12 animated-div">
+                                        <div class="form-group">
+                                            <div class="input-group input-search-width">
+                                                <input class="form-control form-control-sm shadow-none form-rounded" type="search" placeholder="Search by ProductSerialNumber" aria-label="search" />
+                                                <button class="btn btn-sm btn-outline-secondary border-300 hover-border-secondary form-rounded"><span class="fa fa-search fs-10"></span></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-content" id="ticketViewContent">
+                                    <div class="kanban-item">
+                                        <div id="tableExample" data-list='{"valueNames":["Serialnumber","rate","w-auto","date","Tagsupplier","Suppliername","Supplierorg.name","remarks","Salesstatus"],"page":5,"pagination":true}'>
+                                            <div class="table-responsive scrollbar">
+                                                <table class="table table-hover table-bordered table-striped fs-10 mb-0">
+                                                    <thead class="bg-200">
+                                                        <tr>
+                                                            <th class="text-800 sort align-middle ps-4" data-sort="client">Action</th>
+                                                            <th class="text-900 sort" data-sort="Serialnumber">Serial Number</th>
+                                                            <th class="text-900 sort" data-sort="rate">Rate</th>
+                                                            <th class="text-900 sort" data-sort="date">Date</th>
+                                                            <th class="text-900 sort" data-sort="Tagsupplier">Tag Supplier</th>
+                                                            <th class="text-900 sort" data-sort="Suppliername">Supplier Name</th>
+                                                            <th class="text-900 sort" data-sort="Supplierorg.name">Supplier Org. Name</th>
+                                                            <th class="text-900 sort" data-sort="remarks">Remarks</th>
+                                                            <th class="text-900 sort" data-sort="Salesstatus">Sales Status</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="list" id="table-ticket-body">
+                                                        @foreach (var item in Model)
+                                                        {
+                                                                <tr>
+                                                                    <td class="align-middle fs-9 py-3">
+                                                                        <div class="form-check mb-0">
+                                                                            <a href="@Url.Action("Edit", "ProductSerialNumbers", new { id = item.ProdSerialNmbrId })" class="btn btn-falcon-default btn-sm"><span class="fas fa-external-link-alt" data-fa-transform="shrink-3"></span></a>
+                                                                            <form asp-action="Delete" method="post" style="display:inline;">
+                                                                                <input type="hidden" asp-for="ProdSerialNmbrId" value="@item.ProdSerialNmbrId" />
+                                                                                <button type="submit" class="btn btn-falcon-default btn-sm"><i class="fa fa-trash text-danger" aria-hidden="true"></i></button>
+                                                                            </form>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class="align-middle fs-9 py-3">@item.ProdSerialNmbrId</td>
+                                                                    <td class="align-middle fs-9 py-3">@item.Rate</td>
+                                                                    <td class="align-middle fs-9 py-3">@item.Date</td>
+                                                                    <td class="align-middle fs-9 py-3">@item.TagSupplierId</td>
+                                                                    <td class="align-middle fs-9 py-3">@item.SupplierName</td>
+                                                                    <td class="align-middle fs-9 py-3">@item.SupplierOrgName</td>
+                                                                    <td class="align-middle fs-9 py-3">@item.Remarks</td>
+                                                                    <td class="align-middle fs-9 py-3">@item.SerialStatus</td>
+                                                                </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                                <div class="text-center d-none" id="tickets-table-fallback">
+                                                    <p class="fw-bold fs-8 mt-3">No ticket found</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="row">
+                                            <div class="pagination d-none"></div>
+                                            <div class="col-md-8">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <span class="d-none d-sm-inline-block me-2 fs-10">page 1 of 1, Total Record @Model.Count()</span>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <select class="form-select form-select-sm">
+                                                            <option value="5">5</option>
+                                                            <option value="10">10</option>
+                                                            <option value="20">20</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="col-auto d-flex justify-content-end">
+                                                    <ul class="pagination">
+                                                        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                                                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                                        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> *@
+                <div class="col-lg-4 ps-lg-2">
+                    <div class="card mb-3 mb-lg-0">
+                        <div class="card-body">
+                            <div class="kanban-column-header">
+                                <h5 class="fs-9 mb-0">Product Add Serial</h5>
+                                <div class="dropdown font-sans-serif btn-reveal-trigger">
+                                    <button class="btn btn-sm btn-reveal py-0 px-2" type="button" id="kanbanColumn1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="fas fa-ellipsis-h"></span></button>
+                                    <div class="dropdown-menu dropdown-menu-end py-0" aria-labelledby="kanbanColumn1">
+                                        <a class="dropdown-item" href="#!">Add Card</a><a class="dropdown-item" href="#!">Edit</a><a class="dropdown-item" href="#!">Copy link</a>
+                                        <div class="dropdown-divider"></div><a class="dropdown-item text-danger" href="#!">Remove</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="kanban-items-container scrollbar">
+                                <div class="kanban-item">
+              <form asp-action="SaveOrUpdate" method="post">
+    <div class="mb-1">
+        <label class="form-label fw-semi-bold" for="Serialnumber">Serial Number<span class="error-star">*</span></label>
+        <input asp-for="SerialNumber" class="form-control form-control-sm form-rounded" />
+        <span asp-validation-for="SerialNumber" class="text-danger"></span>
+    </div>
+    <div class="mb-1">
+        <label for="rate">Rate</label>
+        <input asp-for="Rate" class="form-control form-control-sm form-rounded" type="text" placeholder="Enter Rate" aria-label="default input Rate" />
+        <span asp-validation-for="Rate" class="text-danger"></span>
+    </div>
+    <div class="mb-1">
+        <label for="datepicker">Date</label>
+        <input asp-for="Date" class="form-control form-control-sm form-rounded" type="date" />
+        <span asp-validation-for="Date" class="text-danger"></span>
+    </div>
+    <div class="mb-1">
+        <label for="Tagsupplier">Tag Supplier</label>
+        <input asp-for="TagSupplierId" class="form-control form-control-sm form-rounded" type="number" placeholder="Enter tag supplier" aria-label="default input Tag Supplier" />
+        <span asp-validation-for="TagSupplierId" class="text-danger"></span>
+    </div>
+    <div class="mb-1">
+        <label for="Suppliername">Supplier Name</label>
+        <input asp-for="SupplierName" class="form-control form-control-sm form-rounded" type="text" placeholder="Enter supplier name" aria-label="default input Supplier Name" />
+        <span asp-validation-for="SupplierName" class="text-danger"></span>
+    </div>
+    <div class="mb-1">
+        <label for="Supplierorg.name">Supplier Org. Name</label>
+        <input asp-for="SupplierOrgName" class="form-control form-control-sm form-rounded" type="text" placeholder="Enter Supplier Org. Name" aria-label="default input Supplier Org. Name" />
+        <span asp-validation-for="SupplierOrgName" class="text-danger"></span>
+    </div>
+    <div class="mb-1">
+        <label for="remarks">Remarks</label>
+        <input asp-for="Remarks" class="form-control form-control-sm form-rounded" type="text" placeholder="Enter Remarks" aria-label="default input Remarks" />
+        <span asp-validation-for="Remarks" class="text-danger"></span>
+    </div>
+    <div class="mb-1">
+        <label for="Salesstatus">Sales Status</label>
+        <select asp-for="SerialStatus" class="form-select form-rounded">
+            <option value="">Select Sales Status</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+        </select>
+        <span asp-validation-for="SerialStatus" class="text-danger"></span>
+    </div>
+    <div class="col-9 col-sm-7 offset-0">
+        @if (Model.ProdSerialNmbrId > 0)
+        {
+            <button class="btn btn-sm btn-primary" type="submit">Update</button>
+        }
+        else
+        {
+            <button class="btn btn-sm btn-primary" type="submit">Save</button>
+        }
+    </div>
+</form>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+     </div>
+</main>
+
+    

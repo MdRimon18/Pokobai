@@ -1,0 +1,29 @@
+﻿@using Domain.CommonServices
+@using Domain.ViewModel
+@model SubCategoryViewModel
+
+
+<div class="row g-0 bg-light dark__bg-1000 mt-3">
+    
+
+    <div class="row">
+        <div class="col-md-4 col-lg-4 border-end p-3">
+            <div id="SearchResultContainer">
+                @await Html.PartialAsync("_SearchResult", Model.ProductSubCategories)
+            </div>
+        </div>
+
+
+        <!-- Right Section: Form -->
+
+        <div class="col-md-8 col-lg-8 p-4">
+            <div id="AddContainer">
+                @await Html.PartialAsync("_AddForm", Model.ProductSubCategory)
+            </div>
+
+        </div>
+    </div>
+    
+</div>
+
+ 

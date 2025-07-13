@@ -1,0 +1,377 @@
+﻿
+@using Domain.Entity.Settings
+@model User
+
+<div class="container mt-4">
+    <div class="card mb-3">
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs" id="userTab" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link active" id="basic-tab" data-bs-toggle="tab" data-bs-target="#basic-info" type="button" role="tab">Basic Info</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="details-tab" data-bs-toggle="tab" data-bs-target="#user-details" type="button" role="tab">User Details</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="address-tab" data-bs-toggle="tab" data-bs-target="#user-address" type="button" role="tab">Address</button>
+                </li>
+            </ul>
+        </div>
+        <div class="tab-content p-3">
+            <!-- ================= Basic Info Tab ================= -->
+            <div class="tab-pane fade show active" id="basic-info" role="tabpanel">
+                <form id="userForm" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <!-- Existing fields here -->
+                            <div class="mb-3">
+                                <label for="Name" class="form-label fw-semibold">Name<span class="error-star">*</span></label>
+                                <input id="Name" name="Name" class="form-control form-control-sm" placeholder="Enter Name">
+                            </div>
+                            <div class="mb-3">
+                                <label for="PhoneNo" class="form-label fw-semibold">Phone Number<span class="error-star">*</span></label>
+                                <input id="PhoneNo" name="PhoneNo" class="form-control form-control-sm" placeholder="Enter Mobile Number">
+                            </div>
+                            <div class="mb-3">
+                                <label for="Email" class="form-label fw-semibold">Email</label>
+                                <input id="Email" name="Email" type="email" class="form-control form-control-sm" placeholder="Write Email">
+                            </div>
+                            <div class="mb-3">
+                                <label for="Password" class="form-label fw-semibold">Password</label>
+                                <input id="Password" name="Password" type="password" class="form-control form-control-sm" placeholder="Enter Password">
+                            </div>
+                            <div class="mb-3">
+                                <label for="RoleId" class="form-label fw-semibold">Role ID<span class="error-star">*</span></label>
+                                <input id="RoleId" name="RoleId" class="form-control form-control-sm" placeholder="Enter Role ID">
+                            </div>
+                            <div class="mb-3">
+                                <label for="CountryId" class="form-label fw-semibold">Country</label>
+                                <select id="CountryId" name="CountryId" class="form-select form-control-sm">
+                                    <option value="">Select Country</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="mb-3">Upload Image</h6>
+                            <div class="mb-3 position-relative" id="image-container">
+                                <img id="imagePreview" src="" alt="Image Preview" class="rounded-circle" style="width: 160px; height: 160px; object-fit: cover; display: none;">
+                                <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0" id="removeImageBtn" style="display:none;">×</button>
+                            </div>
+                            <input type="file" name="imageFile" id="fileInput" class="form-control form-control-sm" accept="image/*">
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- ================= User Details Tab ================= -->
+            <div class="tab-pane fade" id="user-details" role="tabpanel">
+                <form id="userDetailsForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="PhoneTwo" class="form-label">Phone Two</label>
+                                <input id="PhoneTwo" name="PhoneTwo" class="form-control form-control-sm">
+                            </div>
+                            
+                           @*  <div class="mb-3">
+                                <label for="NidNo" class="form-label">NID No</label>
+                                <input id="NidNo" name="NidNo" class="form-control form-control-sm">
+                            </div>
+                            <div class="mb-3">
+                                <label for="PassportNo" class="form-label">Passport No</label>
+                                <input id="PassportNo" name="PassportNo" class="form-control form-control-sm">
+                            </div> *@
+                            <div class="mb-3">
+                                <label for="Occupation" class="form-label">Occupation</label>
+                                <input id="Occupation" name="Occupation" class="form-control form-control-sm">
+                            </div>
+                            <div class="mb-3">
+                                <label for="Note" class="form-label">Note</label>
+                                <textarea id="Note" name="Note" rows="3" class="form-control form-control-sm"></textarea>
+                            </div>
+                         @*    <div class="mb-3">
+                                <label for="OrganizationName" class="form-label">Organization Name</label>
+                                <input id="OrganizationName" name="OrganizationName" class="form-control form-control-sm">
+                            </div> *@
+                          
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="EmailTwo" class="form-label">Email Two</label>
+                                <input id="EmailTwo" name="EmailTwo" class="form-control form-control-sm">
+                            </div>
+                            <div class="mb-3">
+                                <label for="OfficeName" class="form-label">Office Name</label>
+                                <input id="OfficeName" name="OfficeName" class="form-control form-control-sm">
+                            </div>
+                           @*  <div class="mb-3">
+                                <label for="BusinessTypeId" class="form-label">Business Type</label>
+                                <input id="BusinessTypeId" name="BusinessTypeId" class="form-control form-control-sm">
+                            </div>
+                            <div class="mb-3">
+                                <label for="OffDay" class="form-label">Off Day</label>
+                                <input id="OffDay" name="OffDay" class="form-control form-control-sm">
+                            </div>
+                            <div class="mb-3">
+                                <label for="NumberOfStaff" class="form-label">Number of Staff</label>
+                                <input id="NumberOfStaff" name="NumberOfStaff" type="number" class="form-control form-control-sm">
+                            </div> *@
+                         
+                          @*   <div class="mb-3">
+                                <label for="OrgImgLink" class="form-label">Organization Image Link</label>
+                                <input id="OrgImgLink" name="OrgImgLink" class="form-control form-control-sm">
+                            </div> *@
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="tab-pane fade" id="user-address" role="tabpanel">
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <div class="row flex-between-center">
+                            <div class="col-4 col-sm-auto d-flex align-items-center pe-0">
+                                <h5 class="fs-9 mb-0 text-nowrap py-2 py-xl-0">Address</h5>
+                            </div>
+                            <div class="col-8 col-sm-auto text-end ps-2">
+                                 
+                                <div id="table-customers-replace-element">
+                                    <button class="btn btn-falcon-default btn-sm" type="button"><span class="fas fa-plus" data-fa-transform="shrink-3 down-2"></span><span class="d-none d-sm-inline-block ms-1">New</span></button>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive scrollbar">
+                            <table class="table table-sm table-striped fs-10 mb-0 overflow-hidden">
+                                <thead class="bg-200">
+                                    <tr>
+                                        
+                                        <th class="text-900 sort pe-1 align-middle white-space-nowrap sortable-header" data-sort="name" onclick="sortTable('customerName')">Name <i class="fas fa-sort"></i></th>
+                                        <th class="text-900 sort pe-1 align-middle white-space-nowrap sortable-header" data-sort="email" onclick="sortTable('email')">Email <i class="fas fa-sort"></i></th>
+                                        <th class="text-900 sort pe-1 align-middle white-space-nowrap sortable-header" data-sort="phone" onclick="sortTable('mobileNo')">Phone <i class="fas fa-sort"></i></th>
+                                        <th class="text-900 sort pe-1 align-middle white-space-nowrap ps-5 sortable-header" data-sort="address" style="min-width: 200px;" onclick="sortTable('custAddrssOne')">Billing Address <i class="fas fa-sort"></i></th>
+                                        <th class="text-900 sort pe-1 align-middle white-space-nowrap sortable-header" data-sort="joined" onclick="sortTable('entryDateTime')">Joined <i class="fas fa-sort"></i></th>
+                                        <th class="align-middle no-sort"></th>
+                                    </tr>
+                                </thead>
+                                <tbody class="list" id="table-customers-body">
+                                    <!-- Rows will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                            <div class="text-center d-none" id="customers-table-fallback">
+                                <p class="fw-bold fs-8 mt-3">No customers found</p>
+                            </div>
+                        </div>
+                    </div>
+                 
+                </div>
+                 
+            </div>
+        </div>
+
+        <div class="card-footer text-end">
+            <input id="UserId" name="UserId" type="hidden" value="0">
+            <button type="button" class="btn btn-primary btn-sm me-2" id="saveBtn">Save</button>
+            <button type="reset" class="btn btn-secondary btn-sm" id="resetBtn">Refresh</button>
+           @*  <div class="d-flex justify-content-between mt-3">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="goToTab('basic-tab')">Previous</button>
+                <button type="button" class="btn btn-primary btn-sm" onclick="goToTab('address-tab')">Next</button>
+            </div> *@
+        </div>
+    </div>
+</div>
+
+<script>
+    window.initUserForm = async function () {
+        const saveBtn = document.getElementById('saveBtn');
+        const form = document.getElementById('userForm');
+        const fileInput = document.getElementById('fileInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const userIdInput = document.getElementById('UserId');
+        const removeImageBtn = document.getElementById('removeImageBtn');
+
+        if (fileInput && imagePreview) {
+            fileInput.addEventListener('change', function () {
+                const file = fileInput.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        imagePreview.src = e.target.result;
+                        imagePreview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+
+                }
+            });
+        }
+        if (fileInput && imagePreview && removeImageBtn) {
+                fileInput.addEventListener('change', function () {
+                    const file = fileInput.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            imagePreview.src = e.target.result;
+                            imagePreview.style.display = 'block';
+                            removeImageBtn.style.display = 'block';
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+
+                removeImageBtn.addEventListener('click', function () {
+                    fileInput.value = ''; // clear file input
+                    imagePreview.src = '';
+                    imagePreview.style.display = 'none';
+                    removeImageBtn.style.display = 'none';
+                });
+       }
+        if (saveBtn) {
+            saveBtn.addEventListener('click', async function () {
+                $(".form-control").removeClass("is-invalid");
+                $(".invalid-feedback").remove();
+
+                const userId = parseInt($("#UserId").val()) || 0;
+                const user = {
+                    UserId: userId,
+                    Name: $("#Name").val().trim(),
+                    PhoneNo: $("#PhoneNo").val().trim(),
+                    Email: $("#Email").val().trim(),
+                    Password: $("#Password").val(),
+                    RoleId: $("#RoleId").val(),
+                    CountryId: $("#CountryId").val(),
+                    ImgLink: ""
+                };
+
+                let isValid = true;
+
+                if (!user.Name) {
+                    isValid = false;
+                    $("#Name").addClass("is-invalid").after('<div class="invalid-feedback">Name is required.</div>');
+                }
+                if (!user.PhoneNo) {
+                    isValid = false;
+                    $("#PhoneNo").addClass("is-invalid").after('<div class="invalid-feedback">Phone number is required.</div>');
+                }
+                if (!user.RoleId) {
+                    isValid = false;
+                    $("#RoleId").addClass("is-invalid").after('<div class="invalid-feedback">Role is required.</div>');
+                }
+                if (user.Email && !/^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/.test(user.Email)) {
+                    isValid = false;
+                    $("#Email").addClass("is-invalid").after('<div class="invalid-feedback">Invalid email format.</div>');
+                }
+                if (!isValid) return;
+
+                const formData = new FormData();
+                for (const key in user) {
+                    formData.append(key, user[key]);
+                }
+                if (fileInput && fileInput.files.length > 0) {
+                    formData.append("imageFile", fileInput.files[0]);
+                }
+
+                try {
+                    const response = await fetch('/api/User/SaveUser', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (response.ok) {
+                        if (response.status === 201) {
+                            const result = await response.json();
+                            alert('User created successfully with ID: ' + result.userId);
+                            userIdInput.value = result.userId;
+                        } else if (response.status === 204) {
+                            alert('User updated successfully');
+                        }
+                    } else {
+                        const error = await response.text();
+                        alert('Server error: ' + error);
+                    }
+                } catch (error) {
+                    alert('Request failed: ' + error.message);
+                }
+            });
+        }
+
+        const resetBtn = document.getElementById('resetBtn');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', function () {
+                if (imagePreview) {
+                    imagePreview.style.display = 'none';
+                    imagePreview.src = '';
+                }
+                if (userIdInput) {
+                    userIdInput.value = 0;
+                }
+            });
+        }
+
+        async function loadCountries() {
+            const countrySelect = document.getElementById('CountryId');
+            if (!countrySelect) return;
+            try {
+                const res = await fetch('/api/Country/GetAll?page=1&pageSize=100');
+                if (res.ok) {
+                    const response = await res.json();
+                    response.countries.forEach(country => {
+                        const option = document.createElement('option');
+                        option.value = country.countryId;
+                        option.textContent = country.countryName;
+                        countrySelect.appendChild(option);
+                    });
+                }
+            } catch (err) {
+                console.error('Failed to load countries:', err);
+            }
+        }
+
+        loadCountries();
+    };
+
+    //   function goToTab(tabId) {
+    //     const trigger = document.getElementById(tabId);
+    //     if (trigger) {
+    //         new bootstrap.Tab(trigger).show();
+    //     }
+    // }
+
+     const addressData = [
+        {
+            name: "John Doe",
+            email: "john@example.com",
+            phone: "1234567890",
+            address: "123 Main St",
+            joined: "2024-01-01"
+        },
+        {
+            name: "Jane Smith",
+            email: "jane@example.com",
+            phone: "9876543210",
+            address: "456 Oak St",
+            joined: "2023-12-15"
+        }
+    ];
+
+    function populateAddressTable() {
+        const tbody = document.getElementById('table-customers-body');
+        tbody.innerHTML = '';
+        addressData.forEach((item, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+               
+                <td>${item.name}</td>
+                <td>${item.email}</td>
+                <td>${item.phone}</td>
+                <td>${item.address}</td>
+                <td>${item.joined}</td>
+                <td><button class="btn btn-sm btn-danger">Delete</button></td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', populateAddressTable);
+</script>
+ 

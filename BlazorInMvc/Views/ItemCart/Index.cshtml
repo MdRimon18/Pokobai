@@ -1,0 +1,49 @@
+﻿@* this page maked dynamic from ecommerce_layout with jquery and javascript *@
+
+<div class="card">
+    <div class="card-header">
+        <div class="row justify-content-between">
+            <div class="col-md-auto">
+                <h5 class="mb-3 mb-md-0">Shopping Cart (<span id="item-count">0</span> Items)</h5>
+            </div>
+            <div class="col-md-auto">
+                <a class="btn btn-sm btn-outline-secondary border-300 me-2 shadow-none" href="/EcomProducts/Index">
+                    <span class="fas fa-chevron-left me-1" data-fa-transform="shrink-4"></span>Continue Shopping
+                </a>
+                <a class="btn btn-sm btn-primary" id="checkout-button" href="/ItemCart/Checkout" >Checkout</a>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="row gx-1 mx-0 bg-200 text-900 fs-10 fw-semi-bold">
+            <div class="col-6 col-md-6 py-2 px-1">Name</div>
+            <div class="col-6 col-md-6 px-1">
+                <div class="row">
+                    <div class="col-6 d-none d-md-block text-center py-2">Quantity</div>
+                    <div class="col-3 text-end py-2">Rate</div>
+                    <div class="col-3 text-end py-2">Price</div>
+                </div>
+            </div>
+        </div>
+        <div id="cart-items"></div>
+
+        <div class="row fw-bold gx-x1 mx-0">
+            <div class="col-9 col-md-8 py-2 px-x1 text-end text-900">Total</div>
+            <div class="col px-0">
+                <div class="row gx-x1 mx-0">
+                    <div class="col-md-8 py-2 px-x1 d-none d-md-block text-center" id="total-items">(0 items)</div>
+                    <div class="col-12 col-md-4 text-end py-2 px-x1" id="total-price">$0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer bg-body-tertiary d-flex justify-content-end">
+        <form class="me-3">
+            <div class="input-group input-group-sm">
+                <input class="form-control" id="promo-code" type="text" placeholder="Promocode" />
+                <button class="btn btn-outline-secondary border-300 btn-sm shadow-none" id="apply-promo" type="button">Apply</button>
+            </div>
+        </form>
+        <a class="btn btn-sm btn-primary" href="/ItemCart/Checkout">Checkout</a>
+    </div>
+</div>

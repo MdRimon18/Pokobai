@@ -1,0 +1,99 @@
+﻿:root {
+    --background-color: white;
+    --text-color: black;
+    --label-color: blue;
+}
+
+.invalid-border-input {
+    border: 1px solid #e63757;
+}
+
+.bold-text {
+    font-weight: bold;
+}
+
+.invalid-message-color {
+    color: red;
+    font-weight: bold;
+    font-size: small;
+}
+
+.error-star {
+    color: red;
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.label {
+    font-weight: 600;
+    border-radius: 4px;
+    font-size: 90%;
+    color: var(--label-color);
+}
+
+.form-control {
+    border-radius: .7rem;
+}
+
+
+/*:root {
+    --background-color: white;
+    --text-color: black;
+    --label-color: blue;
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.label {
+    color: var(--label-color);
+}
+
+body.dark-mode {
+    --background-color: black;
+    --text-color: white;
+    --label-color: yellow;
+}
+
+.container {
+    text-align: center;
+    margin-top: 20%;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+*/
+.text-danger {
+    color: red;
+    font-weight: bold;
+    font-size: small;
+}
+
+.offcanvas {
+    margin-top: 67px; /* Adjust this value according to your header height */
+}
+
+.zoom-card {
+    transition: transform 0.3s ease; /* Smooth transition for the zoom effect */
+}
+
+    .zoom-card:hover {
+        transform: scale(1.05); /* Slight zoom-in effect */
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Adding a shadow for a subtle effect */
+    }
+ 
+.sortable-header {
+    cursor: pointer;
+}
+.spa-link {
+    cursor: pointer;
+}
+
+.mouse-pointer {
+    cursor: pointer;
+}

@@ -1,0 +1,25 @@
+﻿@* Partial View for Toast Notifications *@
+        <div aria-live="polite" aria-atomic="true" style="position: relative; z-index: 9999;">
+            <div style="position: fixed; top: 20px; right: 20px;">
+                <!-- Success Toast -->
+                <div id="successToast" class="toast bg-success text-white d-none" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-body">
+                        <!-- Success message will be dynamically set here -->
+                    </div>
+                </div>
+
+                <!-- Danger Toast -->
+                <div id="dangerToast" class="toast bg-danger text-white d-none" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-body">
+                        <!-- Error message will be dynamically set here -->
+                    </div>
+                </div>
+
+                <!-- Warning Toast -->
+                <div id="warningToast" class="toast bg-warning text-dark d-none" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-body">
+                        <!-- Warning message will be dynamically set here -->
+                    </div>
+                </div>
+            </div>
+        </div>

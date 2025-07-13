@@ -1,0 +1,40 @@
+﻿
+
+
+<select @bind="SelectedPageSize" class="form-control" @oninput="OnSelectedPageSizeChanged">
+        
+        @foreach (var size in PageSizeOptions)
+                    {
+                        <option value="@size">@size</option>
+                    }
+</select>
+             
+      
+    
+ 
+@code {
+    [Parameter]
+    public int SelectedPageSize { get; set; }
+
+    [Parameter]
+    public EventCallback<int> SelectedPageSizeChanged { get; set; }
+
+    // Options for page sizes
+    private int[] PageSizeOptions = { 2, 5,10,20,30}; // Customize as needed
+
+    private async Task OnSelectedPageSizeChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value.ToString(), out int newSize))
+        {
+            SelectedPageSize = newSize;
+          
+            await SelectedPageSizeChanged.InvokeAsync(SelectedPageSize);
+        }
+
+        //SelectedPageSize = int.TryParse(e.Value?.ToString(),);
+        //?? "Strawberry";
+
+        // selectedValue = e.Value.ToString(); // Update the selectedValue
+        //await SelectedPageSizeChanged.InvokeAsync(SelectedPageSize); // Raise an event to notify the parent component
+    }
+}

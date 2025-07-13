@@ -1,0 +1,15 @@
+﻿@using BlazorInMvc.Pages.Components
+@using Microsoft.AspNetCore.Components.Routing
+<Router AppAssembly="@typeof(App).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+    </Found>
+     <NotFound>
+        @* Redirect to `/` if a route is not found *@
+        <Counter />
+    </NotFound>
+</Router>
+
+@code {
+    // Any additional code for App.razor can go here
+}

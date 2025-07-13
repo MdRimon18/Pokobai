@@ -1,0 +1,61 @@
+﻿@using System
+@using System.Collections.Generic
+    
+@if (TotalPages > 0)
+{
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <ul class="pagination justify-content-end">
+            <li class="page-item">
+                <button class="page-link" tabindex="-1" aria-disabled="true" @onclick="() => ChangePage(-1)">Previous</button>
+            </li>
+            @for (int i = 1; i <= TotalPages; i++)
+            {
+                int pageNumber = i; // Capture the loop variable in a local variable
+                <li class="page-item">
+                    <button class="page-link @(pageNumber==CurrentPage?"active":"")" @onclick="() => ChangePage(pageNumber)">@pageNumber</button>
+                </li>
+            }
+            <li class="page-item">
+                <button class="page-link" @onclick="() => ChangePage(-2)">Next</button>
+            </li>
+        </ul>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int TotalPages { get; set; }
+
+    [Parameter]
+    public int CurrentPage { get; set; }
+
+    [Parameter]
+    public Action<int> OnPageChange { get; set; }
+
+   
+
+    private void ChangePage(int pageNumber)
+    {
+        int newPageNumber = CurrentPage;
+        if (pageNumber == -1 && CurrentPage > 1)
+        {
+            newPageNumber--;
+        }
+        else if (pageNumber == -2 && CurrentPage < TotalPages)
+        {
+            newPageNumber++;
+        }
+        else if (pageNumber > 0)
+        {
+            newPageNumber = pageNumber;
+        }
+
+        if (newPageNumber != CurrentPage)
+        {
+
+            CurrentPage = newPageNumber;
+            OnPageChange?.Invoke(newPageNumber);
+        }
+    }
+}

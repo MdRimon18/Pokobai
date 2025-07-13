@@ -1,0 +1,109 @@
+﻿
+@using Domain.Entity.Settings
+@model IEnumerable<Customers>
+<div class="card mb-3" id="customersTable">
+    <div class="card-header">
+        <div class="row flex-between-center">
+            <div class="col-4 col-sm-auto d-flex align-items-center pe-0">
+                <h5 class="fs-9 mb-0 text-nowrap py-2 py-xl-0">Customers</h5>
+            </div>
+            <div class="col-8 col-sm-auto text-end ps-2">
+                <div class="d-none" id="table-customers-actions">
+                    <div class="d-flex">
+                        <select class="form-select form-select-sm" aria-label="Bulk actions" id="bulk-action-select">
+                            <option selected="">Bulk actions</option>
+                            <option value="Delete">Delete</option>
+                            <option value="Archive">Archive</option>
+                        </select>
+                        <button class="btn btn-falcon-default btn-sm ms-2" type="button" onclick="applyBulkAction()">Apply</button>
+                    </div>
+                </div>
+                <div id="table-customers-replace-element">
+                    <button class="btn btn-falcon-default btn-sm" type="button"><span class="fas fa-plus" data-fa-transform="shrink-3 down-2"></span><span class="d-none d-sm-inline-block ms-1">New</span></button>
+                    <button class="btn btn-falcon-default btn-sm mx-2" type="button"><span class="fas fa-filter" data-fa-transform="shrink-3 down-2"></span><span class="d-none d-sm-inline-block ms-1">Filter</span></button>
+                    <button class="btn btn-falcon-default btn-sm" type="button"><span class="fas fa-external-link-alt" data-fa-transform="shrink-3 down-2"></span><span class="d-none d-sm-inline-block ms-1">Export</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive scrollbar">
+            <table class="table table-sm table-striped fs-10 mb-0 overflow-hidden">
+                <thead class="bg-200">
+                    <tr>
+                        <th>
+                            <div class="form-check fs-9 mb-0 d-flex align-items-center">
+                                <input class="form-check-input" id="checkbox-bulk-customers-select" type="checkbox" data-bulk-select='{"body":"table-customers-body","actions":"table-customers-actions","replacedElement":"table-customers-replace-element"}' />
+                            </div>
+                        </th>
+                        <th class="text-900 sort pe-1 align-middle white-space-nowrap sortable-header" data-sort="name" onclick="sortTable('customerName')">Name <i class="fas fa-sort"></i></th>
+                        <th class="text-900 sort pe-1 align-middle white-space-nowrap sortable-header" data-sort="email" onclick="sortTable('email')">Email <i class="fas fa-sort"></i></th>
+                        <th class="text-900 sort pe-1 align-middle white-space-nowrap sortable-header" data-sort="phone" onclick="sortTable('mobileNo')">Phone <i class="fas fa-sort"></i></th>
+                        <th class="text-900 sort pe-1 align-middle white-space-nowrap ps-5 sortable-header" data-sort="address" style="min-width: 200px;" onclick="sortTable('custAddrssOne')">Billing Address <i class="fas fa-sort"></i></th>
+                        <th class="text-900 sort pe-1 align-middle white-space-nowrap sortable-header" data-sort="joined" onclick="sortTable('entryDateTime')">Joined <i class="fas fa-sort"></i></th>
+                        <th class="align-middle no-sort"></th>
+                    </tr>
+                </thead>
+                <tbody class="list" id="table-customers-body">
+                    @foreach (var customer in Model)
+                    {
+                        <tr>
+                            <td class="align-middle py-2" style="width: 28px;">
+                                <div class="form-check fs-9 mb-0 d-flex align-items-center">
+                                    <input class="form-check-input" type="checkbox" id="customer-@customer.CustomerId" data-bulk-select-row="data-bulk-select-row" />
+                                </div>
+                            </td>
+                            <td class="name align-middle white-space-nowrap py-2">
+                                <a href="../../app/e-commerce/customer-details.html">
+                                    <div class="d-flex d-flex align-items-center">
+                                        <div class="avatar avatar-xl me-2">
+                                            <div class="avatar-name rounded-circle"><span>@customer.CustomerName[0]</span></div>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h5 class="mb-0 fs-10">@customer.CustomerName</h5>
+                                        </div>
+                                    </div>
+                                </a>
+                            </td>
+                            <td class="email align-middle py-2"><a href="mailto:@customer.Email">@customer.Email</a></td>
+                            <td class="phone align-middle white-space-nowrap py-2"><a href="tel:@customer.MobileNo">@customer.MobileNo</a></td>
+                            <td class="address align-middle white-space-nowrap ps-5 py-2">@customer.CustAddrssOne</td>
+                            <td class="joined align-middle py-2">@customer.EntryDateTime</td>
+                            <td class="align-middle white-space-nowrap py-2 text-end">
+                                <div class="dropdown font-sans-serif position-static">
+                                    <button class="btn btn-link text-600 btn-sm dropdown-toggle btn-reveal" type="button" id="customer-dropdown-@customer.CustomerId" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false"><span class="fas fa-ellipsis-h fs-10"></span></button>
+                                    <div class="dropdown-menu dropdown-menu-end border py-0" aria-labelledby="customer-dropdown-@customer.CustomerId">
+                                        <div class="py-2"><a class="dropdown-item" href="#!">Edit</a><a class="dropdown-item text-danger" href="#!">Delete</a></div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="text-center d-none" id="customers-table-fallback">
+                <p class="fw-bold fs-8 mt-3">No customers found</p>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer d-flex align-items-center justify-content-center">
+        <span id="pagination-info" class="me-3">Page @ViewBag.CurrentPage of @ViewBag.TotalPages, Total Records: @ViewBag.TotalRecords</span>
+        <button class="btn btn-sm btn-falcon-default me-1" type="button" title="Previous" onclick="changePage(@(ViewBag.CurrentPage - 1))"><span class="fas fa-chevron-left"></span></button>
+        <ul class="pagination mb-0">
+            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+            {
+                <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                    <a class="page-link" href="javascript:void(0)" onclick="changePage(@i)">@i</a>
+                </li>
+            }
+        </ul>
+        <button class="btn btn-sm btn-falcon-default ms-1" type="button" title="Next" onclick="changePage(@(ViewBag.CurrentPage + 1))"><span class="fas fa-chevron-right"></span></button>
+    </div>
+</div>
+<!-- Hidden fields to store pagination data -->
+<input type="hidden" id="hiddenCurrentPage" value="@ViewBag.CurrentPage" />
+<input type="hidden" id="hiddenPageSize" value="@ViewBag.PageSize" /> <!-- Pass via ViewBag if dynamic -->
+<input type="hidden" id="hiddenSortOrder" value="@ViewBag.SortOrder" />
+<input type="hidden" id="hiddenSortField" value="@ViewBag.SortField" />
+<input type="hidden" id="hiddenTotalPages" value="@ViewBag.TotalPages" />
+<input type="hidden" id="hiddenTotalRecords" value="@ViewBag.TotalRecords" />

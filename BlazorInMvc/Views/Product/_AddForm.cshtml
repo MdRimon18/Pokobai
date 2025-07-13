@@ -1,0 +1,1901 @@
+﻿
+@using Domain.CommonServices
+@using Domain.Entity.Settings
+@model Products
+<div class="row" id="ProductSettingsLoader" style="display: none;">
+    <div class="d-flex justify-content-center align-items-center" style="height: 100%;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div> 
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-6">
+        <h5 class="mb-4 text-dark dark__text-light">@(Model.ProductId > 0 ? "Update" : "New") Product</h5>
+    </div>
+    @if (Model.ProductId > 0)
+    {
+        <div class="col-6 text-end">
+            <button class="btn btn-sm btn-outline-primary" onclick="AddUnitNewForm()">New</button>
+        </div>
+    }
+  
+</div>
+<form asp-action="SaveOrUpdateProductBasicInfo" method="post" name="SaveOrUpdateProductBasicInfoForm" id="SaveOrUpdateProductBasicInfoForm" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+<div class="row">
+    <div class="col-lg-9 pe-lg-2">
+        
+            @*   <div class="card-header ">
+                <h6 class="fw-semi-bold mb-0">Basic information</h6>
+
+            </div> *@
+
+            <div class="card-header ">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item"><a class="nav-link active" id="basic_info_tab" data-bs-toggle="tab" href="#tab_basic_info" role="tab" aria-controls="tab_basic_info" aria-selected="true">Basic</a></li>
+                    <li class="nav-item"><a class="nav-link" id="ecommerce_tab" data-bs-toggle="tab" href="#tab_ecommerce" role="tab" aria-controls="tab_ecommerce" aria-selected="false">Advanced</a></li>
+
+                    <li class="nav-item"><a class="nav-link" id="image_tab" data-bs-toggle="tab" href="#tab_image" role="tab" aria-controls="tab_image" aria-selected="false">Add Images</a></li>
+                    <li class="nav-item"><a class="nav-link" id="variant_tab" data-bs-toggle="tab" href="#tab_variant" role="tab" aria-controls="tab_variant" aria-selected="false">Variant</a></li>
+                    <li class="nav-item"><a class="nav-link" id="product_specification_tab" data-bs-toggle="tab" href="#tab_product_specification" role="tab" aria-controls="tab_product_specification" aria-selected="false">Product Specification</a></li>
+
+                  @*   <li class="nav-item"><a class="nav-link" id="product_serial_tab" data-bs-toggle="tab" href="#tab_product_serial" role="tab" aria-controls="tab_product_serial" aria-selected="false">Serial</a></li>
+                   *@
+                </ul>
+            </div>
+            <div class="tab-content border border-top-0 p-3 card-body bg-body-tertiary" id="myTabContent">
+            <div   class="tab-pane fade show active" id="tab_basic_info" role="tabpanel" aria-labelledby="basic_info_tab">
+
+               
+                    <div class="row gx-2">
+                        <div class="col-sm-4 col-md-4 col-lg-4 col-12">
+                            <div class="form-group">
+                                <label for="ProdName" class="form-label fw-semi-bold">Name/Model</label> <span class="error-star">*</span>
+                                <input asp-for="ProdName" type="text" class="form-control form-control-sm form-rounded fw-semi-bold" placeholder="Name/Model" />
+                                <span asp-validation-for="ProdName" class="text-left invalid-message-color"></span>
+                            </div>
+                        </div>
+
+                    <div class="col-sm-4 col-md-4 col-lg-4 col-12">
+                            <div class="form-group">
+                                <label for="ProductCode" class="form-label fw-semi-bold">Product Code<span class="error-star">*</span></label>
+                                <input asp-for="ProductCode" type="text" class="form-control form-control-sm form-rounded fw-semi-bold" placeholder="Product Code" />
+                                <span asp-validation-for="ProductCode" class="text-left invalid-message-color"></span>
+                            </div>
+                        </div>
+
+                    <div class="col-sm-4 col-md-4 col-lg-4 col-12">
+                            <div class="form-group">
+                                <label for="SerialNmbrOrUPC" class="form-label fw-semi-bold">Serial Number/UPC</label>
+                                <input asp-for="SerialNmbrOrUPC" type="text" class="form-control form-control-sm form-rounded fw-semi-bold" placeholder="Serial Number/UPC" />
+                            </div>
+                        </div>
+
+                    <div class="col-sm-4 col-md-4 col-lg-4 col-12">
+                            <div class="form-group">
+                                <label for="Sku" class="form-label fw-semi-bold">SKU<span class="error-star">*</span></label>
+                                <input asp-for="Sku" type="text" class="form-control form-control-sm form-rounded fw-semi-bold" placeholder="SKU" />
+                                <span asp-validation-for="Sku" class="text-left invalid-message-color"></span>
+                            </div>
+                        </div>
+
+                    <div class="col-sm-4 col-md-4 col-lg-4 col-12">
+                            <div class="form-group">
+                                <label for="OpeningQnty" class="form-label fw-semi-bold">Opening Quantity</label> <span class="error-star">*</span>
+                                <input asp-for="OpeningQnty" type="number" class="form-control form-control-sm form-rounded fw-semi-bold" placeholder="Opening Quantity" />
+                                <span asp-validation-for="OpeningQnty" class="text-left invalid-message-color"></span>
+                            </div>
+                        </div>
+
+                    <div class="col-sm-4 col-md-4 col-lg-4 col-12">
+                            <div class="form-group">
+                                <label for="AlertQnty" class="form-label fw-semi-bold">Alert Quantity</label>
+                                <input asp-for="AlertQnty" type="number" class="form-control form-control-sm form-rounded fw-semi-bold" placeholder="Alert Quantity" />
+                            </div>
+                        </div>
+
+                    <div class="col-sm-4 col-md-4 col-lg-4 col-12">
+                            <div class="form-group">
+                                <label for="BuyingPrice" class="form-label fw-semi-bold">Buying Price</label> <span class="error-star">*</span>
+                                <input asp-for="BuyingPrice" type="number" class="form-control form-control-sm form-rounded fw-semi-bold" placeholder="Buying Price" />
+                                <span asp-validation-for="BuyingPrice" class="text-left invalid-message-color"></span>
+                            </div>
+                        </div>
+
+                    <div class="col-sm-4 col-md-4 col-lg-4 col-12">
+                            <div class="form-group">
+                                <label for="SellingPrice" class="form-label fw-semi-bold">Selling Price</label> <span class="error-star">*</span>
+                                <input asp-for="SellingPrice" type="number" class="form-control form-control-sm form-rounded fw-semi-bold" placeholder="Selling Price" />
+                                <span asp-validation-for="SellingPrice" class="text-left invalid-message-color"></span>
+                            </div>
+                        </div>
+
+                    <div class="col-sm-4 col-md-4 col-lg-4 col-12">
+                            <div class="form-group">
+                                <label for="VatPercent" class="form-label fw-semi-bold">VAT (%)</label>
+                                <input asp-for="VatPercent" type="number" class="form-control form-control-sm form-rounded fw-semi-bold" placeholder="VAT in %" />
+                            </div>
+                        </div>
+
+                       <div class="col-sm-4 col-md-4 col-lg-4 col-12">
+                            <div class="form-group">
+                                <label for="VatAmount" class="form-label fw-semi-bold">VAT Amount</label>
+                                <input asp-for="VatAmount" type="number" class="form-control form-control-sm form-rounded fw-semi-bold" placeholder="VAT Amount" />
+                            </div>
+                        </div>
+
+                       <div class="col-sm-4 col-md-4 col-lg-4 col-12">
+                            <div class="form-group">
+                                <label for="DiscountPercentg" class="form-label fw-semi-bold">Discount(%)</label>
+                                <input asp-for="DiscountPercentg" type="number" class="form-control form-control-sm form-rounded fw-semi-bold" placeholder="Discount (%)" />
+                            </div>
+                        </div>
+
+                       <div class="col-sm-4 col-md-4 col-lg-4 col-12">
+                            <div class="form-group">
+                                <label for="DiscountAmount" class="form-label fw-semi-bold">Discount Amount</label>
+                                <input asp-for="DiscountAmount" type="number" class="form-control form-control-sm form-rounded fw-semi-bold" placeholder="Discount Amount" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="d-grid gap-2 d-md-block mt-4">
+                            <input id="ProductId" asp-for="ProductId" type="hidden" />
+                            <button type="submit" class="btn btn-outline-primary btn-sm">Save</button>
+                            <button type="reset" class="btn btn-outline-primary btn-sm">Refresh</button>
+                            @if (Model.ProductId>0){
+                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="OnDeleteProduct('@Model.ProductId')">Delete</button>
+                            }
+                        
+                        </div>
+                    </div>
+
+              
+                </div>
+              
+
+                <div class="tab-pane fade" id="tab_ecommerce" role="tabpanel" aria-labelledby="ecommerce_tab">
+                <div class="row gx-2">
+                     <div class="col-sm-4 col-md-4 col-lg-4 col-12">
+                        <div class="form-group">
+                            <label class="form-label fw-semi-bold">Manufacturar Name</label>
+                            <input asp-for="ManufacturarName" type="text" class="form-control form-control-sm form-rounded" placeholder="Manufacturar Name" />
+                        </div>
+                    </div>
+
+                     <div class="col-sm-4 col-md-4 col-lg-4 col-12">
+                        <div class="form-group">
+                            <label class="form-label fw-semi-bold">Bar Code</label>
+                            <input asp-for="BarCode" type="text" class="form-control form-control-sm form-rounded" placeholder="Bar Code" />
+                        </div>
+                    </div>
+
+                     <div class="col-sm-4 col-md-4 col-lg-4 col-12">
+                        <div class="form-group">
+                            <label class="form-label fw-semi-bold">Link to Supplier</label>
+                            <select asp-for="SupplirLinkId"  class="form-control form-control-sm form-rounded">
+                                <option value="">Select Link to Supplier</option>
+                                                @foreach (var sp in Model.SupplierList)
+                                                {
+                                                    <option value="@sp.SupplierId">@sp.SupplrName</option>
+                                                }
+                            </select>
+                        </div>
+                    </div>
+
+                     <div class="col-sm-4 col-md-4 col-lg-4 col-12">
+                        <div class="form-group">
+                            <label class="form-label fw-semi-bold">Imported From</label>
+                            <input asp-for="ImportedForm" type="text" class="form-control form-control-sm form-rounded" placeholder="Imported From" />
+                        </div>
+                    </div>
+
+                     <div class="col-sm-4 col-md-4 col-lg-4 col-12">
+                        <div class="form-group">
+                            <label class="form-label fw-semi-bold">Import Status</label>
+                            <select asp-for="ImportStatusId"   class="form-control form-control-sm form-rounded">
+                                <option value="">Select Status</option>
+                                                @* @foreach (var s in Model.ImportStatusList)
+                                                {
+                                                    <option value="@s.ProductSizeId">@s.ProductSizeName</option>
+                                                } *@
+                            </select>
+                        </div>
+                    </div>
+
+                     <div class="col-sm-4 col-md-4 col-lg-4 col-12">
+                        <div class="form-group">
+                            <label class="form-label fw-semi-bold">Warrenty Length/Year</label>
+                            <input asp-for="WarrentYear" type="number" class="form-control form-control-sm form-rounded" placeholder="Warrent Year" />
+                        </div>
+                    </div>
+
+                     <div class="col-sm-4 col-md-4 col-lg-4 col-12">
+                        <div class="form-group">
+                            <label class="form-label fw-semi-bold">Warrenty Policy</label>
+                            <textarea asp-for="WarrentyPolicy" class="form-control form-control-sm form-rounded" rows="2" placeholder="Warrenty Policy"></textarea>
+                        </div>
+                    </div>
+
+                     <div class="col-sm-4 col-md-4 col-lg-4 col-12">
+                        <div class="form-group">
+                            <label class="form-label fw-semi-bold">Color</label>
+                            <select asp-for="ColorId"   class="form-control form-control-sm form-rounded">
+                   
+                                <option value="">Select Color</option>
+                                                @foreach (var c in Model.ColorList)
+                                                {
+                                                    <option value="@c.ColorId">@c.ColorIdName</option>
+                                                }
+                            </select>
+                        </div>
+                    </div>
+
+                     <div class="col-sm-4 col-md-4 col-lg-4 col-12">
+                        <div class="form-group">
+                            <label class="form-label fw-semi-bold">Size</label>
+                            <select asp-for="SizeId"   class="form-control form-control-sm form-rounded">
+                                <option value="">Select Size</option>
+                                                @foreach (var s in Model.ProductSizeList)
+                                                {
+                                                    <option value="@s.ProductSizeId">@s.ProductSizeName</option>
+                                                }
+                            </select>
+                        </div>
+                    </div>
+
+                     <div class="col-sm-4 col-md-4 col-lg-4 col-12">
+                        <div class="form-group">
+                            <label class="form-label fw-semi-bold">Height</label>
+                            <input asp-for="ProductHieght" type="text" class="form-control form-control-sm form-rounded" placeholder="Height" />
+                        </div>
+                    </div>
+
+                     <div class="col-sm-4 col-md-4 col-lg-4 col-12">
+                        <div class="form-group">
+                            <label class="form-label fw-semi-bold">Weight</label>
+                            <input asp-for="ItemWeight" type="number" class="form-control form-control-sm form-rounded" placeholder="Weight" />
+                        </div>
+                    </div>
+
+                     <div class="col-sm-4 col-md-4 col-lg-4 col-12">
+                        <div class="form-group">
+                            <label class="form-label fw-semi-bold">Shipping Name</label>
+                            <select asp-for="ShippingById"   class="form-control form-control-sm form-rounded">
+                                <option value="">Select Shipping Name</option>
+                                                @foreach (var ship in Model.ShippingByList)
+                                                {
+                                                    <option value="@ship.ShippingById">@ship.ShippingByName</option>
+                                                }
+                            </select>
+                        </div>
+                    </div>
+
+                     <div class="col-sm-4 col-md-4 col-lg-4 col-12">
+                        <div class="form-group">
+                            <label class="form-label fw-semi-bold">Remarks</label>
+                            <textarea asp-for="Remarks" class="form-control form-control-sm form-rounded" rows="2" placeholder="Remarks"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                    <div class="row gx-2">
+                          <div class="col-12 mb-3">
+                            <label class="form-label fw-semi-bold" for="prodShortDesc">Product Short Description:</label>
+                            <div class="create-product-description-textarea">
+                                <textarea id="prodShortDesc" class="tinymce" asp-for="ProdShortDescription"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="col-12 mb-3">
+                            <label class="form-label fw-semi-bold" for="prodDesc">Product Description:</label>
+                            <div class="create-product-description-textarea">
+                                <textarea id="prodDesc" class="tinymce" asp-for="ProdDescription"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3 col-md-3 col-lg-3 col-12">
+                            <div class="form-group">
+                                <label class="form-label fw-semi-bold" for="GivenEntryDate">Date</label>
+                                <input type="date" class="form-control form-control-sm form-rounded fw-semi-bold" placeholder="Date" asp-for="GivenEntryDate" />
+                            </div>
+                        </div>
+                        <div class="col-sm-3 col-md-3 col-lg-3 col-12">
+                            <div class="form-group">
+                                <label class="form-label fw-semi-bold" for="ReleaseDate">Release Date:</label>
+                                <input type="date" class="form-control form-control-sm form-rounded fw-semi-bold" placeholder="Date" asp-for="ReleaseDate" />
+                            </div>
+                        </div>
+                        @if (Model.ProductId > 0)
+                        {
+                            <div class="row">
+                                <div class="d-grid gap-2 d-md-block mt-4">
+                                    <button type="submit" class="btn btn-outline-primary btn-sm">Update</button>
+                                    <button type="button" onclick=" OnRefresh()" class="btn btn-outline-primary btn-sm">Refresh</button>
+                                    <button type="button" onclick="deleteProduct()" class="btn btn-outline-danger btn-sm">Delete</button>
+                                   
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+            </div>
+                <div class="tab-pane fade" id="tab_image" role="tabpanel" aria-labelledby="image_tab">
+
+                    <div class="card-body">
+                        @if (Model.ProductImages?.Count() > 0)
+                        {
+                            <div class="row gx-2 flex-between-center mb-3">
+                                <div class="col-sm-3">Images</div>
+                                <div class="col-sm-3">Body Part</div>
+                                <div class="col-sm-3">Position</div>
+                                <div class="col-sm-2">Action</div>
+                            </div>
+                            <div id="product-images-list">
+                                @foreach (var img in Model.ProductImages)
+                                {
+                                    <div id="image-row-@img.ProductMediaId" class="row gx-2 flex-between-center mb-3">
+                                        <div class="col-sm-3">
+                                            <div class="avatar avatar-4xl">
+                                                @if (!string.IsNullOrEmpty(img.ImageUrl))
+                                                {
+                                                    <img class="rounded-circle" src="@img.ImageUrl" alt="" />
+                                                }
+                                                else
+                                                {
+                                                    <img src="/assets/commonimage/no-image.png" />
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="d-flex flex-between-center">
+                                                <h6 class="mb-0 text-700">@img.BodyPartName</h6>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="d-flex flex-between-center">
+                                                <h6 class="mb-0 text-700">@img.Position</h6>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="d-flex flex-between-center">
+                                                <button class="btn btn-falcon-default btn-sm" type="button" onclick="LoadProductImageEditModeData('@img.ProductMediaId')">
+                                                    <span class="fas fa-external-link-alt" data-fa-transform="shrink-3"></span>
+                                                </button>
+                                                <a class="btn btn-sm btn-link text-danger" onclick="DeleteImagesItem('@img.ProductMediaId')">
+                                                    <span class="fs-10 fas fa-trash-alt"></span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                         
+                        }
+                        <div class="row gy-3 gx-2">
+                            <div class="col-sm-4">
+                                <input type="file" class="file-input form-control form-control-sm form-rounded" id="fileInput" />
+                                <div class="image-uploader">
+                                    <div class="image-preview">
+                                        <img id="previewImage" src="" alt="Selected Image" style="width: 100px; height: 100px;" />
+                                      
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <select class="form-control form-control-sm form-rounded fw-semi-bold" id="BodyPartName">
+                                    <option value="">Select Body Part</option>
+                                    @foreach (var item in Model.BodyParts)
+                                    {
+                                        <option value="@item.BodyPartName">@item.BodyPartName</option>
+                                    }
+                                </select>
+                                <span class="text-left invalid-message-color"></span>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="d-flex gap-2 flex-between-center">
+                                    <input class="form-control form-control-sm form-label fw-semi-bold" id="Position" type="text" placeholder="Position" />
+                                    
+                                    <input type="hidden" id="ProductMediaId" value="@Model.ProductImage.ProductMediaId" />
+                                    <input type="hidden" id="ProductMediaKey" value="@Model.ProductImage.ProductMediaKey" />
+                                    <input type="hidden" id="ImageUrl" value="@Model.ProductImage.ImageUrl" />
+                                    <button type="button" class="btn btn-outline-primary btn-sm" id="SaveProductImageButton" onclick="saveProductImage()">
+                                        @(Model.ProductImage.ProductMediaId > 0 ? "Update" : "Add")
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                    
+                 
+                   
+                </div>
+                <div class="tab-pane fade" id="tab_variant" role="tabpanel" aria-labelledby="variant_tab">
+
+                    <div class="card-body">
+                        
+                            <div class="row gx-2 flex-between-center mb-3 ">
+                                <div class="col-sm-1">Images</div>
+                                <div class="col-sm-1">SKU</div>
+                                <div class="col-sm-1">Color</div>
+                                <div class="col-sm-1">Size</div>
+                                <div class="col-sm-1">Weight</div>
+                                <div class="col-sm-1">Width</div>
+                                <div class="col-sm-1">Length</div>
+                                <div class="col-sm-1">Stock Qty.</div>
+                                <div class="col-sm-1">Body Part</div>
+                                <div class="col-sm-1">Position</div>
+                                <div class="col-sm-1">IsPrimary</div>
+                                <div class="col-sm-1">Action</div>
+                            </div>
+                        @if (Model.ProductVariants?.Count() > 0)
+                            {
+
+                                <div id="product-variant-list">
+                                    @foreach (var img in Model.ProductVariants)
+                                    {
+                                        <div id="variant-row-@img.ProductVariantId" class="row gx-2 flex-between-center mb-3">
+                                            <div class="col-sm-1">
+                                                <div class="avatar avatar-4xl">
+                                                    @if (!string.IsNullOrEmpty(img.ImageUrl))
+                                                    {
+                                                        <img class="rounded-circle" src="@img.ImageUrl" alt="" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <img src="/assets/commonimage/no-image.png" />
+                                                    }
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-1">
+                                                <div class="d-flex flex-between-center">
+                                                    <h6 class="mb-0 text-700">@img.SkuNumber</h6>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-1">
+                                                <div class="d-flex flex-between-center">
+                                                    <h6 class="mb-0 text-700">@img.Color</h6>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-1">
+                                                <div class="d-flex flex-between-center">
+                                                    <h6 class="mb-0 text-700">@img.Size</h6>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-1">
+                                                <div class="d-flex flex-between-center">
+                                                    <h6 class="mb-0 text-700">@img.Weight</h6>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-1">
+                                                <div class="d-flex flex-between-center">
+                                                    <h6 class="mb-0 text-700">@img.Width</h6>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-1">
+                                                <div class="d-flex flex-between-center">
+                                                    <h6 class="mb-0 text-700">@img.Length</h6>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-1">
+                                                <div class="d-flex flex-between-center">
+                                                    <h6 class="mb-0 text-700">@img.StockQuantity</h6>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-1">
+                                                <div class="d-flex flex-between-center">
+                                                    <h6 class="mb-0 text-700">@img.BodyPartName</h6>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-1">
+                                                <div class="d-flex flex-between-center">
+                                                    <h6 class="mb-0 text-700">@img.Position</h6>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-1">
+                                                <div class="d-flex flex-between-center">
+                                                    <h6 class="mb-0 text-700">@img.IsPrimary</h6>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-1">
+                                                <div class="d-flex flex-between-center">
+                                                <button class="btn btn-falcon-default btn-sm" type="button" onclick="LoadProductVariantEditModeData('@img.ProductVariantId')">
+                                                        <span class="fas fa-external-link-alt" data-fa-transform="shrink-3"></span>
+                                                    </button>
+                                                    <a class="btn btn-sm btn-link text-danger" onclick="DeleteVariantItem('@img.ProductVariantId')">
+                                                        <span class="fs-10 fas fa-trash-alt"></span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+
+                            }
+                       
+                      
+                        <div class="row gy-3 gx-2">
+                            <div class="col-sm-2">
+                                <input type="file" class="file-input form-control form-control-sm form-rounded" id="VariantFileInput" />
+                                <div class="image-uploader">
+                                    <div class="image-preview">
+                                        <img id="VariantPreviewImage" src="" alt="Selected Image" style="width: 100px; height: 100px;" />
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                
+                                <input class="form-control form-control-sm form-label fw-semi-bold" id="VariantSkuNumber" type="text" placeholder="SKU" />
+                                <span class="text-left invalid-message-SkuNumber"></span>
+                            </div>
+                            <div class="col-sm-2">
+                                <select class="form-control form-control-sm form-rounded fw-semi-bold" id="VariantColor">
+                                    <option value="">Select Color</option>
+                                    @foreach (var c in Model.ColorList)
+                                    {
+                                        <option value="@c.ColorIdName">@c.ColorIdName</option>
+                                    }
+                                </select>
+
+                                <span class="text-left invalid-message-ColorIdName"></span>
+                            </div>
+                            
+                            <div class="col-sm-2">
+                                <select class="form-control form-control-sm form-rounded fw-semi-bold" id="VariantSize">
+                                    <option value="">Select Size</option>
+                                    @foreach (var s in Model.ProductSizeList)
+                                    {
+                                        <option value="@s.ProductSizeName">@s.ProductSizeName</option>
+                                    }
+                                </select>
+
+                                <span class="text-left invalid-message-Size"></span>
+                            </div>
+                            <div class="col-sm-2">
+
+                                <input class="form-control form-control-sm form-label fw-semi-bold" id="VariantWeight" type="text" placeholder="Weight" />
+                                <span class="text-left invalid-message-Weight"></span>
+                            </div>
+                            <div class="col-sm-2">
+
+                                <input class="form-control form-control-sm form-label fw-semi-bold" id="VariantHeight" type="text" placeholder="Height" />
+                                <span class="text-left invalid-message-Height"></span>
+                            </div>
+                            <div class="col-sm-2">
+
+                                <input class="form-control form-control-sm form-label fw-semi-bold" id="VariantWidth" type="text" placeholder="Width" />
+                                <span class="text-left invalid-message-Width"></span>
+                            </div>
+                            <div class="col-sm-2">
+
+                                <input class="form-control form-control-sm form-label fw-semi-bold" id="VariantLength" type="text" placeholder="Length" />
+                                <span class="text-left invalid-message-Length"></span>
+                            </div>
+                            <div class="col-sm-2">
+
+                                <input class="form-control form-control-sm form-label fw-semi-bold" id="VariantStockQuantity" type="text" placeholder="Stock Qty." />
+                                <span class="text-left invalid-message-StockQuantity"></span>
+                            </div>
+                            
+                            <div class="col-sm-2">
+                                <select class="form-control form-control-sm form-rounded fw-semi-bold" id="VariantBodyPartName">
+                                    <option value="">Select Body Part</option>
+                                    @foreach (var item in Model.BodyParts)
+                                    {
+                                        <option value="@item.BodyPartName">@item.BodyPartName</option>
+                                    }
+                                </select>
+                                <span class="text-left invalid-message-BodyPartName"></span>
+                            </div>
+                            <div class="col-sm-2">
+                                <input class="form-control form-control-sm form-label fw-semi-bold" id="VariantPosition" type="text" placeholder="Position" />
+                                <span class="text-left invalid-message-Position"></span>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" id="VariantIsPrimary" type="checkbox" />
+                                    <label class="form-check-label fw-semi-bold" for="IsPrimary">Is Primary</label>
+                                </div>
+                                <span class="text-left invalid-message-IsPrimary"></span>
+                            </div>
+
+                            <div class="col-sm-2">
+                                <div class="d-flex gap-2 flex-between-center">
+                                   
+                                    <input type="hidden" id="VariantId" value="@Model.ProductVariant.ProductVariantId" />
+                                  
+                                    <input type="hidden" id="VariantImageUrl" value="@Model.ProductVariant.ImageUrl" />
+                                    <button type="button" class="btn btn-outline-primary btn-sm" id="SaveProductVariantButton" onclick="saveProductVariant()">
+                                        @(Model.ProductVariant.ProductVariantId > 0 ? "Update" : "Add")
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+
+                </div>
+                <div class="tab-pane fade" id="tab_product_specification" role="tabpanel" aria-labelledby="product_specification_tab">
+                    <div class="card-body" >
+                        <div id="specifications-container">
+                            @if (Model.Specification_list != null && Model.Specification_list.Any())
+                            {
+                                var groupedSpecs = Model.Specification_list
+                                    .GroupBy(x => string.IsNullOrWhiteSpace(x.HeaderName) ? "No Header" : x.HeaderName.Trim());
+
+                                foreach (var group in groupedSpecs)
+                                {
+                                    <div class="mt-4">
+                                        <h5 class="text-dark fw-bold">@group.Key</h5>
+                                        <hr />
+                                    </div>
+
+                                    <div class="row gx-2 flex-between-center mb-2">
+                                        <div class="col-sm-3 fw-semibold">Name</div>
+                                        <div class="col-sm-9 fw-semibold">Details</div>
+                                    </div>
+
+                                    @foreach (var spec in group)
+                                    {
+                                        <div class="row gx-2 flex-between-center mb-3" id="spec-@spec.ProdSpcfctnId">
+                                            <div class="col-sm-3">
+                                                <h6 class="mb-0 text-600">@spec.SpecificationName</h6>
+                                            </div>
+                                            <div class="col-sm-9">
+                                                <div class="d-flex flex-between-center">
+                                                    <h6 class="mb-0 text-700">@spec.SpecificationDtls</h6>
+                                                    <a class="btn btn-sm btn-link text-danger" href="javascript:void(0);"
+                                                       onclick="deleteSpecification(@spec.ProdSpcfctnId)">
+                                                        <span class="fs-10 fas fa-trash-alt"></span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            }
+                        </div>
+
+                       
+
+                        <div class="row gy-3 gx-2">
+                            <div class="col-sm-3">
+                                <input asp-for="productSpecification.HeaderName"
+                                       class="form-control form-control-sm form-label fw-semi-bold"
+                                       id="HeaderName"
+                                       placeholder="Header Name" />
+                                <span asp-validation-for="productSpecification.HeaderName" class="text-danger"></span>
+                            </div>
+                            <div class="col-sm-3">
+                                <input asp-for="productSpecification.SpecificationName"
+                                       class="form-control form-control-sm form-label fw-semi-bold"
+                                       id="SpecificationName"
+                                       placeholder="Specification Name" />
+                                <span asp-validation-for="productSpecification.SpecificationName" class="text-danger"></span>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="d-flex gap-2 flex-between-center">
+                                    <input asp-for="productSpecification.SpecificationDtls"
+                                           id="SpecificationDtls"
+                                           class="form-control form-control-sm form-label fw-semi-bold"
+                                          
+                                           placeholder="Specification Details" />
+                                    <input id="ProdSpcfctnId" asp-for="productSpecification.ProdSpcfctnId" type="hidden" />
+                                    <span asp-validation-for="productSpecification.SpecificationDtls" class="text-danger"></span>
+                                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="saveSpecification()">Add</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="tab_product_serial" role="tabpanel" aria-labelledby="product_serial_tab">
+                    <div class="card-body">
+                       
+
+                               <div class="row gx-2 flex-between-center mb-3">
+                                    <div class="col-sm-3">Serial Number</div>
+                                    <div class="col-sm-2">Rate</div>
+                                    <div class="col-sm-2">Supplier</div>
+                                    <div class="col-sm-2">Purchase Date</div>
+                                    <div class="col-sm-3">Remarks </div>
+                                     
+                                    
+                                </div>
+                            <div id="product-serial-container">
+                            @if (Model.ProductSerialNumbers_list != null && Model.ProductSerialNumbers_list.Count > 0)
+                            {
+
+                                foreach (var srl in Model.ProductSerialNumbers_list)
+                                {
+                                    <div class="row gx-2 flex-between-center mb-3" id="spec-@srl.ProdSerialNmbrId">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0 text-600">@srl.SerialNumber</h6>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <h6 class="mb-0 text-600">@srl.Rate</h6>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <h6 class="mb-0 text-600">@srl.SupplierName</h6>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <h6 class="mb-0 text-600">@srl.Date</h6>
+                                        </div>
+                                  
+                                        <div class="col-sm-3">
+                                            <div class="d-flex flex-between-center">
+                                                <h6 class="mb-0 text-600">@srl.Remarks</h6>
+                                                <button class="btn btn-falcon-default btn-sm" type="button" onclick="LoadProductSericalEditModeData('@srl.ProdSerialNmbrId')">
+                                                    <span class="fas fa-external-link-alt" data-fa-transform="shrink-3"></span>
+                                                </button>
+                                                <a class="btn btn-sm btn-link text-danger" href="javascript:void(0);"
+                                                   onclick="deleteSpecification(@srl.ProdSerialNmbrId)">
+                                                    <span class="fs-10 fas fa-trash-alt"></span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                              }
+                      
+                            </div>
+                            
+                      
+
+
+                        <div class="row gy-3 gx-2">
+                            <div class="col-sm-3">
+                                <input asp-for="ProductSerialNumber.SerialNumber"
+                                       class="form-control form-control-sm form-label fw-semi-bold"
+                                       id="SerialNumber"
+                                       placeholder="Serial Number" />
+                                <span asp-validation-for="ProductSerialNumber.SerialNumber" class="text-danger"></span>
+                            </div>
+                            <div class="col-sm-2">
+                                <input asp-for="ProductSerialNumber.Rate"
+                                       class="form-control form-control-sm form-label fw-semi-bold"
+                                       id="ProductSerialNumber_Rate"
+                                       placeholder="Serial Number" />
+                                <span asp-validation-for="ProductSerialNumber.SerialNumber" class="text-danger"></span>
+                            </div>
+                            <div class="col-sm-2">
+                                <select asp-for="ProductSerialNumber.TagSupplierId"
+                                class="form-control form-control-sm form-rounded"
+                                id="TagSupplierId">
+                                    <option value="">Link to Supplier</option>
+                                    @foreach (var sp in Model.SupplierList)
+                                    {
+                                        <option value="@sp.SupplierId">@sp.SupplrName</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="ProductSerialNumber.SerialNumber" class="text-danger"></span>
+                            </div>
+                            <div class="col-sm-2">
+                                <input asp-for="ProductSerialNumber.Date" type="date"
+                                       class="form-control form-control-sm form-label fw-semi-bold"
+                                       id="ProductSerialNumber_Date"
+                                       placeholder="Serial Number" />
+                                
+                                @* <span asp-validation-for="ProductSerialNumber.SerialNumber" class="text-danger"></span> *@
+                            </div>
+                            
+                            <div class="col-sm-3">
+                                <div class="d-flex gap-2 flex-between-center">
+                                    <input asp-for="ProductSerialNumber.Remarks"
+                                           id="ProductSerialNumber_Remarks"
+                                           class="form-control form-control-sm form-label fw-semi-bold"
+                                           placeholder="Remarks" />
+                                    <input id="ProdSerialNmbrId" asp-for="ProductSerialNumber.ProdSerialNmbrId" type="hidden" />
+                                     
+                                    <button type="button" class="btn btn-outline-primary btn-sm" id="SaveProductSerialButton" onclick="saveProductSerial()">Add</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+             
+            </div>
+       
+    </div>
+
+   
+        <div class="col-lg-3 ps-lg-2">
+             
+                        <div class="row gx-2">
+                <div class="col-12">
+                    <label class="form-label fw-semi-bold" for="product-category">Select category<span class="error-star">*</span></label>
+                    <div class="form-group">
+                        <select asp-for="ProdCtgId" class="form-select form-rounded form-select-sm" id="product-category">
+                            <option value="">Select Category</option>
+                            @foreach (var item in Model.ProductCategoryList)
+                            {
+                                <option value="@item.ProdCtgId" selected="@(item.ProdCtgId == Model.ProdCtgId ? "selected" : null)">@item.ProdCtgName</option>
+                            }
+                        </select>
+                        <span asp-validation-for="ProdCtgId" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Subcategory -->
+                <div class="col-12">
+                    <label class="form-label fw-semi-bold" for="product-subcategory">Select sub-category:</label>
+                    <select asp-for="ProdSubCtgId" class="form-select" id="product-subcategory">
+                        <option value="">Select Product Sub Category</option>
+                        @if (Model.ProductSubCategoryList != null)
+                        {
+                            @foreach (var item in Model.ProductSubCategoryList)
+                            {
+                                <option value="@item.ProdSubCtgId" selected="@(item.ProdSubCtgId == Model.ProdSubCtgId ? "selected" : null)">@item.ProdSubCtgName</option>
+                            }
+                        }
+                    </select>
+                    <span asp-validation-for="ProdSubCtgId" class="text-danger"></span>
+                </div>
+
+
+                            <!-- Brand -->
+                            <div class="col-12">
+                                <label class="form-label fw-semi-bold" for="BrandName">Select Brand Name:</label>
+                                <select asp-for="BrandId" class="form-select">
+                                    <option value="">Select Brand Name</option>
+                                    @foreach (var item in Model.BrandList)
+                                    {
+                                        <option value="@item.BrandId">@item.BrandName</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <!-- Unit Type -->
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label class="form-label fw-semi-bold">Unit Type<span class="error-star">*</span></label>
+                                    <select asp-for="UnitId" class="form-select">
+                                        <option value="">Select Unit Type</option>
+                                        @foreach (var item in Model.UnitList)
+                                        {
+                                            <option value="@item.UnitId">@item.UnitName</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="UnitId" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!-- Final Price -->
+                            <div class="col-12">
+                                <label class="form-label fw-semi-bold" for="final-price">Final price:</label>
+                                <input asp-for="FinalPrice" class="form-control" type="number"  />
+                            </div>
+
+                            <!-- Previous Price -->
+                            <div class="col-12">
+                                <label class="form-label fw-semi-bold" for="previous-price">Previous price:</label>
+                                <input asp-for="PreviousPrice" class="form-control" type="number" />
+                            </div>
+
+                            <!-- Currency -->
+                            <div class="col-12">
+                                <label class="form-label fw-semi-bold" for="price-currency">Currency:</label>
+                                <select asp-for="CurrencyId" class="form-select">
+                                    <option value="">Select Currency</option>
+                                    @foreach (var item in Model.CurrencyList)
+                                    {
+                                        <option value="@item.CurrencyId">@item.CurrencyShortName</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="CurrencyId" class="text-danger"></span>
+                            </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semi-bold" for="previous-price">Add a keyword:</label>
+                            <input class="form-control js-choice" id="product-tags" type="text" asp-for="TagWord"   size="1" data-options='{"removeItemButton":true,"placeholder":false}' />
+                        </div>
+                
+                        </div>
+                   
+                 
+                    <div class="card-header bg-body-tertiary">
+                        <h6 class="mb-0 fw-semi-bold">Stock status</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-check">
+                            <input class="form-check-input p-2" type="radio" name="StockStatus" value="InStock" id="in-stock" />
+                            <label class="form-check-label fs-9 fw-normal text-700" for="in-stock">In stock (10 Pcs)</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input p-2" type="radio" name="StockStatus" value="Unavailable" id="unavailable" />
+                            <label class="form-check-label fs-9 fw-normal text-700" for="unavailable">Unavailable</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input p-2" type="radio" name="StockStatus" value="TBA" id="to-be-announced" />
+                            <label class="form-check-label fs-9 fw-normal text-700" for="to-be-announced">To be announced</label>
+                        </div>
+                    </div>
+                
+           
+        </div>
+
+</div>
+</form>
+
+@* <form asp-action="SaveOrUpdate" method="post" name="SaveOrUpdateProduct" id="ProductForm">
+    @Html.AntiForgeryToken()
+   
+</form> *@
+ 
+<div data-product-size-name="@Model.Sku">
+    <!-- Existing form content -->
+</div>
+
+<script src="~/assets/js/jquery-3.6.0.min.js"></script>
+<script>
+   
+    $(document).ready(function () {
+       
+        $('form[name="SaveOrUpdateProductBasicInfoForm"]').submit(function (e) {
+            
+            e.preventDefault(); // Prevent the default form submission
+             const loaderSelector = '#ProductSettingsLoader';
+              $(loaderSelector).show();
+                const submitButton = $(this).find('button[type="submit"]');
+                   submitButton.prop('disabled', true);
+            $.ajax({
+                
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (result) {
+                    // Check if Model.Id is not an empty GUID correctly in JavaScript
+                 //   console.log(result)
+              
+                  $('#SearchResultContainer').html(result);
+
+                    var modelId = '@Model.ProductId';
+                    if (modelId !== '0') {
+                        
+                        showSuccessToast('@MessageManager.UpdateSuccess');
+                    } else {
+                        showSuccessToast('@MessageManager.SaveSuccess');
+                      var firstProductId = $('#modelList button[data-product-id]').first().data('product-id');
+                      console.log('First Product ID:', firstProductId);
+                      LoadEditModeData(firstProductId);
+                     //   AddUnitNewForm();
+                    }
+                  
+                },
+                    error: function (xhr) {
+                    if (xhr.status === 400) {
+                        showDangerToast('@MessageManager.SaveFaild');
+                         
+                        $('#AddContainer').html(xhr.responseText); // Show validation errors
+                      
+                        
+                    } else if (xhr.status === 409) { // Conflict
+                        // Parse the response if necessary to extract additional data
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(xhr.responseText, 'text/html');
+                          const productSizeName = doc.querySelector('[data-product-size-name]').dataset.productSizeName;
+                      //    console.log(productSizeName)
+                        showDangerToast(`${productSizeName} @MessageManager.Exist`);
+
+
+                        showDangerToast(`${ProdName} @MessageManager.Exist`);
+                        $('#AddContainer').html(xhr.responseText);
+                    } else {
+                        showDangerToast('@MessageManager.SaveFaild');
+                    }
+                }
+                ,
+                complete: function () {
+                    // Hide the loader
+                    $(loaderSelector).hide();
+                    submitButton.prop('disabled', false);
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    function OnRefresh(){
+        $('#SaveOrUpdateProductBasicInfoForm')[0].reset();
+    }
+    function AddUnitNewForm() {
+
+        $.ajax({
+            url: '/Product/AddNewForm', // Your action URL
+            type: 'GET', // Use GET method
+            //   data:, // Send the model object as query string parameters
+            success: function (result) {
+
+                $('#AddContainer').html(result);
+            },
+            error: function (xhr, status, error) {
+                showDangerToast('Form Reset Faild');
+            }
+        });
+    }
+
+   
+</script>
+ 
+<script>
+    function OnDeleteProduct(id) {
+        Swal.fire({
+            title: `Are you sure you want to delete the item with ID ${id}?`,
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/Product/Delete', // Your action URL
+                    type: 'POST',
+                    data: { id: id }, // Data sent to the server
+                    success: function (response) {
+                        // Success message
+                        Swal.fire(
+                            'Deleted!',
+                            'Your file has been deleted.',
+                            'success'
+                        ).then(() => {
+                            // Reload content or execute additional actions
+                            $('#SearchResultContainer').html(response);
+                            AddUnitNewForm(); // Optional additional call
+                        });
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error('Error:', textStatus, errorThrown);
+                        Swal.fire(
+                            'Error!',
+                            'An error occurred while deleting. Please try again.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    }
+</script>
+<script>
+    function saveProductImage() {
+        const submitButton = $('#SaveProductImageButton');
+
+        // Gather values
+        const fileInput = $('#fileInput')[0].files[0];
+        const bodyPartName = $('#BodyPartName').val();
+        const position = $('#Position').val();
+        const productId = $('#ProductId').val();
+        const productMediaId = $('#ProductMediaId').val();
+        const productMediaKey = $('#ProductMediaKey').val();
+        const imageUrl = $('#ImageUrl').val();
+
+        if (productId <= 0) {
+             
+             showDangerToast('Please select a Product First.');
+            return;
+        }
+
+        if (!bodyPartName) {
+             showDangerToast('Please select a body part.');
+            return;
+        }
+          if (!fileInput&&productMediaId==0) {
+            showDangerToast('Please select a file.');
+            return;
+        }
+
+
+        // Create FormData to handle file and other inputs
+        const formData = new FormData();
+        formData.append('file', fileInput);
+        formData.append('BodyPartName', bodyPartName);
+        formData.append('Position', position);
+        formData.append('ProductId', productId);
+        formData.append('ProductMediaId', productMediaId);
+        formData.append('ProductMediaKey', productMediaKey);
+        formData.append('ImageUrl', imageUrl);
+
+        // Disable the button to prevent multiple clicks
+        submitButton.prop('disabled', true);
+
+        // Send data via AJAX
+        $.ajax({
+            url: '/api/Product/SaveProductImage', // Adjust endpoint as necessary
+            type: 'POST',
+            data: formData,
+            processData: false, // Prevent jQuery from processing data
+            contentType: false, // Allow the browser to set the Content-Type
+            success: function (response) {
+                console.log(response); // Log success response for debugging
+                if (response.isSuccess) {
+                    
+                    showSuccessToast('@MessageManager.SaveSuccess');
+                    const image_list = response.data.productImages;
+
+                    // Update the product image list
+                    updateProductImageList(image_list);
+
+                    // Clear the input fields
+                    $('#BodyPartName').val('');
+                    $('#Position').val('');
+                    $('#ProductId').val('');
+                    $('#fileInput').val('');
+                    $('#previewImage').attr('src', '').hide();
+                    $('#ProductMediaId').val(0);
+                    $('#ProductMediaKey').val('00000000-0000-0000-0000-000000000000');
+                    $('#ImageUrl').val('');
+
+                    // Reset button text
+                    $('#SaveProductImageButton').text('Add');
+                } else {
+                   
+                    showDangerToast('Failed to save product image.');
+                }
+            },
+            error: function (xhr) {
+               showDangerToast('An error occurred while saving the product image.');
+               
+            },
+            complete: function () {
+                submitButton.prop('disabled', false);
+            }
+        });
+    }
+
+    // Preview image on file input change
+    $('#fileInput').on('change', function () {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                $('#previewImage').attr('src', e.target.result).show();
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    function updateProductImageList(images) {
+        const productImagesList = document.getElementById("product-images-list");
+        productImagesList.innerHTML = ""; // Clear the existing list
+
+        images.forEach(img => {
+            const row = `
+                <div id="image-row-${img.productMediaId}" class="row gx-2 flex-between-center mb-3">
+                    <div class="col-sm-3">
+                        <div class="avatar avatar-4xl">
+                            <img class="rounded-circle" src="${img.imageUrl || '/assets/commonimage/no-image.png'}" alt="" />
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="d-flex flex-between-center">
+                            <h6 class="mb-0 text-700">${img.bodyPartName}</h6>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="d-flex flex-between-center">
+                            <h6 class="mb-0 text-700">${img.position}</h6>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="d-flex flex-between-center">
+                            <button class="btn btn-falcon-default btn-sm" type="button" onclick="LoadProductImageEditModeData('${img.productMediaId}')">
+                                <span class="fas fa-external-link-alt" data-fa-transform="shrink-3"></span>
+                            </button>
+                            <a class="btn btn-sm btn-link text-danger" onclick="DeleteImagesItem('${img.productMediaId}')">
+                                <span class="fs-10 fas fa-trash-alt"></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+            productImagesList.innerHTML += row;
+        });
+    }
+
+        function DeleteImagesItem(productMediaId) {
+        if (!confirm('Are you sure you want to delete this image?')) {
+            return; // Exit if user cancels
+        }
+
+        // Make an AJAX call to delete the image
+        $.ajax({
+            url: `/api/Product/DeleteProductImage?productMediaId=${productMediaId}`, // Adjust the endpoint URL
+            type: 'DELETE',
+            success: function (response) {
+                if (response.isSuccess) {
+                    showSuccessToast('Image deleted successfully.');
+
+                    // Remove the deleted image from the DOM
+                    // Assuming each image row has an ID like `image-row-{ProductMediaId}`
+                    $(`#image-row-${productMediaId}`).remove();
+                } else {
+                    showDangerToast('Failed to delete the image.');
+                }
+            },
+            error: function (xhr) {
+                showDangerToast('An error occurred while deleting the image.');
+                console.log(xhr.responseText);
+            }
+        });
+    }
+</script>
+<script>
+         // Save Product Variant
+    function saveProductVariant() {
+        const submitButton = $('#SaveProductVariantButton');
+
+        // Gather values
+         const productId = $('#ProductId').val();
+      
+
+        if (productId <= 0) {
+
+             showDangerToast('Please select a Product First.');
+            return;
+        }
+
+        const fileInput = $('#VariantFileInput')[0].files[0];
+        const skuNumber = $('#VariantSkuNumber').val();
+        const color = $('#VariantColor').val();
+        const size = $('#VariantSize').val();
+        const weight = $('#VariantWeight').val();
+        const height = $('#VariantHeight').val();
+        const width = $('#VariantWidth').val();
+        const length = $('#VariantLength').val();
+        const stockQuantity = $('#VariantStockQuantity').val();
+        const bodyPartName = $('#VariantBodyPartName').val();
+        const position = $('#VariantPosition').val();
+        const isPrimary = $('#VariantIsPrimary').is(':checked');
+        const productVariantId = $('#VariantId').val();
+        const imageUrl = $('#VariantImageUrl').val();
+
+        // Validation checks
+        if (!skuNumber) {
+            showDangerToast('SKU is required.');
+            return;
+        }
+        if (!color) {
+            showDangerToast('Please select a color.');
+            return;
+        }
+        // if (!bodyPartName) {
+        //     showDangerToast('Please select a body part.');
+        //     return;
+        // }
+        // if (!fileInput && productMediaId == 0) {
+        //     showDangerToast('Please select a file.');
+        //     return;
+        // }
+
+        // Create FormData to handle file and other inputs
+        const formData = new FormData();
+        formData.append('file', fileInput);
+        formData.append('SkuNumber', skuNumber);
+        formData.append('Color', color);
+        formData.append('Size', size);
+        formData.append('Weight', weight);
+        formData.append('Height', height);
+        formData.append('Width', width);
+        formData.append('Length', length);
+        formData.append('StockQuantity', stockQuantity);
+        formData.append('BodyPartName', bodyPartName);
+        formData.append('Position', position);
+        formData.append('IsPrimary', isPrimary);
+        formData.append('ProductVariantId', productVariantId);
+        formData.append('ImageUrl', imageUrl);
+        formData.append('ProductId',parseInt(productId));
+        // Disable the button to prevent multiple clicks
+        submitButton.prop('disabled', true);
+
+        // Send data via AJAX
+        $.ajax({
+            url: '/api/ProductVariant/SaveOrUpdate', // Adjust endpoint as necessary
+            type: 'POST',
+            data: formData,
+            processData: false, // Prevent jQuery from processing data
+            contentType: false, // Allow the browser to set the Content-Type
+            success: function (response) {
+                if (response.isSuccess) {
+                    showSuccessToast('Product variant saved successfully.');
+
+                    // Update the variant list or UI as needed
+                    updateProductVariantList(response.data.productVariants);
+
+                    // Reset the form fields
+                    $('#VariantSkuNumber').val('');
+                    $('#VariantColor').val('');
+                    $('#VariantSize').val('');
+                    $('#VariantWeight').val('');
+                    $('#VariantHeight').val('');
+                    $('#VariantWidth').val('');
+                    $('#VariantLength').val('');
+                    $('#VariantStockQuantity').val('');
+                    $('#VariantBodyPartName').val('');
+                    $('#VariantPosition').val('');
+                    $('#VariantIsPrimary').prop('checked', false);
+                    $('#VariantFileInput').val('');
+                    $('#VariantPreviewImage').attr('src', '').hide();
+                    $('#VariantId').val(0);
+                    $('#VariantImageUrl').val('');
+
+                    // Update button text
+                    submitButton.text('Add');
+                } else {
+                    showDangerToast('Failed to save product variant.');
+                }
+            },
+            error: function () {
+                showDangerToast('An error occurred while saving the product variant.');
+            },
+            complete: function () {
+                submitButton.prop('disabled', false);
+            }
+        });
+    }
+
+    // Preview image on file input change
+    $('#VariantFileInput').on('change', function () {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                $('#VariantPreviewImage').attr('src', e.target.result).show();
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+        function LoadProductVariantEditModeData(productVariantId) {
+        $.ajax({
+            url: `/api/ProductVariant/GetByVariantIdId?productVariantId=${productVariantId}`, // Adjust the endpoint URL as needed
+            type: 'GET',
+            success: function (response) {
+                if (response.isSuccess) {
+                    const data = response.data;
+                    console.log('variantData',data)
+                    // Populate form fields
+                    $('#VariantPreviewImage').attr('src', data.imageUrl || '/assets/commonimage/no-image.png').show();
+                    $('#VariantSkuNumber').val(data.skuNumber);
+                    $('#VariantColor').val(data.color);
+                    $('#VariantSize').val(data.size);
+                    $('#VariantWeight').val(data.weight);
+                    $('#VariantHeight').val(data.height);
+                    $('#VariantWidth').val(data.width);
+                    $('#VariantLength').val(data.length);
+                    $('#VariantStockQuantity').val(data.stockQuantity);
+                    $('#VariantBodyPartName').val(data.bodyPartName);
+                    $('#VariantPosition').val(data.position);
+                    $('#VariantIsPrimary').prop('checked', data.isPrimary);
+
+                    // Hidden inputs
+                    $('#VariantId').val(data.productVariantId);
+                    $('#VariantImageUrl').val(data.imageUrl);
+
+                    // Update button text
+                    $('#SaveProductVariantButton').text('Update');
+                } else {
+                    alert('Failed to load product variant details.');
+                }
+            },
+            error: function (xhr, status, error) {
+                alert('An error occurred while loading the product variant details.');
+                console.error(error);
+            }
+        });
+    }
+
+        function updateProductVariantList(variants) {
+        const productVariantsList = document.getElementById("product-variant-list");
+        productVariantsList.innerHTML = ""; // Clear the existing list
+
+        variants.forEach(variant => {
+            const row = `
+                <div id="variant-row-${variant.productVariantId}" class="row gx-2 flex-between-center mb-3">
+                    <div class="col-sm-1">
+                        <div class="avatar avatar-4xl">
+                            <img class="rounded-circle" src="${variant.imageUrl || '/assets/commonimage/no-image.png'}" alt="" />
+                        </div>
+                    </div>
+                    <div class="col-sm-1">
+                        <div class="d-flex flex-between-center">
+                            <h6 class="mb-0 text-700">${variant.skuNumber || ''}</h6>
+                        </div>
+                    </div>
+                    <div class="col-sm-1">
+                        <div class="d-flex flex-between-center">
+                            <h6 class="mb-0 text-700">${variant.color || ''}</h6>
+                        </div>
+                    </div>
+                    <div class="col-sm-1">
+                        <div class="d-flex flex-between-center">
+                            <h6 class="mb-0 text-700">${variant.size || ''}</h6>
+                        </div>
+                    </div>
+                    <div class="col-sm-1">
+                        <div class="d-flex flex-between-center">
+                            <h6 class="mb-0 text-700">${variant.weight || ''}</h6>
+                        </div>
+                    </div>
+                    <div class="col-sm-1">
+                        <div class="d-flex flex-between-center">
+                            <h6 class="mb-0 text-700">${variant.width || ''}</h6>
+                        </div>
+                    </div>
+                    <div class="col-sm-1">
+                        <div class="d-flex flex-between-center">
+                            <h6 class="mb-0 text-700">${variant.length || ''}</h6>
+                        </div>
+                    </div>
+                    <div class="col-sm-1">
+                        <div class="d-flex flex-between-center">
+                            <h6 class="mb-0 text-700">${variant.stockQuantity || ''}</h6>
+                        </div>
+                    </div>
+                    <div class="col-sm-1">
+                        <div class="d-flex flex-between-center">
+                            <h6 class="mb-0 text-700">${variant.bodyPartName || ''}</h6>
+                        </div>
+                    </div>
+                    <div class="col-sm-1">
+                        <div class="d-flex flex-between-center">
+                            <h6 class="mb-0 text-700">${variant.position || ''}</h6>
+                        </div>
+                    </div>
+                    <div class="col-sm-1">
+                        <div class="d-flex flex-between-center">
+                            <h6 class="mb-0 text-700">${variant.isPrimary ? 'Yes' : 'No'}</h6>
+                        </div>
+                    </div>
+                    <div class="col-sm-1">
+                        <div class="d-flex flex-between-center">
+                            <button class="btn btn-falcon-default btn-sm" type="button" onclick="LoadProductVariantEditModeData('${variant.productVariantId}')">
+                                <span class="fas fa-external-link-alt" data-fa-transform="shrink-3"></span>
+                            </button>
+                            <a class="btn btn-sm btn-link text-danger" onclick="DeleteImagesItem('${variant.productVariantId}')">
+                                <span class="fs-10 fas fa-trash-alt"></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+            productVariantsList.innerHTML += row;
+        });
+    }
+
+
+    function DeleteVariantItem(productVariantId) {
+        if (!confirm('Are you sure you want to delete this variant?')) {
+            return; // Exit if user cancels
+        }
+
+        // Make an AJAX call to delete the variant
+        $.ajax({
+            url: `/api/ProductVariant/DeleteProductVariant?productVariantId=${productVariantId}`, // Adjust the endpoint URL
+            type: 'DELETE',
+            success: function (response) {
+                if (response.isSuccess) {
+                    showSuccessToast('Variant deleted successfully.');
+
+                    // Remove the deleted variant from the DOM
+                    // Assuming each variant row has an ID like `image-row-{ProductVariantId}`
+                    $(`#variant-row-${productVariantId}`).remove();
+                } else {
+                    showDangerToast('Failed to delete the variant.');
+                }
+            },
+            error: function (xhr) {
+                showDangerToast('An error occurred while deleting the variant.');
+                console.log(xhr.responseText);
+            }
+        });
+    }
+
+</script>
+<script>
+        function LoadProductImageEditModeData(productMediaId) {
+        $.ajax({
+            url: `/api/Product/GetProductImageById?productMediaId=${productMediaId}`, // Adjust the endpoint as necessary
+            type: 'GET',
+            success: function (response) {
+                if (response.isSuccess) {
+                    const data = response.data;
+
+                    // Populate form fields
+                    $('#previewImage').attr('src', data.imageUrl || '/assets/commonimage/no-image.png').show();
+                    $('#BodyPartName').val(data.bodyPartName);
+                    $('#Position').val(data.position);
+                    $('#ProductId').val(data.productId);
+                    $('#ProductMediaId').val(data.productMediaId);
+                    $('#ProductMediaKey').val(data.productMediaKey);
+                    $('#ImageUrl').val(data.imageUrl);
+                    // Change the button text to "Update"
+                    $('#SaveProductImageButton').text('Update');
+                } else {
+                    alert('Failed to load product image details.');
+                }
+            },
+            error: function (xhr, status, error) {
+                alert('An error occurred while loading the product image details.');
+                console.error(error);
+            }
+        });
+    }
+
+</script>
+
+<script>
+    function saveSpecification() {
+        if($('#ProductId').val()<=0){
+            showDangerToast('Please Select a Product First');
+            return;
+        }
+        if($('#SpecificationName').val()==''||$('#SpecificationName').val()==null){
+            showDangerToast('Please Give Specification Name');
+            return;
+        }
+        // Collect values from the input fields
+        const specification = {
+             HeaderName: $("#HeaderName").val(),
+            SpecificationName: $("#SpecificationName").val(),
+            SpecificationDtls: $("#SpecificationDtls").val(),
+            ProdSpcfctnId: $("#ProdSpcfctnId").val(),
+            ProductId: $('#ProductId').val() 
+        };
+
+        // Make an AJAX POST request
+        $.ajax({
+            url: '/api/Product/AddSpecification',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(specification),
+            success: function (response) {
+                console.log(response)
+                    if(response.responseId==-1){
+                         showDangerToast(specification.SpecificationName+' '+'@MessageManager.Exist');
+                         return;
+                    }
+                    if (response.isSuccess) {
+                   // alert(response.message);
+
+                       // Group specifications by headerName
+                    const groupedSpecs = {};
+
+                    response.data.specification_list.forEach(spec => {
+                        const header = spec.headerName?.trim() || "No Header";
+                        if (!groupedSpecs[header]) {
+                            groupedSpecs[header] = [];
+                        }
+                        groupedSpecs[header].push(spec);
+                    });
+
+                    console.log(groupedSpecs)
+                   const container = document.getElementById('specifications-container');
+                    container.innerHTML = ''; // Clear the existing list
+
+
+                    Object.entries(groupedSpecs).forEach(([header, specs]) => {
+                            // Add header section
+                            const headerSection = `
+                                <div class="mb-2 mt-3">
+                                    <h5 class="text-dark fw-bold">${header}</h5>
+                                    <hr />
+                                </div>
+                            `;
+                           container.insertAdjacentHTML('beforeend', headerSection);
+
+                         // Render each specification under this header
+                            specs.forEach(spec => {
+                                const specRow = `
+                                    <div class="row gx-2 flex-between-center mb-3" id="spec-${spec.prodSpcfctnId}">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0 text-600">${spec.headerName}</h6>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0 text-600">${spec.specificationName}</h6>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="d-flex flex-between-center">
+                                                <h6 class="mb-0 text-700">${spec.specificationDtls}</h6>
+                                                <a class="btn btn-sm btn-link text-danger" href="javascript:void(0);"
+                                                   onclick="deleteSpecification(${spec.prodSpcfctnId})">
+                                                    <span class="fs-10 fas fa-trash-alt"></span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                                container.insertAdjacentHTML('beforeend', specRow);
+                            });
+                        });
+
+                      $("#SpecificationName").val("");
+                    $("#SpecificationDtls").val("");
+                    $("#ProdSpcfctnId").val(0);
+                     
+                } else {
+                    alert("Failed to save specification!");
+                }
+            },
+            error: function () {
+                alert("An error occurred while saving the specification.");
+            }
+        });
+    }
+</script>
+@* <script>
+        function deleteSpecification(id) {
+        if (confirm("Are you sure you want to delete this specification?")) {
+            fetch(`/api/Product/DeleteSpecification?id=${id}`, {
+                method: 'GET'
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    if (data.isSuccess) {
+                        // Remove the deleted specification row from the DOM
+                        const specRow = document.getElementById(`spec-${id}`);
+                        if (specRow) {
+                            specRow.remove();
+                        }
+                        showSuccessToast(data.message);
+                    } else {
+                        showDangerToast(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("An error occurred while deleting the specification.");
+                });
+        }
+    }
+
+</script> *@
+<script>
+    function saveProductSerial() {
+        if($('#ProductId').val()<=0){
+            showDangerToast('Please Select a Product First');
+            return;
+        }
+        const data = {
+            SerialNumber: $('#SerialNumber').val(),
+            Rate: parseFloat($('#ProductSerialNumber_Rate').val()) || 0,
+            TagSupplierId: parseFloat($('#TagSupplierId').val()) || null,
+            Remarks: $('#ProductSerialNumber_Remarks').val(),
+            ProdSerialNmbrId: parseInt($('#ProdSerialNmbrId').val()) || 0,
+            ProductId: $('#ProductId').val(),
+            Date: $('#ProductSerialNumber_Date').val()
+        };
+        console.log('data',data)
+        $.ajax({
+            url: '/api/ProductSerial/SaveSerialNumber',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (response) {
+              //  alert(response.message);
+
+                 if (response.responseId === -1) {
+                alert("Serial number already exists!");
+                 } else if (response.responseId > 0) {
+                 // alert("Serial number saved successfully!");
+                  updateSerialNumberList(response.data.productSerialNumber);
+
+                 $('#ProductSerialNumber_Rate').val('');
+                 $('#TagSupplierId').val('');
+                 $('#ProductSerialNumber_Remarks').val('');
+                 $('#ProductSerialNumber_Date').val('');
+
+                }
+                // Optionally, clear the form fields
+                $('#SerialNumber').val('');
+
+                $('#SaveProductSerialButton').text('Add');
+            },
+            error: function (error) {
+                console.error('Error:', error);
+                alert('Failed to save serial number.');
+            }
+        });
+    }
+
+   function updateSerialNumberList(serialNumberData) {
+        console.log('1',serialNumberData)
+         const { prodSerialNmbrId, serialNumber, rate, supplierName, date,remarks } = serialNumberData;
+           console.log('2',serialNumberData)
+        const container = $('#product-serial-container');
+        const existingItem = $(`#spec-${prodSerialNmbrId}`);
+
+        if (existingItem.length) {
+            // Update existing item
+            existingItem.find('.col-sm-3:nth-child(1) h6').text(serialNumber);
+            existingItem.find('.col-sm-2:nth-child(2) h6').text(rate);
+            existingItem.find('.col-sm-2:nth-child(3) h6').text(supplierName);
+            existingItem.find('.col-sm-2:nth-child(4) h6').text(date);
+            existingItem.find('.col-sm-3:nth-child(2) h6').text(remarks);
+        } else {
+            // Add new item
+            const newItem = `
+                <div class="row gx-2 flex-between-center mb-3" id="spec-${prodSerialNmbrId}">
+                    <div class="col-sm-3">
+                        <h6 class="mb-0 text-600">${serialNumber}</h6>
+                    </div>
+                    <div class="col-sm-2">
+                        <h6 class="mb-0 text-600">${rate}</h6>
+                    </div>
+                    <div class="col-sm-2">
+                        <h6 class="mb-0 text-600">${supplierName}</h6>
+                    </div>
+                    <div class="col-sm-2">
+                        <h6 class="mb-0 text-600">${date}</h6>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="d-flex flex-between-center">
+                            <h6 class="mb-0 text-600">${remarks}</h6>
+                            <button class="btn btn-falcon-default btn-sm" type="button" onclick="LoadProductSericalEditModeData('${prodSerialNmbrId}')">
+                                <span class="fas fa-external-link-alt" data-fa-transform="shrink-3"></span>
+                            </button>
+                            <a class="btn btn-sm btn-link text-danger" href="javascript:void(0);" onclick="deleteSpecification(${prodSerialNmbrId})">
+                                <span class="fs-10 fas fa-trash-alt"></span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            container.append(newItem);
+        }
+    }
+        function LoadProductSericalEditModeData(serialId) {
+        $.ajax({
+            url: `/api/ProductSerial/GetSerialNumber/${serialId}`,
+            type: 'GET',
+            success: function (data) {
+                console.log(data)
+                 if(data.success){
+                   $('#SerialNumber').val(data.data.serialNumber);
+                  $('#ProductSerialNumber_Rate').val(data.data.rate);
+                   $('#TagSupplierId').val(data.data.tagSupplierId);
+                  $('#ProductSerialNumber_Remarks').val(data.data.remarks);
+                  $('#ProdSerialNmbrId').val(data.data.prodSerialNmbrId);
+                      const dateValue = data.data.date; // Access the date value
+                        if (dateValue) {
+                            // Use only the date part, without adjusting for timezone
+                            const formattedDate = dateValue.split('T')[0]; // Extract "YYYY-MM-DD" directly
+                            $('#ProductSerialNumber_Date').val(formattedDate);
+                        } else {
+                            $('#ProductSerialNumber_Date').val('');
+                        }
+                    $('#SaveProductSerialButton').text('Update');
+                    
+                    }
+               
+            },
+            error: function (error) {
+                console.error("Error fetching serial number data:", error);
+                alert("Failed to load serial number data.");
+            }
+        });
+    }
+
+        function deleteSpecification(serialId) {
+        if (!confirm("Are you sure you want to delete this serial number?")) {
+            return;
+        }
+
+        $.ajax({
+            url: `/api/Product/DeleteSpecification?id=${serialId}`,
+            type: 'GET',
+            success: function () {
+                $(`#spec-${serialId}`).remove();
+                //alert("Serial number deleted successfully.");
+            },
+            error: function (error) {
+                console.error("Error deleting serial number:", error);
+                alert("Failed to delete serial number.");
+            }
+        });
+    }
+</script>
+
+<script>
+    $(document).ready(function () {
+        function calculateFinalPrice() {
+            // Get values from the inputs
+            let sellingPrice = parseFloat($('#SellingPrice').val()) || 0;
+            let vatPercent = parseFloat($('#VatPercent').val()) || 0;
+            let vatAmount = parseFloat($('#VatAmount').val()) || 0;
+            let discountPercent = parseFloat($('#DiscountPercentg').val()) || 0;
+            let discountAmount = parseFloat($('#DiscountAmount').val()) || 0;
+
+            // Calculate VAT amount if VAT percentage is provided
+            if (vatPercent > 0) {
+                vatAmount = (sellingPrice * vatPercent) / 100;
+                $('#VatAmount').val(vatAmount.toFixed(2)); // Update VAT Amount field
+            }
+
+            // Calculate Discount amount if Discount percentage is provided
+            if (discountPercent > 0) {
+                discountAmount = (sellingPrice * discountPercent) / 100;
+                $('#DiscountAmount').val(discountAmount.toFixed(2)); // Update Discount Amount field
+            }
+
+            // Calculate Final Price
+            let finalPrice = sellingPrice + vatAmount - discountAmount;
+
+            // Update Final Price field
+            $('#FinalPrice').val(finalPrice.toFixed(2));
+        }
+
+        // Attach change event handlers to the input fields
+        $('#SellingPrice, #VatPercent, #VatAmount, #DiscountPercentg, #DiscountAmount').on('input', function () {
+            calculateFinalPrice();
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        // Function to load subcategories
+        function loadSubCategories(categoryId, selectedSubCategoryId) {
+            var subcategorySelect = $('#product-subcategory');
+
+            // Clear existing options
+            subcategorySelect.empty();
+            subcategorySelect.append('<option value="">Select Product Sub Category</option>');
+
+            if (categoryId) {
+                // Make AJAX call to fetch subcategories
+                $.ajax({
+                    url: '/api/ProductSubCategory/ByCategoryId?categoryId=' + categoryId,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.isSuccess && response.list) {
+                            // Populate subcategories
+                            $.each(response.list, function (index, item) {
+                                subcategorySelect.append(
+                                    $('<option></option>').val(item.prodSubCtgId).text(item.prodSubCtgName)
+                                );
+                            });
+
+                            // Set the selected subcategory if provided
+                            if (selectedSubCategoryId) {
+                                subcategorySelect.val(selectedSubCategoryId);
+                            }
+                        } else {
+                            console.error('No subcategories found or API error:', response.message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error fetching subcategories:', error);
+                    }
+                });
+            }
+        }
+
+        // Use event delegation to handle category change event
+        $(document).on('change', '#product-category', function () {
+            var categoryId = $(this).val();
+            var selectedSubCategoryId = '@Model.ProdSubCtgId'; // Get from model
+            loadSubCategories(categoryId, selectedSubCategoryId);
+        });
+
+        // Trigger subcategory load on page load if ProdCtgId is set
+        var selectedCategory = '@Model.ProdCtgId';
+        if (selectedCategory) {
+            loadSubCategories(selectedCategory, '@Model.ProdSubCtgId');
+        }
+    });
+</script>

@@ -1,0 +1,17 @@
+﻿
+<button class="btn btn-falcon-primary btn-sm toggle-button" type="button" onclick="RenderProductSettings('ProductCategory/Index')">Product Category</button>
+<button class="btn btn-falcon-default btn-sm ms-2 toggle-button" type="button" onclick="RenderProductSettings('SubCategory/Index')">Sub<span class="d-none d-sm-inline"> Category</span></button>
+<button class="btn btn-falcon-default btn-sm ms-2 toggle-button" type="button" onclick="RenderProductSettings('Unit/Index')">Brand</button>
+<button class="btn btn-falcon-default btn-sm ms-2 toggle-button" type="button" onclick="RenderProductSettings('Unit/Index')">Units</button>
+<button class="btn btn-falcon-default btn-sm ms-2 toggle-button" type="button" onclick="RenderProductSettings('ProductSize/Index')">Size</button>
+<button class="btn btn-falcon-default btn-sm ms-2 toggle-button" type="button" onclick="RenderProductSettings('ProductColor/Index')">Color</button>
+@* <button class="btn btn-falcon-default btn-sm ms-2 toggle-button" type="button" data-spa="product-serial">Product Serial</button> *@
+<div id="ProductSettingsContainer">
+    <!-- Partial views will be dynamically loaded here -->
+</div>
+<script src="~/assets/js/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        RenderProductSettings('ProductCategory/Index');
+    });
+</script>

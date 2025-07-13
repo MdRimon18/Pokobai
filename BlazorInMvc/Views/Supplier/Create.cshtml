@@ -1,0 +1,123 @@
+﻿@using Domain.Entity.Settings
+@model Suppliers
+
+<div class="card mb-3">
+    <div class="card-header">
+        <h5 class="mb-0" data-anchor="data-anchor">
+            <a class="btn btn-falcon-default btn-sm" href="@Url.Action("Index", "Supplier")"><i class="fas fa-arrow-left"></i></a>
+            Supplier Profile Entry
+        </h5>
+    </div>
+    <form asp-action="SaveOrUpdate" method="post" enctype="multipart/form-data">
+        <div class="card-body bg-body-tertiary container">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="col-sm-10 col-md-10">
+                        <div class="form-group">
+                            <label for="addSupplier" class="form-label fw-semi-bold">Name<span class="error-star">*</span></label>
+                            <input asp-for="SupplrName" type="text" class="form-control form-control-sm form-rounded" placeholder="Enter Name" />
+                            <span asp-validation-for="SupplrName" class="text-left invalid-message-color"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-10 col-md-10">
+                        <div class="form-group">
+                            <label for="addSupplier" class="form-label fw-semi-bold">Enter Mobile No<span class="error-star">*</span></label>
+                            <input asp-for="MobileNo" type="text" class="form-control form-control-sm form-rounded" placeholder="Enter Mobile No" />
+                            <span asp-validation-for="MobileNo" class="text-left invalid-message-color"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-10 col-md-10">
+                        <div class="form-group">
+                            <label for="addSupplier" class="form-label fw-semi-bold">Email<span class="error-star">*</span></label>
+                            <input asp-for="Email" type="text" class="form-control form-control-sm form-rounded" placeholder="Write Email" />
+                            <span asp-validation-for="Email" class="text-left invalid-message-color"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-10 col-md-10">
+                        <div class="form-group">
+                            <label for="addSupplier" class="form-label fw-semi-bold">Organization Name<span class="error-star">*</span></label>
+                            <input asp-for="SuppOrgnznName" type="text" class="form-control form-control-sm form-rounded" placeholder="Organization Name" />
+                            <span asp-validation-for="SuppOrgnznName" class="text-left invalid-message-color"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="col-sm-10 col-md-10">
+                        <div class="card-header">
+                            <h5 class="mb-0">Upload Image</h5>
+                        </div>
+                        <div class="image-uploader">
+                            <div class="image-preview">
+                                <img src="@Model.SupplrImgLink" alt="Selected Image" style="width: 160px;height: 160px;" />
+                                @if (!string.IsNullOrEmpty(Model.SupplrImgLink))
+                                {
+                                    <button type="button" class="remove-button" onclick="document.getElementById('fileInput').value = '';">X</button>
+                                }
+                            </div>
+                            <input asp-for="SupplrImgLink" type="file" class="file-input form-control form-control-sm form-rounded mb-2" id="fileInput" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="col-sm-10 col-md-10">
+                        <div class="form-group">
+                            <label for="addSupplier" class="form-label fw-semi-bold">Select Business Type<span class="error-star">*</span></label>
+                            <select asp-for="BusinessTypeId" class="form-select form-rounded form-select-sm">
+                                <option value="">Business Type</option>
+                                @foreach (var item in ViewBag.BusinessTypesList as List<BusinessType>)
+                                {
+                                    <option value="@item.BusinessTypeId">@item.BusinessTypeName</option>
+                                }
+                            </select>
+                            <span asp-validation-for="BusinessTypeId" class="text-left invalid-message-color"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-10 col-md-10">
+                        <div class="form-group">
+                            <label for="addSupplier" class="form-label fw-semi-bold">Select Country<span class="error-star">*</span></label>
+                            <select asp-for="CountryId" class="form-select form-rounded form-select-sm">
+                                <option value="">Select Country</option>
+                                @foreach (var item in ViewBag.CountryList as List<CountryV2>)
+                                {
+                                    <option value="@item.CountryId">@item.CountryName</option>
+                                }
+                            </select>
+                            <span asp-validation-for="CountryId" class="text-left invalid-message-color"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-10 col-md-10">
+                        <div class="form-group">
+                            <label for="addSupplier" class="form-label fw-semi-bold">State Name<span class="error-star">*</span></label>
+                            <input asp-for="StateName" type="text" class="form-control form-control-sm form-rounded" placeholder="Enter Your State Name" />
+                            <span asp-validation-for="StateName" class="text-left invalid-message-color"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="col-sm-10 col-md-10">
+                        <div class="form-group">
+                            <label for="addSupplier" class="form-label fw-semi-bold">Supplier Address One</label>
+                            <textarea asp-for="SupplrAddrssOne" rows="2" class="form-control form-control-sm form-rounded" placeholder="Supplier Address One"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-sm-10 col-md-10">
+                        <div class="form-group">
+                            <label for="addSupplier" class="form-label fw-semi-bold">Supplier Address Two</label>
+                            <textarea asp-for="SupplrAddrssTwo" rows="2" class="form-control form-control-sm form-rounded" placeholder="Supplier Address Two"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-sm-10 col-md-10">
+                        <div class="form-group">
+                            <label for="addSupplier" class="form-label fw-semi-bold">Delivery Off Day</label>
+                            <input asp-for="DeliveryOffDay" type="text" class="form-control form-control-sm form-rounded" placeholder="Delivery off Day" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm mt-2">@ViewBag.SubmitButtonText</button>
+            <button type="reset" class="btn btn-primary btn-sm mt-2">Refresh</button>
+        </div>
+    </form>
+</div>

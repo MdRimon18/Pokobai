@@ -1,0 +1,120 @@
+﻿@* @{
+    Layout = ViewData["RenderLayout"] != null && (bool)ViewData["RenderLayout"] ? "~/Views/Shared/_Layout.cshtml" : null;
+}
+ *@
+@using Domain.ViewModel
+ @model ProductViewModel
+
+
+<div class="row g-0 bg-light dark__bg-1000 mt-3">
+
+    <button class="btn btn-sm btn-light border mb-2 dark__bg-1000 dark__text-light"
+            id="toggleSidebarBtn"
+            onclick="toggleSidebar()"
+            title="Hide Sidebar">
+        <i class="fas fa-eye-slash"></i>
+    </button>
+
+    <div class="row">
+        <div id="sidebarSection" class="col-md-3 col-lg-3 border-end p-3">
+            <div id="SearchResultContainer">
+                @await Html.PartialAsync("_SearchResult", Model.ProductList)
+            </div>
+        </div>
+
+
+        <!-- Right Section: Form -->
+
+        <div id="mainContent" class="col-md-9 col-lg-9 p-4">
+            <div id="AddContainer">
+                @await Html.PartialAsync("_AddForm", Model.Product)
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+ 
+<script src="~/vendors/tinymce/tinymce.min.js"></script>
+
+<script>
+     function initializeTinyMCE() {
+       tinymce.remove(); // Remove any existing TinyMCE instances
+       tinymce.init({
+           selector: '.tinymce', // Target all elements with the `tinymce` class
+           plugins: 'lists link image table code',
+           toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | bullist numlist | link image',
+           height: 300
+       });
+     }
+    function LoadEditModeData(id) {
+        $.ajax({
+            url: '/Product/LoadEditModeData', // Your action URL
+            type: 'GET', // Use GET method
+            data: { id: id }, // Send the ID as a query string parameter
+            success: function (result) {
+                // On success, replace the content of a container with the returned partial view
+                $('#AddContainer').html(result);
+                 initializeTinyMCE();
+            },
+            error: function (xhr, status, error) {
+                console.log('Error:', error);
+                alert('An error occurred while loading the data. Please try again.');
+            }
+        });
+    }
+
+       const productId = @Model.Product.ProductId;
+
+        if (productId > 0) {
+            
+            LoadEditModeData(productId);
+        }
+
+</script>
+
+            <script>
+                function LoadSimilarEditModeData(id) {
+                    $.ajax({
+            url: '/Product/LoadSimilarEditModeData', // Your action URL
+                        type: 'GET', // Use GET method
+                        data: { id: id }, // Send the ID as a query string parameter
+                        success: function (result) {
+                            // On success, replace the content of a container with the returned partial view
+                            $('#AddContainer').html(result);
+                             initializeTinyMCE();
+                        },
+                        error: function (xhr, status, error) {
+                            console.log('Error:', error);
+                            alert('An error occurred while loading the data. Please try again.');
+                        }
+                    });
+                }
+            </script>
+
+<script>
+    let isSidebarVisible = true;
+
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebarSection');
+        const mainContent = document.getElementById('mainContent');
+        const toggleBtn = document.getElementById('toggleSidebarBtn');
+
+        if (isSidebarVisible) {
+            // Hide sidebar and expand main content
+            sidebar.style.display = 'none';
+            mainContent.classList.remove('col-md-9', 'col-lg-9');
+            mainContent.classList.add('col-md-12');
+            toggleBtn.innerHTML = '<i class="fas fa-eye me-1"></i> Show Sidebar';
+        } else {
+            // Show sidebar and reset main content width
+            sidebar.style.display = 'block';
+            mainContent.classList.remove('col-md-12');
+            mainContent.classList.add('col-md-9', 'col-lg-9');
+            toggleBtn.innerHTML = '<i class="fas fa-eye-slash me-1"></i> Hide Sidebar';
+        }
+
+        isSidebarVisible = !isSidebarVisible;
+    }
+</script>

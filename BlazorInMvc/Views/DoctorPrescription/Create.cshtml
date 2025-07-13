@@ -1,0 +1,440 @@
+﻿@model Domain.ViewModel.InvoiceViewModel
+<style>
+    .hidden {
+        display: none;
+    }
+
+    .form-rounded {
+        border-radius: 5px; /* Adjust as desired */
+    }
+</style>
+
+ 
+
+<div class="offcanvas offcanvas-end" id="offcanvasRight-1" tabindex="-1" aria-labelledby="offcanvasRightLabel" style="width: 50%;">
+    <div class="offcanvas-header">
+        <div class="card-header">
+            <h5 class="mb-0">
+                @*  <i class="fas fa-arrow-left"></i> *@
+                Choose Product
+            </h5>
+        </div>
+        <button class="btn-close text-reset" type="button" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content border-0">
+                <div class="modal-body p-0">
+                    <div class="d-lg-flex justify-content-between">
+                        <div class="row flex-between-center gy-2 px-1 mb-2">
+                            <div class="col-auto pe-0">
+                                <div class="input-group" style="max-width: 350px; width: 100%;">
+                                    <input class="form-control form-control-sm shadow-none"
+                                           type="search"
+                                           placeholder="Search by Name/SKU/Code"
+                                           aria-label="search"
+                                           asp-for="SrchQuery"
+                                           oninput="OnProductSearchInOffCanva" />
+
+                                    <button type="button" class="btn btn-sm btn-outline-secondary border-300 hover-border-secondary">
+                                        <span class="fa fa-search fs-10"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-0">
+
+
+                        @foreach (var item in Model.FilteredItemsOffCanva)
+                        {
+                            <div class="col-md-4 ps-md-2">
+                                <div class="card mb-3 zoom-card">
+                                    @* <div class="card-header">
+                                <h5 class="mb-0">Laptop</h5>
+                                </div> *@
+                                    <div class="card-body bg-body-tertiary">
+                                        <div class="tab-content">
+                                            <div class="tab-pane preview-tab-pane active" role="tabpanel">
+                                                <div class="avatar avatar-4xl mb-3">
+                                                    <img class="rounded-soft" src="~/assets/img/products/1.jpg" alt="Product Image" />
+                                                </div>
+                                                <!-- Additional Product Information -->
+                                                <div class="product-info">
+                                                    <p class="mb-1"><strong>Category:</strong> @item.ProdCtgName</p>
+                                                    <p class="mb-1"><strong>Brand:</strong> BrandName</p>
+                                                    <p class="mb-1"><strong>Name:</strong> @item.ProdName</p>
+                                                    <p class="mb-1"><strong>Price:</strong> @item.SellingPrice</p>
+                                                    <p class="mb-1"><strong>SKU:</strong> @item.Sku</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-end mt-3">
+                                            <button class="btn btn-sm btn-falcon-primary" type="button" onclick="() => OnSelectProduct(item)">
+                                                Add
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                        }
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @* <div class="card-footer">
+    <div class="row">
+    <div class="pagination d-none"></div>
+    <div class="col-md-8">
+    <div class="row">
+    <div class="col-md-6">
+    <span class="d-none d-sm-inline-block me-2 fs-10">page 1 of 1, Total Record 9 </span>
+
+    </div>
+    <div class="col-md-2">
+
+    <PageSizeSelection SelectedPageSize="1" SelectedPageSizeChanged="HandlePageSizeChanged" />
+    </div>
+    </div>
+    </div>
+    <div class="col-md-4">
+    <div class="col-auto d-flex justify-content-end">
+
+    <PaginationV2 TotalPages="1" CurrentPage="5" OnPageChange="ChangePage" />
+
+    </div>
+    </div>
+
+    </div>
+
+    </div> *@
+</div>
+
+<div class="offcanvas offcanvas-end" id="offcanvasRight-2" tabindex="-1" aria-labelledby="offcanvasRightLabel" style="width: 50%;">
+    <div class="offcanvas-header">
+        <div class="card-header">
+            <h5 class="mb-0">
+                @*  <i class="fas fa-arrow-left"></i> *@
+                Choose Product
+            </h5>
+        </div>
+        <button class="btn-close text-reset" type="button" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+
+        <p>Set Page Serial</p>
+    </div>
+    @* <div class="card-footer">
+    <div class="row">
+    <div class="pagination d-none"></div>
+    <div class="col-md-8">
+    <div class="row">
+    <div class="col-md-6">
+    <span class="d-none d-sm-inline-block me-2 fs-10">page 1 of 1, Total Record 9 </span>
+
+    </div>
+    <div class="col-md-2">
+
+    <PageSizeSelection SelectedPageSize="1" SelectedPageSizeChanged="HandlePageSizeChanged" />
+    </div>
+    </div>
+    </div>
+    <div class="col-md-4">
+    <div class="col-auto d-flex justify-content-end">
+
+    <PaginationV2 TotalPages="1" CurrentPage="5" OnPageChange="ChangePage" />
+
+    </div>
+    </div>
+
+    </div>
+
+    </div> *@
+</div>
+<div class="card">
+
+    <div class="card-header bg-body-tertiary">
+        <h5 class="mb-0"><i class="fas fa-arrow-left"></i>Create Prescription</h5>
+    </div>
+    <div class="card-body">
+
+
+        <div class="tab-content">
+            <div class="row g-3">
+                <div class="col-lg-8 col-md-8 col-sm-8 col-8">
+                    <form>
+
+
+                        <div class="row g-3">
+                            
+
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-9 animated-div">
+                                <div class="form-group">
+                                    <label for="CustomerEmail" class="form-label fw-semi-bold">Patient Name</label>
+                                    <input type="text" style="border-radius: 5px;" asp-for="CustomerEmail" id="CustomerEmail" class="form-control form-control-sm form-rounded fw-semi-bold" placeholder="Patient Name" />
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-9 animated-div">
+                                <div class="form-group">
+                                    <label for="CustomerEmail" class="form-label fw-semi-bold"> Age</label>
+                                    <input type="text" style="border-radius: 5px;" asp-for="CustomerEmail" id="CustomerEmail" class="form-control form-control-sm form-rounded fw-semi-bold" placeholder="Age" />
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-9 animated-div">
+                                <div class="form-group">
+                                    <label for="CustomerEmail" class="form-label fw-semi-bold">Mobile</label>
+                                    <input type="text" style="border-radius: 5px;" asp-for="CustomerEmail" id="CustomerEmail" class="form-control form-control-sm form-rounded fw-semi-bold" placeholder="Mobile" />
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-9 animated-div">
+                                <div class="form-group">
+                                    <label for="CustomerEmail" class="form-label fw-semi-bold">Email</label>
+                                    <input type="text" style="border-radius: 5px;" asp-for="CustomerEmail" id="CustomerEmail" class="form-control form-control-sm form-rounded fw-semi-bold" placeholder="Email" />
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-9 col-9 animated-div">
+                                <div class="form-group">
+                                    <label for="CustomerEmail" class="form-label fw-semi-bold">Address</label>
+                                    <textarea type="text" style="border-radius: 5px;" asp-for="CustomerEmail" id="CustomerEmail" class="form-control form-control-sm form-rounded fw-semi-bold" placeholder="Address" cols="60" rows="1"></textarea>
+                                </div>
+                            </div>
+
+                           
+
+                            
+
+                             
+                            <div class="col-lg-4 col-md-4 col-sm-6 col-9 animated-div">
+                                <div class="form-group">
+                                    <label for="chooseProduct" class="form-label fw-semi-bold">Search by Medicine Name</label><span class="error-star">*</span>
+                                    <div class="position-relative input-group">
+                                        <input type="text" class="form-control form-control-sm form-rounded" placeholder="Search..." id="chooseProduct" />
+                                        <button class="btn btn-sm btn-light" type="button" id="plusButton" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight-1" aria-controls="offcanvasRight-1">+</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                           
+                        </div>
+
+
+
+                        <div class="row">
+                            <div class="table-responsive scrollbar mt-4">
+                                <table class="table table-sm mb-0 fs-10 table-view-tickets">
+                                    <thead class="thdchild">
+                                        <tr>
+                                            <th class="form-label fw-bold">Image</th>
+                                            <th scope="col" class="form-label fw-bold">Medicine</th>
+                                            <th scope="col" class="form-label fw-bold">Dosage</th>
+                                            <th scope="col" class="form-label fw-bold">Duration <span class="error-star"><strong class="bigger-asterisk">*</strong></span></th>
+                                            
+                                            <th scope="col" class="form-label fw-bold">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            int indexx = 0;
+                                        }
+                                        @foreach (var itm in Model.ItemsList)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <div class="col-auto">
+                                                        <div class="avatar avatar-2xl">
+                                                            <img class="rounded-circle" src="~/assets/img/products/1.jpg" alt="@itm.ProductName" />
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control form-control-sm form-rounded bold-input fw-semi-bold" placeholder="Category" readonly value="@itm.CategoryName">
+                                                </td>
+                                                <td>
+                                                    <textarea class="form-control form-control-sm form-rounded bold-input fw-semi-bold"
+                                                              placeholder="Name"
+                                                              readonly>@itm.ProductName</textarea>
+                                                </td>
+                                                <td>
+                                                    <textarea class="form-control form-control-sm form-rounded bold-input fw-semi-bold"
+                                                              placeholder="Quantity"
+                                                              name="ItemsList[@indexx].Quantity">@itm.Quantity</textarea>
+                                                </td>
+
+                                                
+                                                
+                                                <td>
+                                                    <button type="button" title="Info" class="btn btn-sm a-light" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                                        <i class="fa fa-info-circle" style="font-size:18px"></i>
+                                                    </button>
+                                                </td>
+                                                <td>
+                                                    <button title="Delete" class="btn btn-sm btn-light" onclick="deleteItem('@itm.ProductId')">
+                                                        <i class="far fa-trash-alt fa-lg text-danger"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            
+                                            indexx++;
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+
+                        <div class="row align-items-center mt-2">
+                            <div class="col-auto d-flex">
+                                <a class="btn btn-outline-primary btn-sm me-1 mb-1" type="button" data-spa="DoctorPrescription/Index">Generate</a>
+                                 
+                                <button class="btn btn-outline-secondary me-1 mb-1" type="button">Refresh</button>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="row mt-4">
+                    </div>
+
+                </div>
+
+                <div class="col-lg-4 col-md-4 col-sm-4 col-4">
+                    <div class="form-group">
+                        <div class="form-group">
+                            <label for="InvoiceDateTime" class="form-label fw-semi-bold">Date</label>
+                            <input type="date" asp-for="Invoice.InvoiceDateTime" id="InvoiceDateTime" class="form-control form-control-sm form-rounded fw-semi-bold" placeholder="Date" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-group">
+                            <label for="InvoiceDateTime" class="form-label fw-semi-bold">Next Meet Date</label>
+                            <input type="date" asp-for="Invoice.InvoiceDateTime" id="InvoiceDateTime" class="form-control form-control-sm form-rounded fw-semi-bold" placeholder="Date" />
+                        </div>
+                    </div>
+                    
+                        <div class="form-group">
+                            <label for="NotificationById" class="form-label fw-semi-bold">Notification Send By</label><span class="error-star">*</span>
+                            <select asp-for="Invoice.NotificationById" id="NotificationById" class="form-select form-rounded form-select-sm">
+                                <option value="">Select Notification</option>
+                                @foreach (var item in Model.NotificationByList)
+                                {
+                                    <option value="@item.NotificationById">@item.NotificationByName</option>
+                                }
+                            </select>
+                            <span asp-validation-for="Invoice.NotificationById" class="text-danger"></span>
+                        </div>
+
+                    <div class="form-group">
+                        <label for="remarks" class="form-label fw-semi-bold">Notes</label>
+                        <textarea asp-for="Invoice.Notes" id="remarks" class="form-control form-control-sm form-rounded fw-semi-bold" placeholder="Notes" cols="60" rows="2"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label fw-bold">Important</label>
+                        <textarea asp-for="Invoice.Notes" id="remarks" class="form-control form-control-sm form-rounded fw-semi-bold" placeholder="Notes" cols="60" rows="2"></textarea>
+
+                    </div>
+                  
+                     
+                </div>
+
+
+            </div>
+        </div>
+
+        <div class="border-bottom border-dashed my-5"></div>
+        <div class="row">
+            <div class="col-md-7 col-xl-12 col-xxl-7 px-md-3 mb-xxl-0 position-relative">
+                <div class="d-flex">
+                    <img class="me-3" src="../../assets/img/icons/shield.png" alt="" width="60" height="60" />
+                    <div class="flex-1">
+                        <h5 class="mb-2">Doctor/Patient Protection</h5>
+                        <div class="form-check mb-0">
+                            <input class="form-check-input" id="protection-option-1" type="checkbox" checked="checked" />
+                            <label class="form-check-label mb-0" for="protection-option-1"> <strong>Full Refund </strong>If you don't <br class="d-none d-md-block d-lg-none" />receive your order</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" id="protection-option-2" type="checkbox" checked="checked" />
+                            <label class="form-check-label mb-0" for="protection-option-2"> <strong>Full or Partial Refund, </strong>If the product is not as described in details</label>
+                        </div><a class="fs-10 ms-3 ps-2" href="#!">Learn More<span class="fas fa-caret-right ms-1" data-fa-transform="down-2">    </span></a>
+                    </div>
+                </div>
+                <div class="vertical-line d-none d-md-block d-xl-none d-xxl-block"> </div>
+            </div>
+            <div class="col-md-5 col-xl-12 col-xxl-5 ps-lg-4 ps-xl-2 ps-xxl-5 text-center text-md-start text-xl-center text-xxl-start">
+                <div class="border-bottom border-dashed d-block d-md-none d-xl-block d-xxl-none my-4"></div>
+                <div class="fs-7 fw-bold">Total Medicine: <span class="text-primary">3</span></div>
+                <a href="#" class="btn btn-success mt-3 px-5" type="submit" data-spa="DoctorPrescription/Index">Generate Prescription</a>
+                <p class="fs-10 mt-3 mb-0">By clicking <strong>Confirm & Ready </strong> button you agree to the <a href="#!">Terms &amp; Conditions</a></p>
+            </div>
+        </div>
+
+    </div>
+
+
+</div>
+
+<div class="modal fade" id="staticBackdrop" data-bs-keyboard="false" data-bs-backdrop="static" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg mt-6" role="document">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="position-absolute top-0 end-0 mt-3 me-3 z-1">
+                <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0 fw-bold" id="staticBackdropLabel">Product Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- Left Column -->
+                            <div class="col-lg-4">
+                                <h4 class="text-primary mb-3">Item Information</h4>
+                                <p class="fs-7 text-muted">Vat Amount: <span class="fw-bold text-dark">10%</span></p>
+                                <p class="fs-7 text-muted">Discount Amount: <span class="fw-bold text-dark">$5.00</span></p>
+                                <p class="fs-7 text-muted">Date: <span class="fw-bold text-dark">24/10/2024</span></p>
+                                <p class="fs-7 text-muted">Warranty: <span class="fw-bold text-dark">2 years</span></p>
+                                <p class="fs-7 text-muted">Link to Supplier: <a href="#" class="fw-bold text-primary">View Supplier</a></p>
+                                <p class="fs-7 text-muted">Remarks: <span class="fw-bold text-dark">Some remarks</span></p>
+                                <p class="fs-7 text-muted">Descriptions: <span class="fw-bold text-dark">Product details here</span></p>
+                                <p class="fs-7 text-muted">Imported From: <span class="fw-bold text-dark">Country</span></p>
+                                <p class="fs-7 text-muted">Category: <span class="fw-bold text-dark">Electronics</span></p>
+
+                            </div>
+                            <div class="col-lg-4">
+                                <h4 class="text-primary mb-3 mt-4">Pricing & Quantity</h4>
+                                <p class="fs-7 text-muted">Sub Category: <span class="fw-bold text-dark">Smartphone</span></p>
+                                <p class="fs-7 text-muted">Name/Model: <span class="fw-bold text-dark">Model X</span></p>
+                                <p class="fs-7 text-muted">Buying Price: <span class="fw-bold text-dark">$500.00</span></p>
+                                <p class="fs-7 text-muted">Selling Price: <span class="fw-bold text-dark">$700.00</span></p>
+                                <p class="fs-7 text-muted">Unit Type: <span class="fw-bold text-dark">Piece</span></p>
+                                <p class="fs-7 text-muted">Opening Quantity: <span class="fw-bold text-dark">50</span></p>
+                                <p class="fs-7 text-muted">Alert Quantity: <span class="fw-bold text-dark">5</span></p>
+                                <p class="fs-7 text-muted">Vat (in %): <span class="fw-bold text-dark">15%</span></p>
+                                <p class="fs-7 text-muted">Discount (%): <span class="fw-bold text-dark">10%</span></p>
+                            </div>
+                            <!-- Right Column with Image and Additional Info -->
+                            <div class="col-lg-4 d-flex flex-column align-items-center">
+                                <div class="mb-3 text-center">
+                                    <img class="rounded shadow mb-2" src="../../assets/img/gallery/2000.jpg" width="200" height="200" alt="Product Image" />
+                                </div>
+                                <div class="bg-light p-3 rounded w-100">
+                                    <h5 class="fw-bold text-dark">Additional Information</h5>
+                                    <p class="fs-7 text-muted">Stock Availability: <span class="fw-bold text-dark">In Stock</span></p>
+                                    <p class="fs-7 text-muted">SKU: <span class="fw-bold text-dark">#12345</span></p>
+                                    <p class="fs-7 text-muted">Supplier Rating: <span class="fw-bold text-dark">4.5/5</span></p>
+                                    <p class="fs-7 text-muted">Shipping Time: <span class="fw-bold text-dark">3-5 Days</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

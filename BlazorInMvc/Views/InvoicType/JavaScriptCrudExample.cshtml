@@ -1,0 +1,337 @@
+﻿@using Domain.Entity.Settings
+ @model InvoiceType
+
+<div class="offcanvas offcanvas-end" id="offcanvasRight" tabindex="-1" aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas-header">
+        <div class="card-header">
+            <h5 class="mb-0">Invoice Types</h5>
+        </div>
+        <button class="btn-close text-reset" type="button" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="col-lg-12 ps-lg-2 mb-3">
+            <div class="row g-0 h-100 align-items-stretch">
+                <div class="col-lg-12 mb-3">
+                    <div class="pb-0">
+                        <a class="mb-4 d-block d-flex align-items-center" href="#experience-form" data-bs-toggle="collapse" aria-expanded="true" aria-controls="experience-form"><span class="circle-dashed"><span class="fas fa-plus"></span></span><span class="ms-3">Add new Invoice Type</span></a>
+                        <div class="collapse show" id="experience-form">
+                            <form id="invoiceTypeForm">
+                                <input type="hidden" id="InvoiceTypeId" name="InvoiceTypeId" />
+                                <input type="hidden" id="InvoiceTypeKey" name="InvoiceTypeKey" />  
+                                <input type="hidden" id="EntryDateTime" name="EntryDateTime" />
+                                <input type="hidden" id="EntryBy" name="EntryBy" />
+                
+                                <input type="hidden" id="Status" name="Status" />
+                                <div class="row">
+                                    <div class="col-3 mb-3 text-lg-end">
+                                        <label class="form-label fw-semi-bold" for="InvoiceTypeName">Invoice Type Name<span class="error-star">*</span></label>
+                                    </div>
+                                    <div class="col-9 col-sm-7 mb-3">
+                                        <input type="text" class="form-control form-control-sm form-rounded" id="InvoiceTypeName" name="InvoiceTypeName" />
+                                        <span class="text-danger" id="InvoiceTypeNameError"></span>
+                                    </div>
+                                    <div class="col-9 col-sm-7 offset-3">
+                                        <button class="btn btn-primary" type="button" onclick="saveOrUpdate()">Save</button>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="border-dashed-bottom my-4"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card" id="ticketsTable">
+    <div class="card-header border-bottom border-200 px-0">
+        <div class="d-lg-flex justify-content-between">
+            <div class="row flex-between-center gy-2 px-x1">
+                <div class="col-auto pe-0">
+                    <h5 class="mb-0">Invoice Types</h5>
+                </div>
+                <div class="col-auto pe-0">
+                    <div class="input-group input-search-width">
+                        <input class="form-control form-control-sm shadow-none form-rounded" type="search" placeholder="Search by name" aria-label="search" id="InvoiceTypeNameSearch" />
+                        <button class="btn btn-sm btn-outline-secondary border-300 hover-border-secondary form-rounded" onclick="loadInvoiceTypes()">
+                            <span class="fa fa-search fs-10"></span>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-auto pe-0">
+                    <button class="btn btn-falcon-default btn-sm ms-sm-1" type="button" onclick="onRefresh()"><span class="fas fa-redo"></span></button>
+                </div>
+            </div>
+            <div class="border-bottom border-200 my-3"></div>
+            <div class="d-flex align-items-center justify-content-between justify-content-lg-end px-x1">
+                <div class="d-flex align-items-center" id="table-ticket-replace-element">
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-falcon-default dropdown-toggle dropdown-caret-none" type="button" id="dashboard-layout" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="d-none d-sm-inline-block d-xl-none d-xxl-inline-block me-1 table-layout">Table View</span><span class="fas fa-chevron-down" data-fa-transform="shrink-3 down-1"></span></button>
+                        <div class="dropdown-menu dropdown-toggle-item dropdown-menu-end border py-2" aria-labelledby="dashboard-layout" role="tablist"><a class="dropdown-item active" id="tableView" data-bs-toggle="tab" href="#table-view" role="tab" aria-controls="table-view">Table View</a><a class="dropdown-item" id="cardView" data-bs-toggle="tab" href="#card-view" role="tab" aria-controls="card-view">Card View</a></div>
+                    </div>
+                    <a class="btn btn-falcon-default btn-sm mx-2" href="#!" data-bs-toggle="offcanvas"
+                       data-bs-target="#offcanvasRight" aria-controls="offcanvasRight" onclick="resetForm()">
+                        <span class="fas fa-plus" data-fa-transform="shrink-3"></span>
+                        <span class="d-none d-sm-inline-block d-xl-none d-xxl-inline-block ms-1">New</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-content" id="ticketViewContent">
+        <div class="fade tab-pane active show" id="table-view" role="tabpanel" aria-labelledby="tableView" data-list='{"valueNames":["client","subject","status","priority","agent"],"page":6,"pagination":true}'>
+            <div class="card-body p-0">
+                <div class="table-responsive scrollbar">
+                    <table class="table table-sm mb-0 fs-10 table-view-tickets">
+                        <thead class="bg-body-tertiary">
+                            <tr>
+                                <th class="text-800 sort align-middle ps-4" data-sort="client">Action</th>
+                                <th class="text-800 sort align-middle ps-2" data-sort="client">Invoice Types Name</th>
+                            </tr>
+                        </thead>
+                        <tbody class="list" id="table-ticket-body">
+                            <!-- Rows will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                    <div class="text-center d-none" id="tickets-table-fallback">
+                        <p class="fw-bold fs-8 mt-3">No ticket found</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="fade tab-pane" id="card-view" role="tabpanel" aria-labelledby="cardView" data-list='{"valueNames":["client","subject","status","priority","agent"],"page":4,"pagination":true}'>
+            <div class="card-body p-0">
+                <div class="form-check d-none">
+                    <input class="form-check-input" id="checkbox-bulk-card-tickets-select" type="checkbox" data-bulk-select='{"body":"card-ticket-body","actions":"table-ticket-actions","replacedElement":"table-ticket-replace-element"}' />
+                </div>
+                <div class="list bg-body-tertiary p-x1 d-flex flex-column gap-3" id="card-ticket-body">
+                    <!-- Cards will be populated by JavaScript -->
+                </div>
+                <div class="text-center d-none" id="tickets-card-fallback">
+                    <p class="fw-bold fs-8 mt-3">No ticket found</p>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="row">
+                <div class="pagination d-none"></div>
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <span class="d-none d-sm-inline-block me-2 fs-10">page <span id="currentPage"></span> of <span id="totalPages"></span>, Total Record <span id="TotalRecord"></span></span>
+                        </div>
+                        <div class="col-md-2">
+                            <select id="PageSize" class="form-select form-select-sm" onchange="handlePageSizeChanged(this.value)">
+                                <option value="2">2</option>
+                                <option value="5">5</option>
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="col-auto d-flex justify-content-end">
+                        <ul class="pagination" id="pagination">
+                            <!-- Pagination will be populated by JavaScript -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentPage = 1;
+    let pageSize = 5;
+
+    document.addEventListener("DOMContentLoaded", function () {
+        loadInvoiceTypes();
+    });
+        function loadInvoiceTypes() {
+        const search = document.getElementById("InvoiceTypeNameSearch").value;
+        if (search == undefined) { search =null}
+        fetch(`/api/InvoiceType/GetAll?search=${search}&page=${currentPage}&pageSize=${pageSize}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+                const tbody = document.getElementById("table-ticket-body");
+                tbody.innerHTML = "";
+                if (data.items.length > 0) {
+                    data.items.forEach(item => {
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+                            <td class="align-middle fs-9 py-3">
+                                <div class="form-check mb-0">
+                                 <a class="btn btn-falcon-default btn-sm" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight" onclick="editLoadData(${item.invoiceTypeId})">
+                           <span class="fas fa-external-link-alt" data-fa-transform="shrink-3"></span>
+                                </a>
+                                    <a   class="btn btn-falcon-default btn-sm" onclick="deleteItem(${item.invoiceTypeId})"><i class="fa fa-trash text-danger" aria-hidden="true"></i></a>
+                                </div>
+                            </td>
+                            <td class="align-middle fs-9 py-3">${item.invoiceTypeName}</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+
+                    document.getElementById("currentPage").innerText = data.currentPage;
+                    document.getElementById("totalPages").innerText = data.totalPages;
+                    document.getElementById("TotalRecord").innerText = data.totalRecord;
+
+                    const pagination = document.getElementById("pagination");
+                    pagination.innerHTML = "";
+                    if(data.totalPages > 0){
+                      for (let i = 1; i <= data.totalPages; i++) {
+                            const li = document.createElement("li");
+                            li.className = "page-item";
+                            li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i})">${i}</a>`;
+                            pagination.appendChild(li);
+                        }
+                   }
+                    
+                } else {
+                    document.getElementById("tickets-table-fallback").classList.remove("d-none");
+                }
+            })
+            .catch(error => console.error("Error loading invoice types:", error));
+    }
+    
+    function saveOrUpdate() {
+        const form = document.getElementById("invoiceTypeForm");
+        const formData = new FormData(form);
+        
+        let invoiceTypeId = formData.get("InvoiceTypeId");
+         invoiceTypeId = invoiceTypeId ? parseInt(invoiceTypeId) : 0;
+         console.log(invoiceTypeId)
+        const invoiceTypeName = formData.get("InvoiceTypeName");
+        const invoiceTypeKey = formData.get("InvoiceTypeKey");
+
+        const entryDateTime = formData.get("EntryDateTime");
+        const entryBy = formData.get("EntryBy");
+        let status = formData.get("Status");
+          status = status ? status : "Active";
+
+       
+         if (!invoiceTypeName) {
+        const errorElement = document.getElementById("InvoiceTypeNameError");
+        if (errorElement) {
+            errorElement.innerText = "Invoice Type Name is required.";
+        } else {
+            console.error("Error element not found: InvoiceTypeNameError");
+        }
+        return;
+    }
+
+
+        fetch(`/api/InvoiceType/ManageInvoiceType`, {
+            method: "POST",
+            body: JSON.stringify({
+                InvoiceTypeId: invoiceTypeId,
+                InvoiceTypeName: invoiceTypeName,
+                InvoiceTypeKey: invoiceTypeKey,
+                EntryDateTime: entryDateTime,
+                EntryBy: entryBy,
+                Status: status
+            }),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    loadInvoiceTypes();
+                    form.reset();
+                      document.querySelector('#offcanvasRight .btn-close').click();
+                  
+                } else {
+                    // Handle validation errors
+                    console.log(data.errors);
+                    // for (const key in data.errors) {
+                    //     document.getElementById(`${key}Error`).innerText = data.errors[key];
+                    // }
+                }
+            })
+            .catch(error => console.error("Error saving invoice type:", error));
+    }
+
+    function editLoadData(invoiceTypeId) {
+        fetch(`/api/InvoiceType/GetById?id=${invoiceTypeId}`)
+            .then(response => response.json())
+            .then(data => {
+              //  console.log(data)
+            const form = document.getElementById("invoiceTypeForm");
+            form.elements["InvoiceTypeId"].value = data.invoiceTypeId;
+            form.elements["InvoiceTypeKey"].value = data.invoiceTypeKey;
+           
+            form.elements["EntryDateTime"].value = data.entryDateTime ? data.entryDateTime.split('T')[0] : '';
+            form.elements["EntryBy"].value = data.entryBy;
+          
+            form.elements["Status"].value = data.status;
+            form.elements["InvoiceTypeName"].value = data.invoiceTypeName;
+      
+           // console.log(form.elements)
+        })
+            .catch(error => console.error("Error loading invoice type data:", error));
+    }
+
+    function deleteItem(invoiceTypeId) {
+         const form = document.getElementById("invoiceTypeForm");
+        const formData = new FormData(form);
+        const invoiceTypeName = formData.get("InvoiceTypeName");
+        const invoiceTypeKey = formData.get("InvoiceTypeKey");
+
+        if (confirm("Are you sure you want to delete this item?")) {
+            fetch(`/api/InvoiceType/ManageInvoiceType`, {
+                method: "POST",
+                body: JSON.stringify({
+                    InvoiceTypeId: invoiceTypeId,
+                    InvoiceTypeName: invoiceTypeName,
+                    InvoiceTypeKey: invoiceTypeKey,
+                    Status: "Delete"
+                }),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        loadInvoiceTypes();
+                    } else {
+                        console.error("Error deleting invoice type:", data.message);
+                    }
+                })
+                .catch(error => console.error("Error deleting invoice type:", error));
+        }
+    }
+
+    function changePage(page) {
+        currentPage = page;
+        loadInvoiceTypes();
+    }
+
+    function handlePageSizeChanged(newSize) {
+        pageSize = newSize;
+        currentPage = 1;
+        loadInvoiceTypes();
+    }
+
+    function onRefresh() {
+        document.getElementById("InvoiceTypeNameSearch").value = "";
+        loadInvoiceTypes();
+    }
+     
+    function resetForm() {
+        const form = document.getElementById("invoiceTypeForm");
+        form.reset();
+        form.elements["InvoiceTypeId"].value = 0;
+        form.elements["InvoiceTypeKey"].value = "00000000-0000-0000-0000-000000000000";
+            form.elements["EntryDateTime"].value = new Date().toISOString();
+        form.elements["EntryBy"].value =0;
+        form.elements["Status"].value = "Active";
+    }
+ 
+</script>

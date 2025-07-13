@@ -1,0 +1,376 @@
+﻿<div class="card mb-3" id="customersTable">
+    <div class="card-header">
+        <div class="row flex-between-center">
+            <div class="col-4 col-sm-auto d-flex align-items-center pe-0">
+                <h5 class="fs-9 mb-0 text-nowrap py-2 py-xl-0">Invoice List</h5>
+            </div>
+            <div class="col-8 col-sm-auto text-end ps-2">
+                <div class="d-none" id="table-customers-actions">
+                    <div class="d-flex">
+                        <select class="form-select form-select-sm" aria-label="Bulk actions" id="bulk-action-select">
+                            <option selected="">Bulk actions</option>
+                            <option value="Delete">Delete</option>
+                            <option value="Archive">Archive</option>
+                        </select>
+                        <button class="btn btn-falcon-default btn-sm ms-2" type="button" onclick="applyBulkAction()">Apply</button>
+                    </div>
+                </div>
+                <div id="table-customers-replace-element">
+                    <a class="btn btn-falcon-default btn-sm" href="/Product/Index?id=0" type="button"><span class="fas fa-plus" data-fa-transform="shrink-3 down-2"></span><span class="d-none d-sm-inline-block ms-1">New</span></a>
+                    <button class="btn btn-falcon-default btn-sm mx-2" type="button"><span class="fas fa-filter" data-fa-transform="shrink-3 down-2"></span><span class="d-none d-sm-inline-block ms-1">Filter</span></button>
+                    <button class="btn btn-falcon-default btn-sm" type="button"><span class="fas fa-external-link-alt" data-fa-transform="shrink-3 down-2"></span><span class="d-none d-sm-inline-block ms-1">Export</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive scrollbar">
+            <table class="table table-sm table-striped fs-10 mb-0 overflow-hidden">
+                <thead class="bg-200">
+                    <tr>
+                        <th>
+                            <div class="form-check fs-9 mb-0 d-flex align-items-center">
+                                <input class="form-check-input" id="checkbox-bulk-customers-select" type="checkbox"
+                                       data-bulk-select='{"body":"table-customers-body","actions":"table-customers-actions","replacedElement":"table-customers-replace-element"}' />
+                            </div>
+                        </th>
+                        <th class="text-900 align-middle white-space-nowrap">Image</th>
+                        <th class="text-900 sort pe-1 align-middle white-space-nowrap sortable-header" data-sort="prodCtgName" onclick="sortTable('prodCtgName')">Category <i class="fas fa-sort"></i></th>
+                        <th class="text-900 sort pe-1 align-middle white-space-nowrap sortable-header" data-sort="prodSubCtgName" onclick="sortTable('prodSubCtgName')">Sub Category <i class="fas fa-sort"></i></th>
+                        <th class="text-900 sort pe-1 align-middle white-space-nowrap sortable-header" data-sort="prodName" onclick="sortTable('prodName')">Product Name <i class="fas fa-sort"></i></th>
+                        <th class="text-900 sort pe-1 align-middle white-space-nowrap sortable-header" data-sort="productCode" onclick="sortTable('prodName')">Product Code <i class="fas fa-sort"></i></th>
+                        <th class="text-900 align-middle white-space-nowrap">Quantity</th>
+                        <th class="text-900 sort pe-1 align-middle white-space-nowrap sortable-header" data-sort="unitName" onclick="sortTable('unitName')">Unit <i class="fas fa-sort"></i></th>
+                        <th class="text-900 sort pe-1 align-middle white-space-nowrap sortable-header" data-sort="sellingPrice" onclick="sortTable('sellingPrice')">Price <i class="fas fa-sort"></i></th>
+                        <th class="text-900 sort pe-1 align-middle white-space-nowrap sortable-header" data-sort="vatPercent" onclick="sortTable('vatPercent')">VAT % <i class="fas fa-sort"></i></th>
+                        <th class="text-900 sort pe-1 align-middle white-space-nowrap sortable-header" data-sort="discountPercentg" onclick="sortTable('discountPercentg')">Discount % <i class="fas fa-sort"></i></th>
+                        <th class="text-900 sort pe-1 align-middle white-space-nowrap sortable-header" data-sort="finalPrice" onclick="sortTable('finalPrice')">Final Price <i class="fas fa-sort"></i></th>
+                        <th class="text-900 sort pe-1 align-middle white-space-nowrap sortable-header" data-sort="previousPrice" onclick="sortTable('previousPrice')">previous Price <i class="fas fa-sort"></i></th>
+                        <th class="text-900 align-middle white-space-nowrap">Variant</th>
+                        <th class="align-middle no-sort">Action</th>
+                    </tr>
+
+                </thead>
+                <tbody class="list" id="table-customers-body">
+                    <!-- Rows will be populated by JavaScript -->
+                </tbody>
+                @* <tbody class="list" id="product-body">
+                </tbody> *@
+            </table>
+            <div class="text-center d-none" id="customers-table-fallback">
+                <p class="fw-bold fs-8 mt-3">No customers found</p>
+            </div>
+
+         
+
+        </div>
+    </div>
+    <div class="card-footer d-flex align-items-center justify-content-center">
+        <span id="pagination-info" class="me-3"></span>
+        <button class="btn btn-sm btn-falcon-default me-1" type="button" title="Previous" onclick="changePage(currentPage - 1)"><span class="fas fa-chevron-left"></span></button>
+        <ul class="pagination mb-0"></ul>
+        <button class="btn btn-sm btn-falcon-default ms-1" type="button" title="Next" onclick="changePage(currentPage + 1)"><span class="fas fa-chevron-right"></span></button>
+    </div>
+</div>
+
+<script>
+  
+    function generateProductRowHtml(product, index) {
+                const hasVariants = product.productVariants && product.productVariants.length > 0;
+            console.log(hasVariants)
+        const collapseId = `variantCollapse-${index}`;
+
+        return `
+        <tr data-index="${index}">
+           <td class="align-middle py-2" style="width: 28px;">
+                      <div class="form-check fs-9 mb-0 d-flex align-items-center">
+                               <input class="form-check-input" type="checkbox" id="customer-${product.productId}" data-bulk-select-row="data-bulk-select-row" />
+                       </div>
+          </td>
+            <td>
+                <div class="col-auto">
+                    <div class="avatar avatar-2xl">
+                        <img class="rounded-circle" src="${product.imageUrl}" alt="${product.prodName}" />
+                    </div>
+                </div>
+            </td>
+            <td>${product.prodCtgName}</td>
+            <td>${product.prodSubCtgName}</td>
+            <td>${product.prodName}</td>
+            <td>${product.productCode}</td>
+            <td>${product.stockQuantity}</td>
+            <td>${product.unitName}</td>
+            <td>${product.sellingPrice}</td>
+            <td>${product.vatPercent}</td>
+            <td>${product.discountPercentg}</td>
+             <td>${product.finalPrice}</td>
+             <td>${product.previousPrice}</td>
+            <td class="treeview">
+                <div class="treeview-list-item">
+                    ${hasVariants ?
+                        `<a class="text-primary" data-bs-toggle="collapse" href="#${collapseId}" role="button" aria-expanded="false">
+                            <p class="treeview-text mb-0">Variant</p>
+                        </a>` :
+                        `<span class="text-muted small">No Variant</span>`}
+                </div>
+            </td>
+           
+            <td>
+                             <a class="btn btn-sm btn-primary me-1" href="/Product/Index?id=${product.productId}">
+                   <i class="fas fa-edit me-1"></i>
+                </a>
+
+                <button class="btn btn-sm btn-danger" onclick="deleteDynamicRow(this)">
+                    <i class="far fa-trash-alt"></i>
+                </button>
+            </td>
+        </tr>
+
+        ${hasVariants ?
+            `<tr>
+                <td colspan="13" class="p-0">
+                    <div class="collapse" id="${collapseId}">
+                        <div class="table-responsive p-2">
+                            <table class="table table-bordered table-sm mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                         <th>Image</th>
+                                         <th>SKU</th>
+                                         <th>Color</th>
+                                         <th>Size</th>
+                                         <th>Weight</th>
+                                         <th>Width</th>
+                                        <th>Stock</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                        ${product.productVariants.map((v) => `
+                                        <tr>
+                                                      <td>
+                                                       <div class="col-auto">
+                                                          <div class="avatar avatar-2xl">
+                                                               <img class="rounded-circle" src="${v.imageUrl}" alt="${v.skuNumber}" />
+                                                          </div>
+                                                       </div>
+                                                    
+                                                      </td>
+                                              <td>${v.skuNumber}</td>
+                                                <td>${v.color}</td>
+                                                 <td>${v.size}</td>
+                                                 <td>${v.weight}</td>
+                                                 <td>${v.width}</td>
+                                              <td>${v.stockQuantity}</td>
+                                            <td>
+     
+                                               <button class="btn btn-sm btn-primary"
+                                                  type="button"
+
+                                                    data-bs-toggle="offcanvas"
+                                                    data-bs-target="#offcanvasRight-2"
+                                                    aria-controls="offcanvasRight-2"
+                                                    onclick="loadSerials(17,0)" >
+                                                    Add Serial
+                                             </button>
+                                          
+                                            </td>
+                                        </tr>`).join("")}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </td>
+            </tr>` : ''
+        }
+        `;
+    }
+ 
+
+
+
+
+    //     window.renderProductList = async function () {
+    //     const tbody = document.getElementById("product-body");
+    //     products.forEach((prod, index) => {
+    //         tbody.insertAdjacentHTML("beforeend", generateProductRowHtml(prod, index));
+    //     });
+    // }
+
+        function addSerial(variantId) {
+        alert("Add Serial clicked for Variant ID/SKU: " + variantId);
+        // You can open a modal, send an AJAX call, etc.
+    }
+
+    // Call render function on page load
+  //  document.addEventListener("DOMContentLoaded", renderProductList);
+</script>
+
+<script>
+
+
+    // document.addEventListener("DOMContentLoaded", function () {
+    //     loadInvoices();
+    //     document.getElementById("checkbox-bulk-customers-select").addEventListener("change", toggleSelectAll);
+    // });
+
+    window.loadInvoices = async function () {
+        const tbody = document.getElementById("table-customers-body");
+        tbody.innerHTML = "";
+
+        try {
+            const response = await fetch(`/api/v1/Product/GetProductsWithExpandingVariants?page=${currentPage}&pageSize=${pageSize}`);
+          // const response = await fetch(`/api/GetProducts`);
+           const data = await response.json();
+            console.log(data);
+          //  invoices = data.product_list;
+             invoices =data.items;
+            totalPages = data.totalPages;
+            totalRecords = data.totalRecord;
+             renderInvoices();
+            updatePagination();
+            updatePaginationInfo();
+        } catch (error) {
+            console.error('Error fetching customers:', error);
+        }
+    }
+     function changePage(page) {
+        if (page < 1 || page > totalPages) return;
+        currentPage = page;
+        loadInvoices();
+    }
+
+    function handlePageSizeChanged(newSize) {
+        pageSize = newSize;
+        currentPage = 1;
+        loadInvoices();
+    }
+
+    function onRefresh() {
+        loadInvoices();
+    }
+
+    function sortTable(field) {
+        if (sortField === field) {
+            sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+        } else {
+            sortField = field;
+            sortOrder = 'asc';
+        }
+        renderInvoices();
+    }
+
+
+    function renderInvoices() {
+        const tbody = document.getElementById("table-customers-body");
+        tbody.innerHTML = "";
+
+        const sortedInvoices = invoices.sort((a, b) => {
+            if (a[sortField] < b[sortField]) return sortOrder === 'asc' ? -1 : 1;
+            if (a[sortField] > b[sortField]) return sortOrder === 'asc' ? 1 : -1;
+            return 0;
+        });
+
+        console.log(sortedInvoices)
+        // const tbody = document.getElementById("product-body");
+        sortedInvoices.forEach((prod, index) => {
+            tbody.insertAdjacentHTML("beforeend", generateProductRowHtml(prod, index));
+        });
+    //     sortedInvoices.forEach(item => {
+    //         const row = document.createElement("tr");
+    //         row.innerHTML = `
+    //             <td class="align-middle py-2" style="width: 28px;">
+    //                 <div class="form-check fs-9 mb-0 d-flex align-items-center">
+    //                     <input class="form-check-input" type="checkbox" id="customer-${item.invoiceId}" data-bulk-select-row="data-bulk-select-row" />
+    //                 </div>
+    //             </td>
+    //             <td class="name align-middle white-space-nowrap py-2">
+    //                 <a href="../../app/e-commerce/customer-details.html">
+    //                     <div class="d-flex d-flex align-items-center">
+    //                         <div class="avatar avatar-xl me-2">
+    //                             <div class="avatar-name rounded-circle"><span>${item.invoiceNumber}</span></div>
+    //                         </div>
+
+    //                     </div>
+    //                 </a>
+    //             </td>
+    //               <td class="email align-middle py-2"><a href="mailto:${item.customerName}">${item.customerName}</a></td>
+    //                <td class="phone align-middle white-space-nowrap py-2"><a href="tel:${item.mobileNo}">${item.mobileNo}</a></td>
+    //             <td class="email align-middle py-2"><a href="mailto:${item.email}">${item.email}</a></td>
+
+    //             <td class="address align-middle white-space-nowrap ps-5 py-2">${item.invoiceTypeName}</td>
+    //             <td class="joined align-middle py-2">${item.totalQnty}</td>
+    //              <td class="joined align-middle py-2">${item.totalPayable}</td>
+    //               <td class="joined align-middle py-2">${item.recieveAmount}</td>
+    //                <td class="joined align-middle py-2">${item.dueAmount}</td>
+    //                <td class="align-middle white-space-nowrap py-2 text-end">
+    //     <button class="btn btn-sm btn-primary me-1" onclick="loadPage('/Invoice/Create?key=${item.invoiceKey}')">
+    //         <i class="fas fa-edit me-1"></i>
+    //     </button>
+    //     <button class="btn btn-sm btn-danger" onclick="handleDelete('${item.customerId}')">
+    //         <i class="fas fa-trash-alt me-1"></i>
+    //     </button>
+    // </td>
+
+    //         `;
+    //         tbody.appendChild(row);
+    //         document.getElementById(`customer-${item.invoiceId}`).addEventListener("change", toggleBulkActions);
+    //     });
+    }
+
+    function toggleSelectAll() {
+        const selectAllCheckbox = document.getElementById("checkbox-bulk-customers-select");
+        const checkboxes = document.querySelectorAll("#table-customers-body .form-check-input");
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = selectAllCheckbox.checked;
+        });
+        toggleBulkActions();
+    }
+
+    function toggleBulkActions() {
+        const checkboxes = document.querySelectorAll("#table-customers-body .form-check-input");
+        const anyChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+        const actionsElement = document.getElementById("table-customers-actions");
+        const replaceElement = document.getElementById("table-customers-replace-element");
+        if (anyChecked) {
+            actionsElement.classList.remove("d-none");
+            replaceElement.classList.add("d-none");
+        } else {
+            actionsElement.classList.add("d-none");
+            replaceElement.classList.remove("d-none");
+        }
+    }
+
+    async function applyBulkAction() {
+        const selectedAction = document.getElementById("bulk-action-select").value;
+        const selectedCustomers = Array.from(document.querySelectorAll("#table-customers-body .form-check-input:checked"))
+            .map(checkbox => checkbox.id.replace("customer-", ""));
+
+        if (selectedCustomers.length === 0) {
+            alert("No customers selected.");
+            return;
+        }
+        console.log(selectedAction, selectedCustomers);
+        try {
+            const response = await fetch(`/api/Customer/BulkAction`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    action: selectedAction,
+                    customerIds: selectedCustomers
+                })
+            });
+
+
+            if (response.ok) {
+                alert("Bulk action applied successfully.");
+                loadCustomers();
+            } else {
+                alert("Failed to apply bulk action.");
+            }
+        } catch (error) {
+            console.error("Error applying bulk action:", error);
+        }
+    }
+</script>

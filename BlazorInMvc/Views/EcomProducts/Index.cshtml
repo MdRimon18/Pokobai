@@ -1,0 +1,465 @@
+﻿@using Domain.Entity.Settings
+@model List<Products>
+
+ 
+  
+<div class="row g-3">
+    <div class="col-xxl-2 col-xl-3 mt-0">
+        <aside class="scrollbar-overlay font-sans-serif p-4 p-xl-3 ps-xl-0 offcanvas offcanvas-start offcanvas-filter-sidebar"
+               tabindex="-1" id="filterOffcanvas" aria-labelledby="filterOffcanvasLabel">
+            <div class="d-flex flex-between-center">
+                <div class="d-flex gap-2 flex-xl-grow-1 align-items-center justify-content-xl-between">
+                    <h5 class="mb-0 text-700 d-flex align-items-center" id="filterOffcanvasLabel">
+                        <span class="fas fa-filter fs-10 me-1"></span> <span>Filter</span>
+                    </h5>
+                    <button class="btn btn-sm btn-outline-secondary" id="resetFilters">Reset</button>
+                </div>
+                <button class="btn-close text-reset d-xl-none shadow-none" type="button"
+                        data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+
+            <!-- Selected Filters -->
+            <div class="d-flex gap-2 flex-wrap my-3" id="selectedFilters"></div>
+
+            <!-- Filters List -->
+            <ul class="list-unstyled" id="filters-list"></ul>
+        </aside>
+
+    </div>
+    <div class="col-xxl-10 col-xl-9">
+        <div class="card mb-3">
+            @* <div class="card-header position-relative">
+                <h5 class="mb-0 mt-1">All Courses</h5>
+                <div class="bg-holder d-none d-md-block bg-card" style="background-image:url(../../../assets/img/illustrations/corner-6.png);">
+                </div>
+              
+
+            </div> *@
+            <div class="card-body pt-0 pt-md-3">
+                <div class="row g-3 align-items-center">
+                    <div class="col-auto d-xl-none">
+                        <button class="btn btn-sm p-0 btn-link position-relative" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterOffcanvas" aria-controls="filterOffcanvas"><span class="fas fa-filter fs-9 text-700"></span></button>
+                    </div>
+                    <div class="col">
+                        <form class="position-relative">
+                            <input class="form-control form-control-sm search-input lh-1 rounded-2 ps-4" type="search" placeholder="Search Products..." aria-label="Search" />
+                            <div class="position-absolute top-50 start-0 translate-middle-y ms-2"><span class="fas fa-search text-400 fs-10"></span></div>
+                        </form>
+                    </div>
+                    <div class="col position-sm-relative position-absolute top-0 end-0 me-3 me-sm-0 p-0">
+                        <div class="row g-0 g-md-3 justify-content-end">
+                            <div class="col-auto">
+                                <form class="row gx-2">
+                                    <div class="col-auto d-none d-lg-block"><small class="fw-semi-bold">Sort by:</small></div>
+                                    <div class="col-auto">
+                                        <select class="form-select form-select-sm" aria-label="Bulk actions">
+                                            <option value="rating">Rating</option>
+                                            <option value="review">Review</option>
+                                            <option value="price">Price</option>
+                                        </select>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-auto">
+                                <div class="d-flex align-items-center">
+                                    <small class="fw-semi-bold d-none d-lg-block lh-1">View:</small>
+                                    <div class="d-flex">
+                                        <a class="btn btn-link btn-sm text-700"  data-bs-toggle="tooltip" data-bs-placement="top" title="Course Grid">
+                                            <span class="fas fa-th fs-8" data-fa-transform="down-1"></span></a>
+                                          @*   <a class="btn btn-link btn-sm px-1 text-400 hover-700" href="../../../app/e-learning/course/course-list.html" data-bs-toggle="tooltip" data-bs-placement="top" title="Course List">
+                                                <span class="fas fa-list-ul fs-8" data-fa-transform="down-1"></span> 
+                                                </a>*@
+                                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      <div class="card mb-3">
+            <div class="card-body">
+
+                <div class="row mb-3 g-3">
+                    @foreach (var item in Model)
+                    {
+                        //var firstItem = group.FirstOrDefault();
+                        if (item != null)
+                        {
+                            <div class="mb-4 mb-lg-0  col-md-6 col-lg-4">
+                                <div class="border rounded-1 h-100 d-flex flex-column justify-content-between pb-3">
+                                    <div class="overflow-hidden">
+                                        @if (item.ProductVariants.Count() > 1)
+                                        {
+                                            <div class="position-relative rounded-top overflow-hidden">
+
+                                                <div class="swiper-container theme-slider" data-swiper='{"autoplay":true,"autoHeight":true,"spaceBetween":5,"loop":true,"loopedSlides":5,"navigation":{"nextEl":".swiper-button-next","prevEl":".swiper-button-prev"}}'>
+                                                    <div class="swiper-wrapper">
+
+                                                        @foreach (var variant in item.ProductVariants)
+                                                        {
+                                                            <div class="swiper-slide">
+                                                                @if (variant.ImageUrl != null)
+                                                                {
+                                                                    <a class="d-block" href="/EcomProducts/Details?key=@item.ProductKey">
+                                                                        <img class="rounded-top img-fluid" src="@variant?.ImageUrl" alt="" />
+                                                                    </a>
+                                                                }
+                                                            </div>
+                                                        }
+
+                                                        @* <div class="swiper-slide"><a class="d-block" href="../../../app/e-commerce/product/product-details.html"><img class="rounded-top img-fluid" src="../../../assets/img/products/1-2.jpg" alt="" /></a></div>
+                                            <div class="swiper-slide"><a class="d-block" href="../../../app/e-commerce/product/product-details.html"><img class="rounded-top img-fluid" src="../../../assets/img/products/1-3.jpg" alt="" /></a></div> *@
+                                                    </div>
+                                                    <div class="swiper-nav">
+                                                        <div class="swiper-button-next swiper-button-white"></div>
+                                                        <div class="swiper-button-prev swiper-button-white"></div>
+                                                    </div>
+                                                </div><span class="badge rounded-pill bg-success position-absolute mt-2 me-2 z-2 top-0 end-0">New</span>
+
+
+                                            </div>
+                                        }
+                                        else
+                                        {
+
+                                            @if (item.ImageUrl != null)
+                                            {
+                                                <div class="position-relative rounded-top overflow-hidden">
+                                                    <a class="d-block" href="/EcomProducts/Details?key=@item.ProductKey">
+                                                        <img class="img-fluid rounded-top" src="@item.ImageUrl" alt="" />
+                                                    </a>
+                                                </div>
+                                            }
+
+
+                                        }
+
+
+
+                                        <div class="p-3">
+                                            <h5 class="fs-9"><a class="text-1100" href="/EcomProducts/Details?key=@item.ProductKey">@item?.ProdName @item?.ProductShortSpecification</a></h5>
+                                            <p class="fs-10 mb-3"><a class="text-500" href="#!">@item?.ProdCtgName</a></p>
+                                            <h5 class="fs-md-7 text-warning mb-0 d-flex align-items-center mb-3">
+                                                <strong>@item?.CurrencySymbol</strong> @item?.SellingPrice
+                                            </h5>
+                                            <p class="fs-10 mb-1">Shipping Cost: <strong>$65</strong></p>
+                                            <p class="fs-10 mb-1">
+                                                Stock: <strong class="text-danger">Sold-Out</strong>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex flex-between-center px-3">
+                                        <div>
+                                            <span class="fa fa-star text-warning"></span><span class="fa fa-star text-warning"></span><span class="fa fa-star text-warning"></span><span class="fa fa-star text-warning"></span><span class="fa fa-star-half-alt text-warning star-icon"></span><span class="ms-1">(20)</span>
+                                        </div>
+                                        <div>
+                                            <a class="btn btn-sm btn-falcon-default me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Add to Wish List"><span class="far fa-heart"></span></a>
+                                            <a class="btn btn-sm btn-falcon-default btn-add-to-cart" data-bs-toggle="tooltip" data-bs-placement="top" title="Add to Cart" data-product-id="@item?.ProductId" data-sku="@item?.Sku" data-price="@item?.SellingPrice"><span class="fas fa-cart-plus"></span></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                    }
+
+                    @* <div class="mb-4 col-md-6 col-lg-4">
+                        <div class="border rounded-1 h-100 d-flex flex-column justify-content-between pb-3">
+                            <div class="overflow-hidden">
+                                <div class="position-relative rounded-top overflow-hidden">
+                                    <a class="d-block" href="../../../app/e-commerce/product/product-details.html">
+                                        <img class="img-fluid rounded-top" src="../../../assets/img/products/4.jpg" alt="" />
+                                    </a>
+                                </div>
+                                <div class="p-3">
+                                    <h5 class="fs-9"><a class="text-1100" href="../../../app/e-commerce/product/product-details.html">Apple iPad Air 2019 (3GB RAM, 128GB ROM, 8MP Main Camera)</a></h5>
+                                    <p class="fs-10 mb-3"><a class="text-500" href="#!">Mobile &amp; Tabs</a></p>
+                                    <h5 class="fs-md-7 text-warning mb-0 d-flex align-items-center mb-3">
+                                        $562.5
+                                        <del class="ms-2 fs-10 text-500">$750 </del>
+                                    </h5>
+                                    <p class="fs-10 mb-1">Shipping Cost: <strong>$47</strong></p>
+                                    <p class="fs-10 mb-1">
+                                        Stock: <strong class="text-success">Available</strong>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="d-flex flex-between-center px-3">
+                                <div>
+                                    <span class="fa fa-star text-warning"></span><span class="fa fa-star text-warning"></span><span class="fa fa-star-half-alt text-warning star-icon"></span><span class="fa fa-star text-300"></span><span class="fa fa-star text-300"></span><span class="ms-1">(14)</span>
+                                </div>
+                                <div><a class="btn btn-sm btn-falcon-default me-2" href="#!" data-bs-toggle="tooltip" data-bs-placement="top" title="Add to Wish List"><span class="far fa-heart"></span></a><a class="btn btn-sm btn-falcon-default" href="#!" data-bs-toggle="tooltip" data-bs-placement="top" title="Add to Cart"><span class="fas fa-cart-plus"></span></a></div>
+                            </div>
+                        </div>
+                    </div> *@
+
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row g-3 flex-center justify-content-md-between">
+                        <div class="col-auto">
+                            <form class="row gx-2">
+                                <div class="col-auto"><small>Show:</small></div>
+                                <div class="col-auto">
+                                    <select class="form-select form-select-sm" aria-label="Show courses">
+                                        <option selected="selected" value="9">9</option>
+                                        <option value="20">20</option>
+                                        <option value="50">50</option>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-auto">
+                            <button class="btn btn-falcon-default btn-sm me-2" type="button" disabled="disabled" data-bs-toggle="tooltip" data-bs-placement="top" title="Prev"><span class="fas fa-chevron-left"></span></button><a class="btn btn-sm btn-falcon-default text-primary me-2" href="#!">1</a><a class="btn btn-sm btn-falcon-default me-2" href="#!">2</a><a class="btn btn-sm btn-falcon-default me-2" href="#!"> <span class="fas fa-ellipsis-h"></span></a><a class="btn btn-sm btn-falcon-default me-2" href="#!">303</a>
+                            <button class="btn btn-falcon-default btn-sm" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Next"><span class="fas fa-chevron-right"></span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+       </div>
+
+
+        
+    </div>
+
+</div>
+
+ 
+
+<footer class="footer">
+    <div class="row g-0 justify-content-between fs-10 mt-4 mb-3">
+        <div class="col-12 col-sm-auto text-center">
+            <p class="mb-0 text-600">Thank you for creating with RCell E <span class="d-none d-sm-inline-block">| </span><br class="d-sm-none" /> 2023 &copy; <a >RCell_E</a></p>
+        </div>
+        <div class="col-12 col-sm-auto text-center">
+            <p class="mb-0 text-600">v3.1.0</p>
+        </div>
+    </div>
+</footer>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+ 
+<script>
+        $(document).ready(function() {
+        const $checkboxes = $('input[type="checkbox"]');
+        const $results = $('#results');
+        const $filterBadges = $('.d-flex.gap-2.flex-wrap.my-3');
+
+        function updateResults() {
+            const filters = {
+                free: $('#filter-category-free').is(':checked'),
+                paid: $('#filter-category-paid').is(':checked'),
+                onSale: $('#filter-category-on-sale').is(':checked'),
+                subjects: $('input[name^="subject"]:checked').map(function() {
+                    return $(this).attr('name');
+                }).get()
+            };
+
+            $.ajax({
+               url: '/api/Product/filter-products', // Updated endpoint
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(filters),
+                success: function(response) {
+                    updateBadges(response.activeFilters);
+                    renderResults(response.products);
+                },
+                error: function(xhr) {
+                    console.error('Error:', xhr.statusText);
+                }
+            });
+        }
+
+        function updateBadges(activeFilters) {
+            $filterBadges.empty();
+            activeFilters.forEach(filter => {
+                $filterBadges.append(`
+                    <span class="badge bg-300 text-600 py-0">
+                        ${filter}
+                        <button class="btn btn-link btn-sm p-0 text-600 ms-1 remove-filter">
+                            <span class="fas fa-times fs-11"></span>
+                        </button>
+                    </span>
+                `);
+            });
+        }
+
+        function renderResults(products) {
+            $results.empty();
+            if (products.length === 0) {
+                $results.html('<p>No products found.</p>');
+                return;
+            }
+
+            products.forEach(product => {
+                $results.append(`
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5>${product.name}</h5>
+                            <p class="mb-0">$${product.price} • ${product.category} • ${product.subject}</p>
+                        </div>
+                    </div>
+                `);
+            });
+        }
+
+        // Event handlers
+        $checkboxes.on('change', updateResults);
+
+        $('.btn-outline-secondary').on('click', function() {
+            $checkboxes.prop('checked', false);
+            updateResults();
+        });
+
+        $(document).on('click', '.remove-filter', function() {
+            const filterText = $(this).parent().text().trim();
+            $checkboxes.each(function() {
+                if ($(this).siblings('label').text().includes(filterText)) {
+                    $(this).prop('checked', false);
+                }
+            });
+            updateResults();
+        });
+
+        // Initial load
+        updateResults();
+    });
+</script>
+
+@* 
+<script>
+        $(document).ready(function () {
+        $.ajax({
+            url: "/api/Product/filters",
+            type: "GET",
+            success: function (data) {
+                console.log(data);
+                generateFilters("Category", data.categories, "category-collapse");
+                generateFilters("Brand", data.brands, "brand-collapse");
+            },
+            error: function (error) {
+                console.error("Error fetching filters:", error);
+            }
+        });
+
+        function generateFilters(title, items, collapseId) {
+            let listHtml = `
+                <li class="border-bottom">
+                    <a class="nav-link collapse-indicator-plus fs-11 fw-medium text-600 py-3"
+                       data-bs-toggle="collapse" href="#${collapseId}"
+                       aria-controls="${collapseId}" aria-expanded="true">
+                       ${title}
+                    </a>
+                    <div class="collapse show" id="${collapseId}">
+                        <ul class="list-unstyled">`;
+
+            items.forEach(item => {
+                let id = `filter-${collapseId}-${item.name.replace(/\s+/g, "-").toLowerCase()}`;
+                listHtml += `
+                    <li>
+                        <div class="form-check d-flex ps-0">
+                            <label class="form-check-label fs-10 flex-1 text-truncate" for="${id}">
+                                <span class="fas fa-tags fs-10 me-3"></span> ${item.name} (${item.count})
+                            </label>
+                            <input class="form-check-input" type="checkbox" name="${item.name}" id="${id}" />
+                        </div>
+                    </li>`;
+            });
+
+            listHtml += `</ul></div></li>`;
+            $("#filters-list").append(listHtml);
+        }
+    });
+
+</script>
+ *@
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Fetch filter data
+        fetch("/api/Product/filters")
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                generateFilters("Category", data.categories, "category-collapse");
+                generateFilters("Brand", data.brands, "brand-collapse");
+            })
+            .catch(error => console.error("Error fetching filters:", error));
+
+        function generateFilters(title, items, collapseId) {
+            let listHtml = `
+                <li class="border-bottom">
+                    <a class="nav-link collapse-indicator-plus fs-11 fw-medium text-600 py-3"
+                       data-bs-toggle="collapse" href="#${collapseId}"
+                       aria-controls="${collapseId}" aria-expanded="true">
+                       ${title}
+                    </a>
+                    <div class="collapse show" id="${collapseId}">
+                        <ul class="list-unstyled">`;
+
+            items.forEach(item => {
+                let id = `filter-${collapseId}-${item.name.replace(/\s+/g, "-").toLowerCase()}`;
+                listHtml += `
+                    <li>
+                        <div class="form-check d-flex ps-0">
+                            <label class="form-check-label fs-10 flex-1 text-truncate" for="${id}">
+                                <span class="fas fa-tags fs-10 me-3"></span> ${item.name} (${item.count})
+                            </label>
+                            <input class="form-check-input filter-checkbox" type="checkbox" name="${item.name}" id="${id}" data-filter="${item.name}" />
+                        </div>
+                    </li>`;
+            });
+
+            listHtml += `</ul></div></li>`;
+            document.getElementById("filters-list").insertAdjacentHTML("beforeend", listHtml);
+
+            // Attach event listeners to new checkboxes
+            document.querySelectorAll(".filter-checkbox").forEach(checkbox => {
+                checkbox.addEventListener("change", updateSelectedFilters);
+            });
+        }
+
+        function updateSelectedFilters() {
+            let selectedFiltersContainer = document.getElementById("selectedFilters");
+            selectedFiltersContainer.innerHTML = ""; // Clear existing
+
+            document.querySelectorAll(".filter-checkbox:checked").forEach(checkbox => {
+                let filterName = checkbox.getAttribute("data-filter");
+
+                let badgeHtml = `
+                    <span class="badge bg-300 text-600 py-0" data-filter="${filterName}">
+                        ${filterName}
+                        <button class="btn btn-link btn-sm p-0 text-600 ms-1 remove-filter">
+                            <span class="fas fa-times fs-11"></span>
+                        </button>
+                    </span>`;
+
+                selectedFiltersContainer.insertAdjacentHTML("beforeend", badgeHtml);
+            });
+
+            // Attach event listeners to remove filters
+            document.querySelectorAll(".remove-filter").forEach(button => {
+                button.addEventListener("click", function () {
+                    let badge = this.closest(".badge");
+                    let filterToRemove = badge.getAttribute("data-filter");
+
+                    // Uncheck the corresponding checkbox
+                    document.querySelector(`.filter-checkbox[data-filter="${filterToRemove}"]`).checked = false;
+
+                    // Remove badge
+                    badge.remove();
+                });
+            });
+        }
+
+        // Reset all filters
+        document.getElementById("resetFilters").addEventListener("click", function () {
+            document.querySelectorAll(".filter-checkbox:checked").forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            document.getElementById("selectedFilters").innerHTML = "";
+        });
+
+    });
+</script>
