@@ -219,6 +219,7 @@ namespace BlazorInMvc.Controllers.Api
                         Rating = item.Rating,
                     //    ProdStatusId = item.ProdStatusId,
                         Remarks = item.Remarks,
+                        ProdShortDescription = item.ProdShortDescription,
                         ProdDescription = item.ProdDescription,
                         ReleaseDate = item.ReleaseDate,
                         BranchId = item.BranchId,
