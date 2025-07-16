@@ -8,6 +8,29 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("AllowSpecificOrigin",
+//        policy =>
+//        {
+//            policy.WithOrigins("https://example.com") // Add your allowed origins
+//                  .AllowAnyHeader()
+//                  .AllowAnyMethod();
+//     });
+
+//    // For allowing all (use only in development)
+//    options.AddPolicy("AllowAll",
+//        policy =>
+//        {
+//            policy.AllowAnyOrigin()
+//                  .AllowAnyHeader()
+//                  .AllowAnyMethod();
+//        });
+//});
+
+//builder.Services.AddControllers();
+
+
 // Enable detailed exceptions for development
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

@@ -143,7 +143,7 @@ namespace BlazorInMvc.Controllers.Mvc.Products
                 model.ProductSizeList = (await _productSizeService.Get(null, null, null, null, 1, 1000)).ToList();
                 model.WarehouseList = (await _warehouseService.Get(null, null, null, null, null, null, null, null, null, 1, 1000)).ToList();
                 model.BodyParts = await _bodyPartService.GetBodyPartsAsync();
-               
+
                 //  model.ProductImage.BodyParts = model.BodyParts;
                 // model.ProductImages =
                 // model.Specification_list = (await _productSpecificationService.Get(null, null, null, null, null, 1, 1000)).ToList();
@@ -151,8 +151,8 @@ namespace BlazorInMvc.Controllers.Mvc.Products
                 // Store data in the cache with an expiration time
                 _cache.Set("ProductDropdownData", model, new MemoryCacheEntryOptions
                 {
-                    AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1), // Cache expires after 1 hour
-                    SlidingExpiration = TimeSpan.FromMinutes(30)            // Resets expiration if accessed within 30 mins
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(20), // Cache expires after 20 seconds
+                    SlidingExpiration = TimeSpan.FromSeconds(20)                // Resets expiration if accessed within 20 seconds
                 });
             }
 

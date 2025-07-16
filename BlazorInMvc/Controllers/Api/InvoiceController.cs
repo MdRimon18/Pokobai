@@ -39,7 +39,7 @@ namespace BlazorInMvc.Controllers.Api
 
         [HttpGet("GetAll")]
         
-        public async Task<IActionResult> GetAllCustomer(string? search, int page, int pageSize)
+        public async Task<IActionResult> GetAll(string? search, int page, int pageSize)
         {
             if (page <= 0) page = 1;
             if (pageSize <= 0) pageSize = 10;

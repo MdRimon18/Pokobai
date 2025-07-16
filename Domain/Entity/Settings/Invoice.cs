@@ -64,7 +64,8 @@ namespace Domain.Entity.Settings
         public string? InvoiceTypeName { get; set; }
         [NotMapped]
         public string? DeliverAddress { get; set; }
-
+        [NotMapped]
+        public string? FormattedEntryDateTime { get; set; }
         //private void RecalculateTotalPayable()
         //{
         //    TotalPayable = TotalAmount + TotalVat - TotalDiscount - TotalAddiDiscount;
