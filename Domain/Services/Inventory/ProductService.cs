@@ -174,13 +174,14 @@ namespace Domain.Services.Inventory
 				parameters.Add("@ProductCode", _products.ProductCode);
 				parameters.Add("@ProductHieght", _products.ProductHieght);
 				parameters.Add("@BrandId", _products.BrandId);
-				//parameters.Add("@EntryDateTime", _products.EntryDateTime);
-				//parameters.Add("@EntryBy", _products.EntryBy);
-				//parameters.Add("@LastModifyDate", _products.LastModifyDate);
-				//parameters.Add("@LastModifyBy", _products.LastModifyBy);
-				//parameters.Add("@DeletedDate", _products.DeletedDate);
-				//parameters.Add("@DeletedBy", _products.DeletedBy);
-				parameters.Add("@Status", _products.Status);
+                parameters.Add("@StockStatus",_products.StockStatus);
+                //parameters.Add("@EntryDateTime", _products.EntryDateTime);
+                //parameters.Add("@EntryBy", _products.EntryBy);
+                //parameters.Add("@LastModifyDate", _products.LastModifyDate);
+                //parameters.Add("@LastModifyBy", _products.LastModifyBy);
+                //parameters.Add("@DeletedDate", _products.DeletedDate);
+                //parameters.Add("@DeletedBy", _products.DeletedBy);
+                parameters.Add("@Status", _products.Status);
 				parameters.Add("@SuccessOrFailId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 				await _db.ExecuteAsync("Products_InsertOrUpdate_SP", parameters, commandType: CommandType.StoredProcedure);
 

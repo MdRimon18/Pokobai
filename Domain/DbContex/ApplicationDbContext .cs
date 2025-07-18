@@ -30,11 +30,25 @@ namespace Domain.DbContex
         public DbSet<UserAddressBook> UserAddressBooks { get; set; }
         //  public DbSet<BillingPlans> BillingPlans { get; set; }
         // Optional: Override OnModelCreating to configure entity mappings.
+
+
+        public DbSet<ProductVariants> ProductVariants { get; set; }
+        public DbSet<ProductVariantAttribute> ProductVariantAttributes { get; set; }
+        public DbSet<Attributte> Attributtes { get; set; }
+        public DbSet<AttributteValue> AttributteValues { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            // Configure entity relationships, constraints, etc., here.
+         
+            modelBuilder.Entity<ProductVariants>().HasMany(v => v.ProductVariantAttributes).WithOne(va => va.ProductVariant).HasForeignKey(va => va.ProductVariantId);
+            modelBuilder.Entity<Attributte>().HasMany(a => a.AttributeValues).WithOne(av => av.Attributte).HasForeignKey(av => av.AttributeId);
+            modelBuilder.Entity<ProductVariantAttribute>().HasOne(va => va.AttributeValue).WithMany().HasForeignKey(va => va.AttributeValueId);
+            modelBuilder.Entity<ProductVariantAttribute>().HasOne(va => va.Attributte).WithMany().HasForeignKey(va => va.AttributeId);
+       
+        //  modelBuilder.Entity<Products>().HasMany(p => p.Variants).WithOne(v => v.Product).HasForeignKey(v => v.ProductId);
+      
+          // Configure entity relationships, constraints, etc., here.
             //modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique(); // Example: Unique email constraint
         }
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

@@ -112,7 +112,8 @@ namespace BlazorInMvc.Controllers.Api
                         ImageUrl = !string.IsNullOrWhiteSpace(item.ImageUrl) && !item.ImageUrl.StartsWith(baseUrl)
                         ? baseUrl + item.ImageUrl
                         : item.ImageUrl,
-                        ProductVariants = item.ProductVariants
+                        ProductVariants = item.ProductVariants,
+                       StockStatus= item.StockStatus
                     };
                     responseList.Add(response);
                 }
@@ -243,7 +244,8 @@ namespace BlazorInMvc.Controllers.Api
                         ? baseUrl + item.ImageUrl
                        : item.ImageUrl,
                         ProductVariants = item.ProductVariants,
-                        Specificationlist = grouped
+                        Specificationlist = grouped,
+                        StockStatus = item.StockStatus
 
                     };
                     responseList.Add(response);
