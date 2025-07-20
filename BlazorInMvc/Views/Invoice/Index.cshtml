@@ -166,7 +166,7 @@
         <button class="btn btn-sm btn-primary me-1" onclick="loadPage('/Invoice/Create?key=${item.invoiceKey}')">
             <i class="fas fa-edit me-1"></i> 
         </button>
-        <button class="btn btn-sm btn-danger" onclick="handleDelete('${item.customerId}')">
+        <button class="btn btn-sm btn-danger" onclick="RemoveData('${item.invoiceId}')">
             <i class="fas fa-trash-alt me-1"></i> 
         </button>
     </td>
@@ -233,4 +233,48 @@
             console.error("Error applying bulk action:", error);
         }
     }
+
+     function RemoveData(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '@Url.Action("RemoveData", "Invoice")?id=' + id,
+                    type: 'GET',
+                    success: function (response) {
+                        if (response) {
+                            Swal.fire(
+                                'Deleted!',
+                                'Your file has been deleted.',
+                                'success'
+                            ).then(() => {
+                                loadInvoices(); // Refresh table after delete
+                            });
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                'Something went wrong.',
+                                'error'
+                            );
+                        }
+                    },
+                    error: function () {
+                        Swal.fire(
+                            'Error!',
+                            'Something went wrong.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    }
+
 </script>

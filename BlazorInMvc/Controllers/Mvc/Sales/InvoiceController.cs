@@ -136,6 +136,30 @@ namespace BlazorInMvc.Controllers.Mvc.Sales
         //    return View("Index", invoiceViewModel);
 
         //}
+
+        [HttpGet]
+        public async Task<bool> RemoveData(long id)
+        {
+
+            try
+            {
+                if (id>0)
+                {
+                   var model = await _invoiceService.Delete(id);
+                    return true;
+                   
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+        }
         public IActionResult ShippingWithPayment()
         {
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
