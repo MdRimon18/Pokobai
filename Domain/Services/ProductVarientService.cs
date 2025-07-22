@@ -1,6 +1,7 @@
 ﻿using Domain.DbContex;
 using Domain.Entity;
 using Domain.Entity.Settings;
+using Domain.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -19,7 +20,149 @@ namespace Domain.Services
         {
             _context = context;
         }
+        public List<AttributteViewModel> GetAttributes()
+        {
+            try
+            {
+                return _context.Attributtes
+                    .Select(a => new AttributteViewModel
+                    {
+                        AttributteId = a.AttributteId,
+                        AttributteKey = a.AttributteKey,
+                        AttributeName = a.AttributeName,
+                        Status = a.Status,
+                        LastModified = a.LastModified
+                    })
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                // TODO: Log exception (e.g., using ILogger)
+                // Console.WriteLine($"Error in GetAttributes: {ex.Message}");
+                return null;
+            }
+        }
+        public List<AttributteValueViewModel> GetAttributeValuesByAttributteId(int attributteId)
+        {
+            try
+            {
+                return _context.AttributteValues
+                    .Where(v => v.AttributeId == attributteId)
+                    .Select(v => new AttributteValueViewModel
+                    {
+                        AttributeValueId = v.AttributeValueId,
+                        AttributeId = v.AttributeId,
+                        AttrbtValue = v.AttrbtValue,
+                        Status = v.Status,
+                        LastModified = v.LastModified
+                    })
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                // TODO: Log exception
+                // Console.WriteLine($"Error in GetAttributeValuesByAttributteId: {ex.Message}");
+                return null;
+            }
+        }
+        public bool SaveAttributteWithDetails(AttributteWithDetailsViewModel model)
+        {
+            try
+            {
+                var attribute = model.AttributteId == 0
+                    ? new Attributte { AttributeName = model.AttributeName, Status = model.Status ?? "Active", LastModified = DateTime.UtcNow }
+                    : _context.Attributtes.Find(model.AttributteId);
 
+                if (attribute == null)
+                    return false;
+
+                if (model.AttributteId != 0)
+                {
+                    attribute.AttributeName = model.AttributeName;
+                    attribute.Status = model.Status ?? "Active";
+                    attribute.LastModified = DateTime.UtcNow;
+                }
+                else
+                {
+                    attribute.AttributteKey = Guid.NewGuid();
+                    _context.Attributtes.Add(attribute);
+                }
+
+                _context.SaveChanges();
+
+                // Load existing attribute values
+                var existingValues = _context.AttributteValues
+                    .Where(v => v.AttributeId == attribute.AttributteId)
+                    .ToList();
+
+                // Process provided details
+                if (model.AttributteDetails != null && model.AttributteDetails.Any())
+                {
+                    var incomingDetails = model.AttributteDetails
+                        .Select(d => d?.Trim().ToLowerInvariant())
+                        .Where(d => !string.IsNullOrEmpty(d))
+                        .Distinct()
+                        .ToList();
+
+                    // Update existing values or add new ones
+                    foreach (var detail in incomingDetails)
+                    {
+                        var existingValue = existingValues
+                            .FirstOrDefault(v => v.AttrbtValue.Trim().ToLowerInvariant() == detail);
+
+                        if (existingValue != null)
+                        {
+                            // Update existing value
+                            existingValue.Status = "Active";
+                            existingValue.LastModified = DateTime.UtcNow;
+                        }
+                        else
+                        {
+                            // Add new value
+                            _context.AttributteValues.Add(new AttributteValue
+                            {
+                                AttributeId = attribute.AttributteId,
+                                AttrbtValue = detail,
+                                AttributeValueKey = Guid.NewGuid(),
+                                Status = "Active",
+                                LastModified = DateTime.UtcNow
+                            });
+                        }
+                    }
+                }
+
+                _context.SaveChanges();
+                model.AttributteId = attribute.AttributteId;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // TODO: Log exception
+                // Console.WriteLine($"Error in SaveAttributteWithDetails: {ex.Message}");
+                return false;
+            }
+        }
+        public bool DeleteAttribute(int id)
+        {
+            try
+            {
+                var attribute = _context.Attributtes.Find(id);
+                if (attribute == null)
+                    return false;
+
+                var values = _context.AttributteValues.Where(v => v.AttributeId == id);
+                _context.AttributteValues.RemoveRange(values);
+                _context.Attributtes.Remove(attribute);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // TODO: Log exception
+                // Console.WriteLine($"Error in DeleteAttribute: {ex.Message}");
+                return false;
+            }
+        }
         // Products
         //public async Task<List<Products>> GetAllProductsAsync()
         //{

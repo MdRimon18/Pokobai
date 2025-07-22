@@ -1,0 +1,231 @@
+﻿@model dynamic
+  <head>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+   @*  <style>
+        .select2-container {
+            width: 100% !important;
+        }
+
+        .select2-selection__choice {
+            background-color: white !important;
+            color: white !important;
+        }
+
+        .table th, .table td {
+            vertical-align: middle;
+        }
+    </style> *@
+  </head>
+<div class="container-fluid">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h3 class="text-themecolor">Attribute Management</h3>
+        </div>
+         
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+
+                    <div class="section">
+                        <div class="col-md-6">
+                            <form id="attributeForm" class="mb-4">
+                                <input type="hidden" id="attributeId" name="AttributteId" />
+                                <input type="hidden" id="attributeStatus" name="Status" value="Active" />
+                                <div class="form-group">
+                                    <label for="attributeName">Attribute Name</label>
+                                    <input type="text" id="attributeName" name="AttributeName" class="form-control" required />
+                                </div>
+                                <div class="form-group">
+                                    <label for="attributeDetails">Attribute Details (Tags)</label>
+                                    <select id="attributeDetails" name="AttributteDetails" class="form-control" multiple="multiple"></select>
+                                </div>
+                                <button type="submit" id="submitButton" class="btn btn-primary">Save</button>
+                                <button type="button" class="btn btn-secondary" onclick="clearAttributeForm()">Clear</button>
+                            </form>
+                        </div>
+
+
+                        <table class="display nowrap table table-hover table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Details</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attributeTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+ 
+ 
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    $(document).ready(function () {
+        initializeSelect2();
+        loadAttributes();
+
+        $('#attributeForm').submit(function (e) {
+            e.preventDefault();
+            saveAttribute();
+        });
+    });
+
+    function initializeSelect2() {
+        if (!$('#attributeDetails').data('select2')) {
+            $('#attributeDetails').select2({
+                tags: true,
+                tokenSeparators: [',', ' '],
+                placeholder: "Enter attribute details (e.g., Red, Blue, Green)",
+                allowClear: true
+            }).on('select2:open', function () {
+                console.log('Select2 opened for attributeDetails');
+            }).on('select2:select', function () {
+                console.log('Select2 selection updated:', $('#attributeDetails').val());
+            });
+        }
+    }
+
+       function loadAttributes() {
+        $.get('/api/AttributteManagement/GetAttributes', function (attributes) {
+            $('#attributeTable').empty();
+            $.each(attributes, function (i, item) {
+                var detailsText = item.attributeValues.map(d => d.attrbtValue).join(', ');
+                $('#attributeTable').append(`
+                    <tr>
+                        <td>${item.attributteId}</td>
+                        <td>${item.attributeName}</td>
+                        <td>${detailsText || 'None'}</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm" onclick="editAttribute(${item.attributteId}, '${item.attributeName.replace(/'/g, "\\'")}', '${item.attributeValues.map(d => d.attrbtValue.replace(/'/g, "\\'").replace(/,/g, '&#44;')).join(',')}')"><i class="fa fa-edit"></i></button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteAttribute(${item.attributteId})"><i class="fa fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `);
+            });
+        }).fail(function () {
+            Swal.fire('Error', 'Failed to load attributes.', 'error');
+        });
+    }
+
+        function saveAttribute() {
+        var attributeId = parseInt($('#attributeId').val()) || 0;
+        var data = {
+            AttributteId: attributeId,
+            AttributeName: $('#attributeName').val().trim(),
+            Status: $('#attributeStatus').val(),
+            AttributteDetails: $('#attributeDetails').val() || []
+        };
+
+        if (!data.AttributeName) {
+            Swal.fire('Error', 'Attribute Name is required.', 'error');
+            return;
+        }
+
+        $.ajax({
+            url: '/api/AttributteManagement/SaveAttributteWithDetails',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (response) {
+                if (response.success) {
+                    loadAttributes();
+                    clearAttributeForm();
+                    Swal.fire('Success', 'Attribute and details saved successfully', 'success');
+                } else {
+                    Swal.fire('Error', 'Error saving attribute and details.', 'error');
+                }
+            },
+            error: function (xhr, status, error) {
+                let errorMessage = 'Request failed. Please try again later.';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                } else if (xhr.responseText) {
+                    try {
+                        let json = JSON.parse(xhr.responseText);
+                        if (json.message) errorMessage = json.message;
+                    } catch (e) {
+                        errorMessage = xhr.responseText;
+                    }
+                }
+                console.error('Save attribute failed:', errorMessage);
+                Swal.fire('Error', errorMessage, 'error');
+            }
+        });
+    }
+
+    function editAttribute(id, name, details) {
+        console.log('Editing attribute:', { id, name, details });
+        $('#attributeId').val(id);
+        $('#attributeName').val(name);
+        $('#submitButton').text('Update');
+        initializeSelect2();
+        // Decode and parse details
+        var decodedDetails = details.replace(/&#44;/g, ',');
+        var detailsArray = decodedDetails && decodedDetails.trim() ? decodedDetails.split(',').map(item => item.trim()).filter(item => item && item !== "null" && item !== "") : [];
+        console.log('Parsed detailsArray:', detailsArray);
+        // Wait for select2 to be fully initialized
+        $(document).ready(function () {
+            try {
+                $('#attributeDetails').val(null).trigger('change'); // Clear previous selection
+                if (detailsArray.length) {
+                    // Ensure each tag is added to select2 options
+                    detailsArray.forEach(function (item) {
+                        if (!$('#attributeDetails option[value="' + item + '"]').length) {
+                            $('#attributeDetails').append(new Option(item, item, false, false));
+                        }
+                    });
+                    $('#attributeDetails').val(detailsArray).trigger('change');
+                    console.log('Set select2 values:', $('#attributeDetails').val());
+                } else if (decodedDetails && decodedDetails !== "null") {
+                    console.warn('No valid details parsed:', decodedDetails);
+                    Swal.fire('Warning', 'No valid attribute details found for editing.', 'warning');
+                }
+            } catch (error) {
+                console.error('Error in editAttribute:', error);
+                Swal.fire('Error', 'Failed to load attribute details for editing.', 'error');
+            }
+        });
+    }
+
+    function deleteAttribute(id) {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "This will delete the attribute and its details.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.get('/api/AttributteManagement/DeleteAttribute', { id: id }, function (response) {
+                    if (response) {
+                        loadAttributes();
+                        Swal.fire('Deleted', 'Attribute has been deleted.', 'success');
+                    } else {
+                        Swal.fire('Error', 'Error deleting attribute.', 'error');
+                    }
+                }).fail(function (xhr, status, error) {
+                    console.error('Delete attribute failed:', error);
+                    Swal.fire('Error', 'Request failed. Please try again later.', 'error');
+                });
+            }
+        });
+    }
+
+    function clearAttributeForm() {
+        $('#attributeForm')[0].reset();
+        $('#attributeId').val('');
+        $('#attributeDetails').val(null).trigger('change');
+        $('#submitButton').text('Save');
+    }
+</script>

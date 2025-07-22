@@ -180,7 +180,10 @@
 <div class="card mt-2">
 
     <div class="card-header bg-body-tertiary">
-        <h5 class="mb-0"><i class="fas fa-arrow-left"></i>Create Invoice</h5>
+        <h5 class="mb-0">
+            <a onclick="loadPage('/Invoice/Index')" class="spa-link"> <i class="fas fa-arrow-left"></i></a>
+            @(Model.Invoice.InvoiceId > 0 ? "Update Invoice" : "Create Invoice")
+            </h5>
     </div>
     <div class="card-body">
        
@@ -195,7 +198,7 @@
                         <input type="hidden" asp-for="Invoice.InvoiceNumber" />
                         <input type="hidden" asp-for="Invoice.EntryBy" />
                         <input type="hidden" asp-for="Invoice.EntryDateTime" />
-
+                        <input type="hidden" asp-for="Invoice.SalesByName" id="SalesByName" name="salesBy" />
                             <div class="row g-3">
                                
                             <div class="col-lg-3 col-md-3 col-sm-9 col-9 animated-div">
@@ -311,14 +314,20 @@
                                         <input type="date" asp-for="Invoice.InvoiceDateTime" id="InvoiceDateTime" class="form-control form-control-sm form-rounded fw-semi-bold" placeholder="Date" />
                                     </div>
                                 </div>
-
-                                <div class="col-lg-3 col-md-3 col-sm-6 col-9 animated-div">
-                                    <div class="form-group">
-                                        <label for="SalesByName" class="form-label fw-semi-bold">Seller</label>
-                                        <input asp-for="Invoice.SalesByName" id="SalesByName" readonly name="salesBy" type="text" class="form-control form-control-sm form-rounded fw-semi-bold" placeholder="seller" required />
-                                    </div>
+ 
+                            <div class="col-lg-3 col-md-3 col-sm-9 col-9 animated-div">
+                                <div class="form-group">
+                                    <label for="OrderStageId" class="form-label fw-semi-bold">Order Stage</label><span class="error-star">*</span>
+                                    <select asp-for="Invoice.OrderStageId" id="OrderStageId" class="form-select form-rounded form-select-sm">
+                                        <option value="">Select Order Stage</option>
+                                        @foreach (var item in Model.OrderStages)
+                                        {
+                                            <option value="@item.OrderStageStaticId">@item.OrderStageName</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="Invoice.OrderStageId" class="text-danger"></span>
                                 </div>
-
+                            </div>
                                 <div class="col-lg-3 col-md-3 col-sm-9 col-9 animated-div">
                                     <div class="form-group">
                                         <label for="PaymentTypeId" class="form-label fw-semi-bold">Payment Type</label><span class="error-star">*</span>
@@ -1137,6 +1146,7 @@
         function generateItemRowHtml(item, index) {
              console.log('Generating row for item:', item, 'at index:', index);
            console.log(item)
+
         return `
              <tr  data-index="${index}">
                 <td>
@@ -1145,7 +1155,8 @@
                             <img class="rounded-circle" src="${item.imageUrl}" alt="${item.prodName}" />
                         </div>
                     </div>
-                    <input type="hidden" name="ItemsList[${index}].ProductId" value="${item.productId}" />
+                        <input type="hidden" name="ItemsList[${index}].ProductId" value="${item.productId}" />
+                        <input type="hidden" name="ItemsList[${index}].InvoiceItemId" value="${item.invoiceItemId}" />
                         <input type="hidden" name="ItemsList[${index}].ProductVariantId" value="${item.productVariantId}" />
                         <input type="hidden" name="ItemsList[${index}].imageUrl" value="${item.imageUrl}" />
                             <input type="hidden" name="ItemsList[${index}].buyingPrice" value="${item.buyingPrice}" />
@@ -1334,7 +1345,8 @@
             if (!quantityInput) continue; // Skip non-data rows
 
             const productIdInput = row.querySelector('[name^="ItemsList["][name$="].ProductId"]');
-              
+            const InvoiceItemIdInput = row.querySelector('[name^="ItemsList["][name$="].InvoiceItemId"]');
+               
             const productVariantIdInput = row.querySelector('[name^="ItemsList["][name$="].ProductVariantId"]');
              const sellingPriceInput = row.querySelector('[name^="ItemsList["][name$="].SellingPrice"]');
                  const buyingPriceInput = row.querySelector('[name^="ItemsList["][name$="].buyingPrice"]');
@@ -1386,13 +1398,15 @@
             }
               console.log('unit naem ', unitNameInput?.value)
                   console.log('buyingPrice ',buyingPriceInput?.value)
+                      const idValue = InvoiceItemIdInput?.value;
             items.push({
-                rowIndex: rowIndex,
-                productId: parseInt(productIdInput?.value || 0),
-                productVariantId: parseInt(productVariantIdInput?.value || 0),
-                quantity: parseFloat(quantityInput?.value || 0),
-                sellingPrice: parseFloat(sellingPriceInput?.value || 0),
-                discountPercentg: parseFloat(discountPercentInput?.value || 0),
+                 rowIndex: rowIndex,
+                 productId: parseInt(productIdInput?.value || 0),
+                 InvoiceItemId: isNaN(idValue) || idValue === "" ? 0 : parseInt(idValue, 10),
+                 productVariantId: parseInt(productVariantIdInput?.value || 0),
+                 quantity: parseFloat(quantityInput?.value || 0),
+                 sellingPrice: parseFloat(sellingPriceInput?.value || 0),
+                 discountPercentg: parseFloat(discountPercentInput?.value || 0),
                  categoryName: prodCtgNameInput?.value || '',
                  subCtgName: prodSubCtgNameInput?.value || '',
                  unit: unitNameInput?.value || '',
@@ -1427,6 +1441,7 @@
                   notificationById: document.getElementById("NotificationById").value,
                   invoiceDate: document.getElementById("InvoiceDateTime").value,
                   seller: document.getElementById("SalesByName").value,
+                  OrderStageId: document.getElementById("OrderStageId").value,
                   paymentTypeId: document.getElementById("PaymentTypeId").value,
                   categoryId: document.getElementById("categorySelect").value,
                   subCategoryId: document.getElementById("subCategorySelect").value,
@@ -1466,7 +1481,10 @@
                     isValid = false;
                         $("#PaymentTypeId").addClass("is-invalid").after('<div class="invalid-feedback">Payment Type is required.</div>');
                 }
-
+                   if (!invoiceSummary.OrderStageId) {
+                     isValid = false;
+                          $("#OrderStageId").addClass("is-invalid").after('<div class="invalid-feedback">Order Stage is required.</div>');
+                 }
            if (!isValid) {
              console.warn("Validation failed!");
              return;
@@ -1486,15 +1504,33 @@
             },
              body: JSON.stringify(payload)
         })
-        .then(res => res.json())
-         .then(data => {
-          //  console.log("Saved!", data);
-               showToast("success",data.message);
-               document.getElementById('Invoice_InvoiceKey').value = data.invoiceKey;
+          .then(res => {
+            if (!res.ok) {
+                return res.text().then(text => {
+                    throw new Error(`HTTP error! Status: ${res.status}, Body: ${text}`);
+                });
+            }
+            return res.json();
+        })
+        .then(data => {
+           
+            showToast("success", data.message);
+            document.getElementById('Invoice_InvoiceKey').value = data.invoiceKey;
+           const tableBody = document.querySelector('.table-view-tickets tbody');
+             if (data.invoiceItems && Array.isArray(data.invoiceItems)) {
+                tableBody.innerHTML = '';
+                data.invoiceItems.forEach(item => {
+                   
+                    const rowHtml = generateItemRowHtml(item, itemRowIndex);
+                    tableBody.insertAdjacentHTML('beforeend', rowHtml);
+                    appendSerialRows(item.selectedSerialNumbers, itemRowIndex);
+                    itemRowIndex++;
+                });
+            }
         })
         .catch(err => {
-          //  console.error("Save failed", err);
-              showToast("danger","Save Failed!.");
+            console.error("Save failed", err);
+            showToast("danger", "Save Failed!");
         });
     }
 

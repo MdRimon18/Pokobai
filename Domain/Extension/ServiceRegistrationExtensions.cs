@@ -75,5 +75,8 @@ public static class ServiceRegistrationExtensions
 
         services.AddScoped<UserAddressBookService>();
         services.AddScoped<InvoiceItemSerialsService>();
+        services.AddScoped<OrderStageService>();
+        services.AddScoped<ProductAttributeService>();
+
     }
 }

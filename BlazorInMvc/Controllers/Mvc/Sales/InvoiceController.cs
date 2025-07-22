@@ -20,6 +20,7 @@ namespace BlazorInMvc.Controllers.Mvc.Sales
         private readonly CustomerService _customerService;
         private readonly ProductSerialNumbersService _productSerialNumbersService;
         private readonly InvoiceItemSerialsService _invoiceItemSerialsService;
+        private readonly OrderStageService _orderStageService;
         public InvoiceController(
             InvoiceService invoiceService,
             InvoiceItemService invoiceItemService,
@@ -31,7 +32,8 @@ namespace BlazorInMvc.Controllers.Mvc.Sales
             PaymentTypesService paymentTypesService,
             CustomerService customerService,
             ProductSerialNumbersService productSerialNumbersService,
-            InvoiceItemSerialsService invoiceItemSerialsService)
+            InvoiceItemSerialsService invoiceItemSerialsService,
+            OrderStageService orderStageService)
         {
             _invoiceService = invoiceService;
             _invoiceItemService = invoiceItemService;
@@ -44,6 +46,7 @@ namespace BlazorInMvc.Controllers.Mvc.Sales
             _customerService = customerService;
             _productSerialNumbersService = productSerialNumbersService;
             _invoiceItemSerialsService = invoiceItemSerialsService;
+            _orderStageService = orderStageService;
         }
         [HttpGet]
         public async Task<IActionResult> Index()
@@ -112,7 +115,9 @@ namespace BlazorInMvc.Controllers.Mvc.Sales
                 PaymentTypesList = (await _paymentTypesService.Get(null, null, null, null, 1, 1000)).ToList(),
                 Products = (await _productService.Get(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1, 1000)).ToList(),
                 CustomersList = (await _customerService.Get(null, null, null, null, null, null, null, 1, 1000)).ToList(),
-                SerialNumbers = (await _productSerialNumbersService.Get(null, null, null, null, null, null, null, null, null, null, null, 1, 5000)).ToList()
+                SerialNumbers = (await _productSerialNumbersService.Get(null, null, null, null, null, null, null, null, null, null, null, 1, 5000)).ToList(),
+                OrderStages = await _orderStageService.GetAllAsync()
+
             };
 
             // Set default values for other model properties if needed

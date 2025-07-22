@@ -110,7 +110,7 @@ namespace BlazorInMvc.Controllers.Api
                     TotalPayable = (decimal)request.InvoiceSummary.TotalPayable,
                     RecieveAmount = (decimal)request.InvoiceSummary.RecieveAmount,
                     DueAmount = (decimal)request.InvoiceSummary.DueAmount,
-                  
+                    OrderStageId=request.InvoiceSummary.OrderStageId,
                     Status = "Active",
                     EntryDateTime = DateTime.UtcNow,
                     EntryBy = UserInfo.UserId,
@@ -135,6 +135,7 @@ namespace BlazorInMvc.Controllers.Api
 
                     InvoiceId = newInsertedInvoiceId,
                     ProductId = item.ProductId,
+                    InvoiceItemId=item.InvoiceItemId,
                     Quantity = (int)item.Quantity,
                     SellingPrice = (decimal)item.SellingPrice,
                     BuyingPrice=item.BuyingPrice,
@@ -190,10 +191,37 @@ namespace BlazorInMvc.Controllers.Api
                 // Commit transaction
                 await transaction.CommitAsync();
                 var invoiceObj = await _invoiceService.GetById(newInsertedInvoiceId);
+                var itemViewList = new List<InvoiceItemViewModel>();
+                foreach (var item in invoiceItems)
+                {
+                    // Retrieve serial numbers asynchronously
+                    var serialNumbers = await _invoiceItemSerialsService.GetByInvoiceItemId(item.InvoiceItemId);
+
+                    var viewModel = new InvoiceItemViewModel
+                    {
+                        InvoiceItemId = item.InvoiceItemId,
+                        InvoiceId = newInsertedInvoiceId,
+                        ProductId = item.ProductId,
+                        Quantity = (int)item.Quantity,
+                        SellingPrice = (decimal)item.SellingPrice,
+                        TotalPrice = (decimal)item.SellingPrice * (int)item.Quantity, // Calculate TotalPrice (adjust if there's a specific formula)
+                        VatPercent = item.VatPercentg, // Handle if VatPercentg is not provided in request.Items
+                        DiscountPercentg = (decimal)item.DiscountPercentg,
+                        ImageUrl = item.ProductImage,
+                        ProdName = item.ProductName,
+                        ProdCtgName = item.CategoryName,
+                        ProdSubCtgName = item.SubCtgName,
+                        UnitName = item.Unit,
+                        SelectedSerialNumbers = serialNumbers?.ToList() ?? new List<InvoiceItemSerials>()
+                    };
+
+                    itemViewList.Add(viewModel);
+                }
                 return Ok(new
                 {
                     InvoiceKey= invoiceObj?.InvoiceKey,
                     InvoiceId = newInsertedInvoiceId,
+                    InvoiceItems= itemViewList,
                     Message = "Invoice Created successfully!"
                 });
             }

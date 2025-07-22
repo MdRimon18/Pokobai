@@ -36,7 +36,7 @@ namespace Domain.DbContex
         public DbSet<ProductVariantAttribute> ProductVariantAttributes { get; set; }
         public DbSet<Attributte> Attributtes { get; set; }
         public DbSet<AttributteValue> AttributteValues { get; set; }
-
+        public DbSet<OrderStage> OrderStages { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

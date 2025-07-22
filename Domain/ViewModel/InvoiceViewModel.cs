@@ -1,4 +1,5 @@
-﻿using Domain.Entity.Settings;
+﻿using Domain.Entity;
+using Domain.Entity.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace Domain.ViewModel
         public List<PaymentTypes> PaymentTypesList { get; set; } = new List<PaymentTypes>();
         public List<Customers> CustomersList { get; set; } =new List<Customers>();
         public List<ProductSerialNumbers> SerialNumbers { get; set; } = new List<ProductSerialNumbers>();
-       
+        public List<OrderStage> OrderStages { get; set; } = new List<OrderStage>();
         public string CustomerEmail { get; set; }
         public string CustomerName { get; set; }
         public long CustomerId { get; set; }

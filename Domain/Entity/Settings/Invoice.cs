@@ -62,10 +62,14 @@ namespace Domain.Entity.Settings
         public string? Email { get; set; }
         public string? MobileNo { get; set; }
         public string? InvoiceTypeName { get; set; }
+        public int? OrderStageId { get; set; }
         [NotMapped]
         public string? DeliverAddress { get; set; }
         [NotMapped]
         public string? FormattedEntryDateTime { get; set; }
+        [NotMapped]
+        public string? OrderStageName { get; set; }
+        
         //private void RecalculateTotalPayable()
         //{
         //    TotalPayable = TotalAmount + TotalVat - TotalDiscount - TotalAddiDiscount;

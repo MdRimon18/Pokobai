@@ -104,7 +104,8 @@ namespace Domain.Services.Inventory
                 parameters.Add("@DeliveryAddressId", invoice.DeliveryAddressId);
                 parameters.Add("@ExpirationDate", invoice.ExpirationDate);
 				parameters.Add("@EntryDateTime", invoice.EntryDateTime);
-				parameters.Add("@EntryBy", invoice.EntryBy);
+                parameters.Add("@OrderStageId", invoice.OrderStageId);
+                parameters.Add("@EntryBy", invoice.EntryBy);
 				parameters.Add("@LastModifyDate", invoice.LastModifyDate);
 				parameters.Add("@LastModifyBy", invoice.LastModifyBy);
 				parameters.Add("@DeletedDate", invoice.DeletedDate);

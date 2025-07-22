@@ -44,8 +44,8 @@
                         <th class="text-900 sort pe-1 align-middle white-space-nowrap sortable-header" >Total Qnty.</th>
                          <th class="text-900 sort pe-1 align-middle white-space-nowrap sortable-header" >Total Amount </th>
                           <th class="text-900 sort pe-1 align-middle white-space-nowrap sortable-header" > Received Amount</th>
-                        <th class="text-900 sort pe-1 align-middle white-space-nowrap sortable-header">Due Amount</th>
-                        
+                         <th class="text-900 sort pe-1 align-middle white-space-nowrap sortable-header">Due Amount</th>
+                        <th class="text-900 sort pe-1 align-middle white-space-nowrap sortable-header">Order Stage</th>
                         <th class="align-middle no-sort"></th>
                     </tr>
                 </thead>
@@ -162,6 +162,7 @@
                  <td class="joined align-middle py-2">${item.totalPayable}</td>
                   <td class="joined align-middle py-2">${item.recieveAmount}</td>
                    <td class="joined align-middle py-2">${item.dueAmount}</td>
+                   <td class="joined align-middle py-2">${item.orderStageName}</td>
                    <td class="align-middle white-space-nowrap py-2 text-end">
         <button class="btn btn-sm btn-primary me-1" onclick="loadPage('/Invoice/Create?key=${item.invoiceKey}')">
             <i class="fas fa-edit me-1"></i> 

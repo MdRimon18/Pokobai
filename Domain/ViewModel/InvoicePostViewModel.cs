@@ -25,6 +25,7 @@ namespace Domain.ViewModel
             public string NotificationById { get; set; }
             public string InvoiceDate { get; set; }
             public string? Seller { get; set; }
+            public int? OrderStageId { get; set; }
             public string PaymentTypeId { get; set; }
             public string? CategoryId { get; set; }
             public string SubCategoryId { get; set; }
@@ -49,10 +50,11 @@ namespace Domain.ViewModel
             public long ItemId { get; set; }
             public int RowIndex { get; set; }
             public int ProductId { get; set; }
+            public long InvoiceItemId { get; set; }
             public float Quantity { get; set; }
             public float SellingPrice { get; set; }
-        public decimal BuyingPrice { get; set; } = 0;
-        public float DiscountPercentg { get; set; }
+          public decimal BuyingPrice { get; set; } = 0;
+          public float DiscountPercentg { get; set; }
           public string? ProductImage { get; set; }
           public string CategoryName { get; set; }
           public string ProductName { get; set; }
