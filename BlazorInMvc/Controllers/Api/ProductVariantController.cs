@@ -1,6 +1,8 @@
 ﻿using Domain.CommonServices;
+using Domain.Entity;
 using Domain.Entity.Inventory;
 using Domain.Helper;
+using Domain.Services;
 using Domain.Services.Inventory;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,10 +15,10 @@ namespace BlazorInMvc.Controllers.Api
     public class ProductVariantController : ControllerBase
     {
         private readonly ILogger<ProductController> _logger;
-        private readonly ProductVariantService _productVariantService;
+        private readonly ProductVarientService _productVariantService;
         private readonly ProductSpecificationService _productSpecificationService;
         private readonly ProductService _productService;
-        public ProductVariantController(ProductVariantService productVariantSerivice,
+        public ProductVariantController(ProductVarientService productVariantSerivice,
             ProductSpecificationService productSpecificationService,
             ProductService productService, ILogger<ProductController> logger)
         {
@@ -29,9 +31,9 @@ namespace BlazorInMvc.Controllers.Api
 
         [HttpPost]
         [Route("api/ProductVariant/SaveOrUpdate")]
-        public async Task<IActionResult> SaveOrUpdate([FromForm] ProductVariant model)
+        public async Task<IActionResult> SaveOrUpdate([FromForm] ProductVariants model)
         {
-            List<ProductVariant> productVariants = new List<ProductVariant>();
+            List<ProductVariants> productVariants = new List<ProductVariants>();
             if (model.file != null || model.file?.Length > 0)
             {
                 // Get the base URL
@@ -50,11 +52,11 @@ namespace BlazorInMvc.Controllers.Api
 
             try
             {
-                long responseId = (long)await _productVariantService.SaveOrUpdate(model);
-                model.ProductVariantId = responseId;
+               // long responseId = (long)await _productVariantService.SaveOrUpdate(model);
+               // model.ProductVariantId = responseId;
 
-                productVariants = (List<ProductVariant>)await _productVariantService.Get(null, model.ProductId, null, null,null,null,null,GlobalPageConfig.PageNumber,
-                    GlobalPageConfig.PageSize);
+                //productVariants = (List<ProductVariant>)await _productVariantService.Get(null, model.ProductId, null, null,null,null,null,GlobalPageConfig.PageNumber,
+                //    GlobalPageConfig.PageSize);
             }
             catch (Exception ex)
             {
@@ -83,7 +85,7 @@ namespace BlazorInMvc.Controllers.Api
         [Route("api/ProductVariant/GetByVariantIdId")]
         public async Task<IActionResult> GetProductImageById(long productVariantId)
         {
-            var productVariant = await _productVariantService.GetById(productVariantId);
+            var productVariant = new ProductVariants();//await _productVariantService.ProductVarients(productVariantId);
             if (productVariant == null)
             {
                 return NotFound(
@@ -114,7 +116,7 @@ namespace BlazorInMvc.Controllers.Api
 
             try
             {
-                var result = await _productVariantService.Delete(productVariantId);
+                var result = true;//await _productVariantService.Delete(productVariantId);
                 if (result)
                 {
                     return Ok(new { isSuccess = true, message = "Product Variant deleted successfully." });

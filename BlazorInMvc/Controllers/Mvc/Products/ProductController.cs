@@ -5,6 +5,7 @@ using Domain.Services;
 using Domain.Services.Inventory;
 using Domain.ViewModel;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Caching.Memory;
 using System.Drawing.Printing;
 
@@ -31,7 +32,7 @@ namespace BlazorInMvc.Controllers.Mvc.Products
         private readonly ProductMediaService _productMediaService;
         private readonly ProductSpecificationService _productSpecificationService;
         private readonly ProductSerialNumbersService _productSerialNumbersService;
-        private readonly ProductVariantService _productVariantService;
+        private readonly ProductVarientService _productVariantService;
         public ProductController(IMemoryCache cache,
             ProductService ProductService,
               UnitService unitService,
@@ -51,8 +52,8 @@ namespace BlazorInMvc.Controllers.Mvc.Products
             ProductMediaService productMediaService,
             ProductSpecificationService productSpecificationService,
             ProductSerialNumbersService productSerialNumbersService,
-            ProductVariantService productVariantService
-
+            ProductVarientService productVariantService
+ 
           )
         {
             _cache = cache;
@@ -287,8 +288,12 @@ namespace BlazorInMvc.Controllers.Mvc.Products
                 obj.ProductImages=(await _productMediaService.Get(null, null, id, null)).ToList();
                 obj.Specification_list =(await _productSpecificationService.Get(null, null, id, null, null, GlobalPageConfig.PageNumber, GlobalPageConfig.PageSize)).ToList();
                 obj.ProductSerialNumbers_list = (await _productSerialNumbersService.Get(null, null, id, null, null, null, null, null, null, null, null, GlobalPageConfig.PageNumber, GlobalPageConfig.PageSize)).ToList();
-                obj.ProductVariants = (await _productVariantService.Get(null, id, null, null, null, null, null, GlobalPageConfig.PageNumber,
-                    GlobalPageConfig.PageSize)).ToList();
+                obj.ProductVariants =await _productVariantService.ProductVarients();
+                obj.AttributeValueList = (_productVariantService.GetAttributeValues().Select(a => new SelectListItem
+                {
+                    Value = a.AttributeValueId.ToString(),
+                    Text = a.AttrbtValue
+                }).ToList());
             }
             else
             {

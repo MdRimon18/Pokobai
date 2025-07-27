@@ -1,4 +1,5 @@
-﻿using Domain.DbContex;
+﻿using Domain.CommonServices;
+using Domain.DbContex;
 using Domain.Entity;
 using Domain.ViewModel;
 using System;
@@ -83,6 +84,7 @@ namespace Domain.Services
 
                 if (attribute == null)
                     return false;
+                attribute.CompanyId = CompanyInfo.CompanyId;
 
                 if (model.AttributteId != 0)
                 {

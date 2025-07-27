@@ -4,6 +4,7 @@ using Domain.Entity.Inventory;
 using Domain.Entity.Settings;
 using Domain.Helper;
 using Domain.ResponseModel;
+using Domain.Services;
 using Domain.Services.Inventory;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -25,10 +26,10 @@ namespace BlazorInMvc.Controllers.Api
         private readonly ProductMediaService _productMediaService;
         private readonly ProductSpecificationService _productSpecificationService;
         private readonly ProductService _productService;
-        private readonly ProductVariantService _productVariantService;
+        private readonly ProductVarientService _productVariantService;
         public ProductController(ProductMediaService productMediaService,
             ProductSpecificationService productSpecificationService,
-            ProductService productService, ILogger<ProductController> logger, ProductVariantService productVariantService)
+            ProductService productService, ILogger<ProductController> logger, ProductVarientService productVariantService)
         {
             _productMediaService = productMediaService;
             _productSpecificationService = productSpecificationService;
@@ -145,10 +146,7 @@ namespace BlazorInMvc.Controllers.Api
 
                 foreach (var item in product_list)
                 {
-                    item.ProductVariants = (await _productVariantService.Get(null, item.ProductId,
-                        null, null, null, null,
-                        null, GlobalPageConfig.PageNumber,
-                       GlobalPageConfig.PageSize)).ToList();
+                    item.ProductVariants = await _productVariantService.ProductVarients();
                     foreach (var variant in item.ProductVariants)
                     {
                         if (!string.IsNullOrWhiteSpace(variant.ImageUrl) && !variant.ImageUrl.StartsWith(baseUrl))
@@ -282,7 +280,7 @@ namespace BlazorInMvc.Controllers.Api
                             pageSize)).ToList();
                 foreach (var item in product_list)
                 {
-                    item.ProductVariants = (await _productVariantService.Get(null, item.ProductId, null, null, null, null, null, 1, 500)).ToList();
+                    item.ProductVariants = (await _productVariantService.ProductVarientsByProductId(item.ProductId)).ToList();
                 }
                 if (product_list.Count == 0)
                 {

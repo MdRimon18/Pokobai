@@ -70,7 +70,7 @@ public static class ServiceRegistrationExtensions
 
 
         services.AddScoped<BodyPartService>();
-        services.AddScoped<ProductVariantService>();
+        services.AddScoped<ProductVarientService>();
         services.AddScoped<ItemCardService>();
 
         services.AddScoped<UserAddressBookService>();

@@ -20,6 +20,35 @@ namespace Domain.Services
         {
             _context = context;
         }
+
+        public async Task<List<ProductVariants>> ProductVarients()
+        {
+            try
+            {
+                return await _context.ProductVariants
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                // TODO: Log exception
+                // Console.WriteLine($"Error in GetAttributeValues: {ex.Message}");
+                return null;
+            }
+        }
+        public async Task<List<ProductVariants>> ProductVarientsByProductId(long productId)
+        {
+            try
+            {
+                return await _context.ProductVariants.Where(w=>w.ProductId== productId)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                // TODO: Log exception
+                // Console.WriteLine($"Error in GetAttributeValues: {ex.Message}");
+                return null;
+            }
+        }
         public List<AttributteViewModel> GetAttributes()
         {
             try
@@ -39,6 +68,20 @@ namespace Domain.Services
             {
                 // TODO: Log exception (e.g., using ILogger)
                 // Console.WriteLine($"Error in GetAttributes: {ex.Message}");
+                return null;
+            }
+        }
+        public List<AttributteValue> GetAttributeValues()
+        {
+            try
+            {
+                return _context.AttributteValues
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                // TODO: Log exception
+                // Console.WriteLine($"Error in GetAttributeValues: {ex.Message}");
                 return null;
             }
         }

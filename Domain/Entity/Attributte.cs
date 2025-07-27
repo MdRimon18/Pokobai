@@ -1,4 +1,5 @@
 ﻿using Domain.Entity.Settings;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -14,7 +15,8 @@ namespace Domain.Entity
         [Key]
         public long ProductVariantId { get; set; }
 
-       // [ForeignKey("Products")]
+        // [ForeignKey("Products")]
+        //[Required]
         public long ProductId { get; set; }
         //public virtual Products Product { get; set; }
 
@@ -25,7 +27,7 @@ namespace Domain.Entity
         public decimal PriceAdjustment { get; set; }
 
         [Range(0, int.MaxValue)]
-        public int? StockQuantity { get; set; }
+        public int StockQuantity { get; set; } = 0;
 
         [StringLength(500)]
         public string? ImageUrl { get; set; }
@@ -39,8 +41,12 @@ namespace Domain.Entity
         public string Status { get; set; } = "Active";
 
         public DateTime LastModified { get; set; } = DateTime.UtcNow;
-
+     
         public virtual ICollection<ProductVariantAttribute> ProductVariantAttributes { get; set; } = new List<ProductVariantAttribute>();
+        [NotMapped]
+        public List<int> AttributeValuesId { get; set; } = new();
+        [NotMapped]
+        public IFormFile? file { get; set; }
     }
 
     public class ProductVariantAttribute
@@ -71,6 +77,7 @@ namespace Domain.Entity
         [Key]
         public int AttributteId { get; set; }
         public Guid AttributteKey { get; set; } = Guid.NewGuid();
+        public long CompanyId { get; set; } 
 
         [StringLength(200)]
         public string AttributeName { get; set; }

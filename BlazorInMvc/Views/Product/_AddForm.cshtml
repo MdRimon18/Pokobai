@@ -1,6 +1,7 @@
 ﻿
 @using Domain.CommonServices
 @using Domain.Entity.Settings
+
 @model Products
 <div class="row" id="ProductSettingsLoader" style="display: none;">
     <div class="d-flex justify-content-center align-items-center" style="height: 100%;">
@@ -422,15 +423,10 @@
                             <div class="row gx-2 flex-between-center mb-3 ">
                                 <div class="col-sm-1">Images</div>
                                 <div class="col-sm-1">SKU</div>
-                                <div class="col-sm-1">Color</div>
-                                <div class="col-sm-1">Size</div>
-                                <div class="col-sm-1">Weight</div>
-                                <div class="col-sm-1">Width</div>
-                                <div class="col-sm-1">Length</div>
+                                <div class="col-sm-1">Price</div>
                                 <div class="col-sm-1">Stock Qty.</div>
-                                <div class="col-sm-1">Body Part</div>
-                                <div class="col-sm-1">Position</div>
-                                <div class="col-sm-1">IsPrimary</div>
+                            <div class="col-sm-2">Attribute Values</div>
+ 
                                 <div class="col-sm-1">Action</div>
                             </div>
                         @if (Model.ProductVariants?.Count() > 0)
@@ -457,51 +453,17 @@
                                                     <h6 class="mb-0 text-700">@img.SkuNumber</h6>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-1">
-                                                <div class="d-flex flex-between-center">
-                                                    <h6 class="mb-0 text-700">@img.Color</h6>
-                                                </div>
+                                        <div class="col-sm-1">
+                                            <div class="d-flex flex-between-center">
+                                                <h6 class="mb-0 text-700">price</h6>
                                             </div>
-                                            <div class="col-sm-1">
-                                                <div class="d-flex flex-between-center">
-                                                    <h6 class="mb-0 text-700">@img.Size</h6>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-1">
-                                                <div class="d-flex flex-between-center">
-                                                    <h6 class="mb-0 text-700">@img.Weight</h6>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-1">
-                                                <div class="d-flex flex-between-center">
-                                                    <h6 class="mb-0 text-700">@img.Width</h6>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-1">
-                                                <div class="d-flex flex-between-center">
-                                                    <h6 class="mb-0 text-700">@img.Length</h6>
-                                                </div>
-                                            </div>
+                                        </div>
                                             <div class="col-sm-1">
                                                 <div class="d-flex flex-between-center">
                                                     <h6 class="mb-0 text-700">@img.StockQuantity</h6>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-1">
-                                                <div class="d-flex flex-between-center">
-                                                    <h6 class="mb-0 text-700">@img.BodyPartName</h6>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-1">
-                                                <div class="d-flex flex-between-center">
-                                                    <h6 class="mb-0 text-700">@img.Position</h6>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-1">
-                                                <div class="d-flex flex-between-center">
-                                                    <h6 class="mb-0 text-700">@img.IsPrimary</h6>
-                                                </div>
-                                            </div>
+                                             
                                             <div class="col-sm-1">
                                                 <div class="d-flex flex-between-center">
                                                 <button class="btn btn-falcon-default btn-sm" type="button" onclick="LoadProductVariantEditModeData('@img.ProductVariantId')">
@@ -535,77 +497,25 @@
                                 <span class="text-left invalid-message-SkuNumber"></span>
                             </div>
                             <div class="col-sm-2">
-                                <select class="form-control form-control-sm form-rounded fw-semi-bold" id="VariantColor">
-                                    <option value="">Select Color</option>
-                                    @foreach (var c in Model.ColorList)
-                                    {
-                                        <option value="@c.ColorIdName">@c.ColorIdName</option>
-                                    }
-                                </select>
 
-                                <span class="text-left invalid-message-ColorIdName"></span>
+                                <input class="form-control form-control-sm form-label fw-semi-bold" id="VariantPrice" type="text" placeholder="Price" />
+                                <span class="text-left invalid-message-VarientPrice"></span>
                             </div>
-                            
-                            <div class="col-sm-2">
-                                <select class="form-control form-control-sm form-rounded fw-semi-bold" id="VariantSize">
-                                    <option value="">Select Size</option>
-                                    @foreach (var s in Model.ProductSizeList)
-                                    {
-                                        <option value="@s.ProductSizeName">@s.ProductSizeName</option>
-                                    }
-                                </select>
 
-                                <span class="text-left invalid-message-Size"></span>
-                            </div>
-                            <div class="col-sm-2">
 
-                                <input class="form-control form-control-sm form-label fw-semi-bold" id="VariantWeight" type="text" placeholder="Weight" />
-                                <span class="text-left invalid-message-Weight"></span>
-                            </div>
-                            <div class="col-sm-2">
 
-                                <input class="form-control form-control-sm form-label fw-semi-bold" id="VariantHeight" type="text" placeholder="Height" />
-                                <span class="text-left invalid-message-Height"></span>
-                            </div>
-                            <div class="col-sm-2">
-
-                                <input class="form-control form-control-sm form-label fw-semi-bold" id="VariantWidth" type="text" placeholder="Width" />
-                                <span class="text-left invalid-message-Width"></span>
-                            </div>
-                            <div class="col-sm-2">
-
-                                <input class="form-control form-control-sm form-label fw-semi-bold" id="VariantLength" type="text" placeholder="Length" />
-                                <span class="text-left invalid-message-Length"></span>
-                            </div>
                             <div class="col-sm-2">
 
                                 <input class="form-control form-control-sm form-label fw-semi-bold" id="VariantStockQuantity" type="text" placeholder="Stock Qty." />
                                 <span class="text-left invalid-message-StockQuantity"></span>
                             </div>
-                            
-                            <div class="col-sm-2">
-                                <select class="form-control form-control-sm form-rounded fw-semi-bold" id="VariantBodyPartName">
-                                    <option value="">Select Body Part</option>
-                                    @foreach (var item in Model.BodyParts)
-                                    {
-                                        <option value="@item.BodyPartName">@item.BodyPartName</option>
-                                    }
-                                </select>
-                                <span class="text-left invalid-message-BodyPartName"></span>
-                            </div>
-                            <div class="col-sm-2">
-                                <input class="form-control form-control-sm form-label fw-semi-bold" id="VariantPosition" type="text" placeholder="Position" />
-                                <span class="text-left invalid-message-Position"></span>
-                            </div>
-                            <div class="col-sm-2">
-                                <div class="form-check">
-                                    <input class="form-check-input" id="VariantIsPrimary" type="checkbox" />
-                                    <label class="form-check-label fw-semi-bold" for="IsPrimary">Is Primary</label>
-                                </div>
-                                <span class="text-left invalid-message-IsPrimary"></span>
+
+                            <div class="col-sm-3">
+                                <select id="attributeValueIds" name="AttributteValueIds" class="form-control" multiple="multiple"></select>
+                                <span class="text-danger invalid-message-AttributeValuesId"></span>
                             </div>
 
-                            <div class="col-sm-2">
+                            <div class="col-sm-1">
                                 <div class="d-flex gap-2 flex-between-center">
                                    
                                     <input type="hidden" id="VariantId" value="@Model.ProductVariant.ProductVariantId" />
@@ -621,6 +531,7 @@
 
                     </div>
 
+              
 
 
                 </div>
@@ -947,6 +858,7 @@
 </div>
 
 <script src="~/assets/js/jquery-3.6.0.min.js"></script>
+<script src="~/js/select2.min.js"></script>
 <script>
    
     $(document).ready(function () {
@@ -1243,33 +1155,68 @@
         });
     }
 </script>
+
 <script>
+    
+         $(document).ready(function () {
+            populateAttributeValuesDropdowns();
+            initializeSelect2();
+        });
+
+        function initializeSelect2() {
+            const $dropdown = $('#attributeValueIds');
+
+            // Initialize Select2 if not already initialized
+            if (!$dropdown.hasClass("select2-hidden-accessible")) {
+                $dropdown.select2({
+                    placeholder: "Select attribute values",
+                    allowClear: true,
+                    multiple: true,
+                    width: '100%'
+                    // dropdownParent: $('#productAttributeModal') // uncomment if inside modal
+                }).on('select2:open', function () {
+                    console.log('Select2 opened for attributeValueIds');
+                }).on('select2:select', function () {
+                    console.log('Select2 selection updated:', $dropdown.val());
+                });
+            }
+        }
+
+        function populateAttributeValuesDropdowns() {
+            const attributeValuesFromModel = @Html.Raw(Json.Serialize(Model.AttributeValueList));
+            console.log(attributeValuesFromModel);
+            const $dropdown = $('#attributeValueIds');
+
+            $dropdown.empty(); // Clear existing options
+            $dropdown.append('<option disabled>Choose</option>');
+
+            attributeValuesFromModel.forEach(function (item) {
+                $dropdown.append(
+                    $('<option>', {
+                        value: item.value,
+                        text: item.text
+                    })
+                );
+            });
+
+            $dropdown.trigger('change'); // Let Select2 refresh properly
+        }
          // Save Product Variant
-    function saveProductVariant() {
+             function saveProductVariant() {
         const submitButton = $('#SaveProductVariantButton');
 
         // Gather values
-         const productId = $('#ProductId').val();
-      
-
-        if (productId <= 0) {
-
-             showDangerToast('Please select a Product First.');
+        const productId = parseInt($('#ProductId').val());
+        if (isNaN(productId) || productId <= 0) {
+            showDangerToast('Please select a valid Product.');
             return;
         }
 
         const fileInput = $('#VariantFileInput')[0].files[0];
         const skuNumber = $('#VariantSkuNumber').val();
-        const color = $('#VariantColor').val();
-        const size = $('#VariantSize').val();
-        const weight = $('#VariantWeight').val();
-        const height = $('#VariantHeight').val();
-        const width = $('#VariantWidth').val();
-        const length = $('#VariantLength').val();
+        const price = $('#VariantPrice').val();
         const stockQuantity = $('#VariantStockQuantity').val();
-        const bodyPartName = $('#VariantBodyPartName').val();
-        const position = $('#VariantPosition').val();
-        const isPrimary = $('#VariantIsPrimary').is(':checked');
+        const attributeValueIds = $('#attributeValueIds').val();
         const productVariantId = $('#VariantId').val();
         const imageUrl = $('#VariantImageUrl').val();
 
@@ -1278,78 +1225,88 @@
             showDangerToast('SKU is required.');
             return;
         }
-        if (!color) {
-            showDangerToast('Please select a color.');
-            return;
-        }
-        // if (!bodyPartName) {
-        //     showDangerToast('Please select a body part.');
-        //     return;
-        // }
-        // if (!fileInput && productMediaId == 0) {
-        //     showDangerToast('Please select a file.');
-        //     return;
-        // }
 
-        // Create FormData to handle file and other inputs
+        // Create FormData
         const formData = new FormData();
-        formData.append('file', fileInput);
+        if (fileInput) {
+            formData.append('file', fileInput);
+        }
         formData.append('SkuNumber', skuNumber);
-        formData.append('Color', color);
-        formData.append('Size', size);
-        formData.append('Weight', weight);
-        formData.append('Height', height);
-        formData.append('Width', width);
-        formData.append('Length', length);
+        formData.append('PriceAdjustment', price);
         formData.append('StockQuantity', stockQuantity);
-        formData.append('BodyPartName', bodyPartName);
-        formData.append('Position', position);
-        formData.append('IsPrimary', isPrimary);
         formData.append('ProductVariantId', productVariantId);
         formData.append('ImageUrl', imageUrl);
-        formData.append('ProductId',parseInt(productId));
-        // Disable the button to prevent multiple clicks
+        formData.append('ProductId', productId);
+        formData.append('Status', 'Active');
+        formData.append('Position', 0);
+
+        // Handle AttributeValuesId
+        if (Array.isArray(attributeValueIds)) {
+            attributeValueIds.forEach((id, index) => {
+                formData.append(`AttributeValuesId[${index}]`, id);
+            });
+        } else {
+            formData.append('AttributeValuesId', attributeValueIds || '');
+        }
+
+        // Log FormData for debugging
+        console.log('FormData contents:');
+        for (var pair of formData.entries()) {
+            console.log(`${pair[0]}: ${pair[1]}`);
+        }
+
+        // Disable the button
         submitButton.prop('disabled', true);
 
         // Send data via AJAX
         $.ajax({
-            url: '/api/ProductVariant/SaveOrUpdate', // Adjust endpoint as necessary
+            url: '/api/ProductVariant/SaveOrUpdate',
             type: 'POST',
             data: formData,
-            processData: false, // Prevent jQuery from processing data
-            contentType: false, // Allow the browser to set the Content-Type
+            processData: false,
+            contentType: false,
             success: function (response) {
                 if (response.isSuccess) {
                     showSuccessToast('Product variant saved successfully.');
-
-                    // Update the variant list or UI as needed
-                    updateProductVariantList(response.data.productVariants);
-
-                    // Reset the form fields
                     $('#VariantSkuNumber').val('');
-                    $('#VariantColor').val('');
-                    $('#VariantSize').val('');
-                    $('#VariantWeight').val('');
-                    $('#VariantHeight').val('');
-                    $('#VariantWidth').val('');
-                    $('#VariantLength').val('');
+                    $('#VariantPrice').val(0);
                     $('#VariantStockQuantity').val('');
-                    $('#VariantBodyPartName').val('');
-                    $('#VariantPosition').val('');
-                    $('#VariantIsPrimary').prop('checked', false);
                     $('#VariantFileInput').val('');
                     $('#VariantPreviewImage').attr('src', '').hide();
-                    $('#VariantId').val(0);
+                    $('#ProductVariantId').val(0);
                     $('#VariantImageUrl').val('');
-
-                    // Update button text
                     submitButton.text('Add');
                 } else {
-                    showDangerToast('Failed to save product variant.');
+                    console.error('Server responded with failure:', response);
+                    showDangerToast('Failed to save product variant: ' + (response.errors?.join(', ') || 'Unknown error'));
                 }
             },
-            error: function () {
-                showDangerToast('An error occurred while saving the product variant.');
+            error: function (xhr, status, error) {
+                // Log detailed error information
+                console.error('AJAX error occurred:', {
+                    status: xhr.status,
+                    statusText: xhr.statusText,
+                    responseText: xhr.responseText,
+                    responseJSON: xhr.responseJSON,
+                    error: error
+                });
+
+                // Prepare user-friendly error message
+                let errorMessage = 'An error occurred while saving the product variant.';
+                if (xhr.responseJSON && xhr.responseJSON.errors) {
+                    errorMessage += ' Details: ' + xhr.responseJSON.errors.join(', ');
+                } else if (xhr.responseText) {
+                    try {
+                        const parsedError = JSON.parse(xhr.responseText);
+                        errorMessage += ' Details: ' + (parsedError.message || parsedError.errors?.join(', ') || 'Unknown server error');
+                    } catch (e) {
+                        errorMessage += ' Details: ' + xhr.responseText;
+                    }
+                } else {
+                    errorMessage += ' Status: ' + xhr.status + ' ' + xhr.statusText;
+                }
+
+                showDangerToast(errorMessage);
             },
             complete: function () {
                 submitButton.prop('disabled', false);

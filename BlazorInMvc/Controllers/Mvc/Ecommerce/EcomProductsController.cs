@@ -1,4 +1,5 @@
 ﻿using Domain.CommonServices;
+using Domain.Services;
 using Domain.Services.Inventory;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -10,12 +11,12 @@ namespace BlazorInMvc.Controllers.Mvc.Ecommerce
     {
         private readonly IMemoryCache _cache;
         private readonly ProductService _productService;
-        private readonly ProductVariantService _productVariantService;
+        private readonly ProductVarientService _productVariantService;
         private readonly ProductMediaService _productMediaService;
         private readonly ProductSpecificationService _productSpecificationService;
         public EcomProductsController(IMemoryCache cache,
             ProductService ProductService,
-            ProductVariantService productVariantService,
+            ProductVarientService productVariantService,
              ProductMediaService productMediaService,
              ProductSpecificationService productSpecificationService)
         {
@@ -44,10 +45,7 @@ namespace BlazorInMvc.Controllers.Mvc.Ecommerce
                 pageSize)).ToList();
             foreach (var item in list)
             {
-                item.ProductVariants = (await _productVariantService.Get(null, item.ProductId,
-                    null, null, null, null,
-                    null, GlobalPageConfig.PageNumber,
-                   GlobalPageConfig.PageSize)).ToList();
+                item.ProductVariants = await _productVariantService.ProductVarients();
 
                 item.Specification_list = (await _productSpecificationService.Get(null, null, item.ProductId, null, null, GlobalPageConfig.PageNumber, GlobalPageConfig.PageSize)).ToList();
                 var specifications = item.Specification_list.Take(2);
@@ -64,10 +62,7 @@ namespace BlazorInMvc.Controllers.Mvc.Ecommerce
            var product =   await  _productService.GetByKey(key);
             if(product is not null)
             {
-                product.ProductVariants = (await _productVariantService.Get(null, product.ProductId,
-                  null, null, null, null,
-                  null, GlobalPageConfig.PageNumber,
-                 GlobalPageConfig.PageSize)).ToList();
+                product.ProductVariants = await _productVariantService.ProductVarientsByProductId(product.ProductId);
 
 
                 product.ProductImages = (await _productMediaService.Get(null, null, product.ProductId, null)).ToList();
