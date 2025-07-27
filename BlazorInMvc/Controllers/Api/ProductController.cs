@@ -280,7 +280,7 @@ namespace BlazorInMvc.Controllers.Api
                             pageSize)).ToList();
                 foreach (var item in product_list)
                 {
-                    item.ProductVariants = (await _productVariantService.ProductVarientsByProductId(item.ProductId)).ToList();
+                    item.ProductVariantV2 = new List<ProductVariant>();// this code is wrong check and update it (await _productVariantService.ProductVarientsByProductId(item.ProductId)).ToList();
                 }
                 if (product_list.Count == 0)
                 {

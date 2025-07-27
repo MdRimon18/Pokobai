@@ -52,9 +52,11 @@ namespace BlazorInMvc.Controllers.Api
 
             try
             {
-               // long responseId = (long)await _productVariantService.SaveOrUpdate(model);
-               // model.ProductVariantId = responseId;
-
+                var isSavedOrUpdated  = await _productVariantService.SaveProductVariantWithProductVariantAttribute(model);
+               // if (isSavedOrUpdated)
+               // {
+                   productVariants= await _productVariantService.ProductVarientsByProductId(model.ProductId);
+                //}
                 //productVariants = (List<ProductVariant>)await _productVariantService.Get(null, model.ProductId, null, null,null,null,null,GlobalPageConfig.PageNumber,
                 //    GlobalPageConfig.PageSize);
             }

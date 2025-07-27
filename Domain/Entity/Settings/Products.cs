@@ -150,6 +150,9 @@ namespace Domain.Entity.Settings
         [NotMapped]
         public List<ProductVariants> ProductVariants { get; set; } = new List<ProductVariants>();
         [NotMapped]
+        public List<ProductVariant> ProductVariantV2 { get; set; } = new List<ProductVariant>();
+
+        [NotMapped]
         public ProductVariants ProductVariant { get; set; } = new ProductVariants();
         public string? ProductShortSpecification { get; set; }
         public List<string>? TagList { get; set; }=new List<string>();

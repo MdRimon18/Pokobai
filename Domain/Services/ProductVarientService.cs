@@ -39,7 +39,7 @@ namespace Domain.Services
         {
             try
             {
-                return await _context.ProductVariants.Where(w=>w.ProductId== productId)
+                return await _context.ProductVariants.Where(w=>w.ProductId== productId).Include(i=>i.ProductVariantAttributes)
                     .ToListAsync();
             }
             catch (Exception ex)
@@ -47,6 +47,107 @@ namespace Domain.Services
                 // TODO: Log exception
                 // Console.WriteLine($"Error in GetAttributeValues: {ex.Message}");
                 return null;
+            }
+        }
+        public async Task<bool> SaveProductVariantWithProductVariantAttribute(ProductVariants model)
+        {
+            try
+            {
+                var productVariant = model.ProductVariantId == 0
+                    ? new ProductVariants
+                    {
+                        ProductId = model.ProductId,
+                        SkuNumber = model.SkuNumber,
+                        PriceAdjustment = model.PriceAdjustment,
+                        StockQuantity = model.StockQuantity,
+                        SupplierId = model.SupplierId,
+                        ImageUrl = model.ImageUrl,
+                        Position = model.Position,
+                        Status = model.Status ?? "Active",
+                        LastModified = DateTime.UtcNow
+                    }
+                    : await _context.ProductVariants.FindAsync(model.ProductVariantId);
+
+                if (productVariant == null)
+                    return false;
+
+                if (model.ProductVariantId > 0)
+                {
+                    productVariant.ProductId = model.ProductId;
+                    productVariant.SkuNumber = model.SkuNumber;
+                    productVariant.PriceAdjustment = model.PriceAdjustment;
+                    productVariant.StockQuantity = model.StockQuantity;
+                    productVariant.SupplierId = model.SupplierId;
+                    productVariant.ImageUrl = model.ImageUrl;
+                    productVariant.Position = model.Position;
+                    productVariant.Status = model.Status ?? "Active";
+                    productVariant.LastModified = DateTime.UtcNow;
+                }
+                else
+                {
+                    _context.ProductVariants.Add(productVariant);
+                }
+
+                await _context.SaveChangesAsync();
+
+                // Get existing attributes
+                var existingDetails = await _context.ProductVariantAttributes
+                    .Where(d => d.ProductVariantId == productVariant.ProductVariantId)
+                    .ToListAsync();
+
+                // Handle attribute values
+                if (model.AttributeValuesId != null && model.AttributeValuesId.Any())
+                {
+                    // Create a list of new/existing attribute value IDs to keep
+                    var incomingAttributeValueIds = model.AttributeValuesId.ToList();
+
+                    // Remove attributes that are not in the incoming list
+                    foreach (var existing in existingDetails)
+                    {
+                        if (!incomingAttributeValueIds.Contains(existing.AttributeValueId))
+                        {
+                            _context.ProductVariantAttributes.Remove(existing);
+                        }
+                    }
+
+                    // Add or update attributes
+                    foreach (var valueId in incomingAttributeValueIds)
+                    {
+                        var value = await _context.AttributteValues.FindAsync(valueId);
+                        if (value != null)
+                        {
+                            var existingAttribute = existingDetails
+                                .FirstOrDefault(d => d.AttributeValueId == valueId);
+
+                            if (existingAttribute == null)
+                            {
+                                // Add new attribute
+                                _context.ProductVariantAttributes.Add(new ProductVariantAttribute
+                                {
+                                    ProductVariantId = productVariant.ProductVariantId,
+                                    AttributeId = value.AttributeId,
+                                    AttributeValueId = valueId
+                                });
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    // If no attribute values provided, remove all existing attributes
+                    foreach (var existing in existingDetails)
+                    {
+                        _context.ProductVariantAttributes.Remove(existing);
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+                model.ProductVariantId = productVariant.ProductVariantId;
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
         public List<AttributteViewModel> GetAttributes()
