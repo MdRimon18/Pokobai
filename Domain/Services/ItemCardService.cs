@@ -2,6 +2,7 @@
 using Domain.CommonServices;
 using Domain.DbContex;
 using Domain.Entity;
+using Domain.Entity.Inventory;
 using Domain.Entity.Settings;
 using System;
 using System.Collections.Generic;
@@ -78,6 +79,7 @@ namespace Domain.Services
                 parameters.Add("@Price", itemCart.Price);
                 parameters.Add("@Discount", itemCart.Discount);
                 parameters.Add("@Vat", itemCart.Vat);
+                parameters.Add("@ProductVariantId", itemCart.ProductVariantId); 
                 if (itemCart.CartId > 0)
                 {
                     parameters.Add("@LastModifyDate", DateTime.UtcNow);
