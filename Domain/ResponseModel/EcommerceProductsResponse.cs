@@ -1,6 +1,7 @@
 ﻿using Domain.Entity;
 using Domain.Entity.Inventory;
 using Domain.Entity.Settings;
+using Domain.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -77,7 +78,7 @@ namespace Domain.ResponseModel
         public int total_row { get; set; } = 0;
         public List<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
         public string? ImageUrl { get; set; }
-        public List<ProductVariants> ProductVariants { get; set; } = new List<ProductVariants>();
+        public List<ProductVariantViewModel> ProductVariants { get; set; } = new List<ProductVariantViewModel>();
      
         public List<SpecificationGroupResponse> Specificationlist { get; set; } = new List<SpecificationGroupResponse>();
         public string? StockStatus { get; set; }

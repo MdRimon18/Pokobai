@@ -2,6 +2,7 @@
 
 using Domain.CommonServices;
 using Domain.Entity.Inventory;
+using Domain.ViewModel;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -148,7 +149,7 @@ namespace Domain.Entity.Settings
         //public string? VariantImageUrl { get; set; }
 
         [NotMapped]
-        public List<ProductVariants> ProductVariants { get; set; } = new List<ProductVariants>();
+        public List<ProductVariantViewModel> ProductVariants { get; set; } = new List<ProductVariantViewModel>();
         [NotMapped]
         public List<ProductVariant> ProductVariantV2 { get; set; } = new List<ProductVariant>();
 

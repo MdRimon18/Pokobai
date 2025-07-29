@@ -35,20 +35,117 @@ namespace Domain.Services
                 return null;
             }
         }
-        public async Task<List<ProductVariants>> ProductVarientsByProductId(long productId)
+        public async Task<List<ProductVariantViewModel>> ProductVarientsByProductId(long productId)
         {
             try
             {
-                return await _context.ProductVariants.Where(w=>w.ProductId== productId).Include(i=>i.ProductVariantAttributes)
-                    .ToListAsync();
+                var attributes = await (from pa in _context.ProductVariants.Where(w => w.ProductId == productId)
+                                        join pad in _context.ProductVariantAttributes
+                                            on pa.ProductVariantId equals pad.ProductVariantId into detailsGroup
+                                        from pad in detailsGroup.DefaultIfEmpty()
+                                        join av in _context.AttributteValues
+                                            on (pad != null ? pad.AttributeValueId : 0) equals av.AttributeValueId into valueGroup
+                                        from av in valueGroup.DefaultIfEmpty()
+                                        join attr in _context.Attributtes
+                                            on (pad != null ? pad.AttributeId : 0) equals attr.AttributteId into attrGroup
+                                        from attr in attrGroup.DefaultIfEmpty()
+                                        select new
+                                        {
+                                            ProductAttribute = pa,
+                                            AttributeName = attr != null ? attr.AttributeName : null,
+                                            AttributeValue = av != null ? av.AttrbtValue : null
+                                        })
+                                        .ToListAsync();
+
+                var result = attributes
+                    .GroupBy(x => x.ProductAttribute)
+                    .Select(g => new ProductVariantViewModel
+                    {
+                        ProductVariantId = g.Key.ProductVariantId,
+                        ProductId = g.Key.ProductId,
+                        SkuNumber=g.Key.SkuNumber,
+                        PriceAdjustment = g.Key.PriceAdjustment,
+                        StockQuantity = g.Key.StockQuantity,
+                        SupplierId = g.Key.SupplierId,
+                        Status = g.Key.Status,
+                        LastModified = g.Key.LastModified,
+                        AttributeDetailsText = g.Any(x => x.AttributeName != null && x.AttributeValue != null)
+                            ? string.Join(", ",
+                                g.Where(x => x.AttributeName != null && x.AttributeValue != null)
+                                 .GroupBy(x => x.AttributeName)
+                                 .Select(ag => $"{ag.Key}: {string.Join(", ", ag.Select(x => x.AttributeValue ?? "None"))}"))
+                            : string.Empty
+                    })
+                    .ToList();
+
+                return result;
             }
             catch (Exception ex)
             {
-                // TODO: Log exception
-                // Console.WriteLine($"Error in GetAttributeValues: {ex.Message}");
-                return null;
+                // Log the exception if needed
+                return new List<ProductVariantViewModel>();
             }
         }
+        public async Task<ProductVariantViewModel?> GetVariantForEditAsync(long productVariantId)
+        {
+            // Step 1: Get selected AttributeValueIds
+            var selectedAttributeValueIds = await _context.ProductVariantAttributes
+                .Where(pva => pva.ProductVariantId == productVariantId)
+                .Select(pva => pva.AttributeValueId)
+                .ToListAsync();
+
+            // Step 2: Load the variant (and attributes) using Include
+            var variantEntity = await _context.ProductVariants
+                .FirstOrDefaultAsync(v => v.ProductVariantId == productVariantId);
+
+            if (variantEntity == null)
+                return null;
+
+            // Step 3: Map to view model
+            var variant = new ProductVariantViewModel
+            {
+                ProductVariantId = variantEntity.ProductVariantId,
+                ProductId = variantEntity.ProductId,
+                SkuNumber = variantEntity.SkuNumber,
+                PriceAdjustment = variantEntity.PriceAdjustment,
+                StockQuantity = variantEntity.StockQuantity,
+                ImageUrl = variantEntity.ImageUrl,
+                Position = variantEntity.Position,
+                SupplierId = variantEntity.SupplierId,
+                Status = variantEntity.Status,
+                LastModified = variantEntity.LastModified,
+                AttributeValuesId = selectedAttributeValueIds,
+                //Attributes = variantEntity.ProductVariantAttributes.Select(attr => new ProductAttributeDetailViewModel
+                //{
+                //    AttributteId = attr.AttributeId,
+                //    AttributteName = attr.Attributte.AttributeName,
+                //    AttributteValueId = attr.AttributeValueId,
+                //    AttributteValue = attr.AttributeValue.AttrbtValue
+                //}).ToList()
+            };
+
+            // Step 4: Load all available attribute values
+            variant.AllAttributeValues = await _context.AttributteValues
+             .ToListAsync();
+
+            return variant;
+        }
+
+
+        //public async Task<List<ProductVariants>> ProductVarientsByProductId(long productId)
+        //{
+        //    try
+        //    {
+        //        return await _context.ProductVariants.Where(w=>w.ProductId== productId).Include(i=>i.ProductVariantAttributes)
+        //            .ToListAsync();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // TODO: Log exception
+        //        // Console.WriteLine($"Error in GetAttributeValues: {ex.Message}");
+        //        return null;
+        //    }
+        //}
         public async Task<bool> SaveProductVariantWithProductVariantAttribute(ProductVariants model)
         {
             try

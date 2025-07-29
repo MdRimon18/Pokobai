@@ -45,7 +45,7 @@ namespace BlazorInMvc.Controllers.Mvc.Ecommerce
                 pageSize)).ToList();
             foreach (var item in list)
             {
-                item.ProductVariants = await _productVariantService.ProductVarients();
+                item.ProductVariants = await _productVariantService.ProductVarientsByProductId(item.ProductId);
 
                 item.Specification_list = (await _productSpecificationService.Get(null, null, item.ProductId, null, null, GlobalPageConfig.PageNumber, GlobalPageConfig.PageSize)).ToList();
                 var specifications = item.Specification_list.Take(2);

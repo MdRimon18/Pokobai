@@ -146,7 +146,7 @@ namespace BlazorInMvc.Controllers.Api
 
                 foreach (var item in product_list)
                 {
-                    item.ProductVariants = await _productVariantService.ProductVarients();
+                    item.ProductVariants = await _productVariantService.ProductVarientsByProductId(productId);
                     foreach (var variant in item.ProductVariants)
                     {
                         if (!string.IsNullOrWhiteSpace(variant.ImageUrl) && !variant.ImageUrl.StartsWith(baseUrl))

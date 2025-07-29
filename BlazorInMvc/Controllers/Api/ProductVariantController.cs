@@ -4,6 +4,7 @@ using Domain.Entity.Inventory;
 using Domain.Helper;
 using Domain.Services;
 using Domain.Services.Inventory;
+using Domain.ViewModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -33,7 +34,7 @@ namespace BlazorInMvc.Controllers.Api
         [Route("api/ProductVariant/SaveOrUpdate")]
         public async Task<IActionResult> SaveOrUpdate([FromForm] ProductVariants model)
         {
-            List<ProductVariants> productVariants = new List<ProductVariants>();
+            List<ProductVariantViewModel> productVariants = new List<ProductVariantViewModel>();
             if (model.file != null || model.file?.Length > 0)
             {
                 // Get the base URL
@@ -87,7 +88,7 @@ namespace BlazorInMvc.Controllers.Api
         [Route("api/ProductVariant/GetByVariantIdId")]
         public async Task<IActionResult> GetProductImageById(long productVariantId)
         {
-            var productVariant = new ProductVariants();//await _productVariantService.ProductVarients(productVariantId);
+            var productVariant = await _productVariantService.GetVariantForEditAsync(productVariantId);
             if (productVariant == null)
             {
                 return NotFound(

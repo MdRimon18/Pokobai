@@ -455,7 +455,7 @@
                                             </div>
                                         <div class="col-sm-1">
                                             <div class="d-flex flex-between-center">
-                                                <h6 class="mb-0 text-700">price</h6>
+                                                <h6 class="mb-0 text-700">@img.PriceAdjustment</h6>
                                             </div>
                                         </div>
                                             <div class="col-sm-1">
@@ -463,7 +463,11 @@
                                                     <h6 class="mb-0 text-700">@img.StockQuantity</h6>
                                                 </div>
                                             </div>
-                                             
+                                        <div class="col-sm-2">
+                                            <div class="d-flex flex-between-center">
+                                                <h6 class="mb-0 text-700">@img.AttributeDetailsText</h6>
+                                            </div>
+                                        </div>
                                             <div class="col-sm-1">
                                                 <div class="d-flex flex-between-center">
                                                 <button class="btn btn-falcon-default btn-sm" type="button" onclick="LoadProductVariantEditModeData('@img.ProductVariantId')">
@@ -1275,7 +1279,10 @@
                     $('#VariantPreviewImage').attr('src', '').hide();
                     $('#ProductVariantId').val(0);
                     $('#VariantImageUrl').val('');
+               
+
                     submitButton.text('Add');
+
                 } else {
                     console.error('Server responded with failure:', response);
                     showDangerToast('Failed to save product variant: ' + (response.errors?.join(', ') || 'Unknown error'));
@@ -1337,23 +1344,33 @@
                     // Populate form fields
                     $('#VariantPreviewImage').attr('src', data.imageUrl || '/assets/commonimage/no-image.png').show();
                     $('#VariantSkuNumber').val(data.skuNumber);
-                    $('#VariantColor').val(data.color);
-                    $('#VariantSize').val(data.size);
-                    $('#VariantWeight').val(data.weight);
-                    $('#VariantHeight').val(data.height);
-                    $('#VariantWidth').val(data.width);
-                    $('#VariantLength').val(data.length);
                     $('#VariantStockQuantity').val(data.stockQuantity);
-                    $('#VariantBodyPartName').val(data.bodyPartName);
-                    $('#VariantPosition').val(data.position);
-                    $('#VariantIsPrimary').prop('checked', data.isPrimary);
-
+              
                     // Hidden inputs
                     $('#VariantId').val(data.productVariantId);
                     $('#VariantImageUrl').val(data.imageUrl);
 
                     // Update button text
                     $('#SaveProductVariantButton').text('Update');
+
+                       const selectedValues = data.attributeValuesId; // e.g., [1, 3]
+                        const allValues = data.allAttributeValues;     // e.g., [{value:1,text:"Red"}, ...]
+
+                        const $dropdown = $('#attributeValueIds');
+                        $dropdown.empty();
+                        console.log(allValues)
+                        allValues.forEach(function (item) {
+                            $dropdown.append(
+                                $('<option>', {
+                                    value: item.attributeValueId,
+                                    text: item.attrbtValue,
+                                    selected: selectedValues.includes(item.attributeValueId)
+                                })
+                            );
+                        });
+
+                        $dropdown.trigger('change'); // Refresh Select2 or dropdown
+                     
                 } else {
                     alert('Failed to load product variant details.');
                 }
@@ -1382,51 +1399,14 @@
                             <h6 class="mb-0 text-700">${variant.skuNumber || ''}</h6>
                         </div>
                     </div>
-                    <div class="col-sm-1">
-                        <div class="d-flex flex-between-center">
-                            <h6 class="mb-0 text-700">${variant.color || ''}</h6>
-                        </div>
-                    </div>
-                    <div class="col-sm-1">
-                        <div class="d-flex flex-between-center">
-                            <h6 class="mb-0 text-700">${variant.size || ''}</h6>
-                        </div>
-                    </div>
-                    <div class="col-sm-1">
-                        <div class="d-flex flex-between-center">
-                            <h6 class="mb-0 text-700">${variant.weight || ''}</h6>
-                        </div>
-                    </div>
-                    <div class="col-sm-1">
-                        <div class="d-flex flex-between-center">
-                            <h6 class="mb-0 text-700">${variant.width || ''}</h6>
-                        </div>
-                    </div>
-                    <div class="col-sm-1">
-                        <div class="d-flex flex-between-center">
-                            <h6 class="mb-0 text-700">${variant.length || ''}</h6>
-                        </div>
-                    </div>
+                    
+                    
                     <div class="col-sm-1">
                         <div class="d-flex flex-between-center">
                             <h6 class="mb-0 text-700">${variant.stockQuantity || ''}</h6>
                         </div>
                     </div>
-                    <div class="col-sm-1">
-                        <div class="d-flex flex-between-center">
-                            <h6 class="mb-0 text-700">${variant.bodyPartName || ''}</h6>
-                        </div>
-                    </div>
-                    <div class="col-sm-1">
-                        <div class="d-flex flex-between-center">
-                            <h6 class="mb-0 text-700">${variant.position || ''}</h6>
-                        </div>
-                    </div>
-                    <div class="col-sm-1">
-                        <div class="d-flex flex-between-center">
-                            <h6 class="mb-0 text-700">${variant.isPrimary ? 'Yes' : 'No'}</h6>
-                        </div>
-                    </div>
+                     
                     <div class="col-sm-1">
                         <div class="d-flex flex-between-center">
                             <button class="btn btn-falcon-default btn-sm" type="button" onclick="LoadProductVariantEditModeData('${variant.productVariantId}')">

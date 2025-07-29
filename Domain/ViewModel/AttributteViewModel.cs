@@ -1,5 +1,9 @@
-﻿using System;
+﻿using Domain.Entity;
+using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -59,18 +63,49 @@ namespace Domain.ViewModel
         public int[] AttributeIds { get; set; }
     }
 
-    public class ProductAttributeViewModel
+    public class ProductVariantViewModel
     {
-        public int ProductAttributeId { get; set; }
-        public int ProductId { get; set; }
-        public int AttributeSetId { get; set; }
-        public decimal ProductPrice { get; set; }
-        public int AvgRatings { get; set; }
-        public int StockQuantity { get; set; }
-        public int BrandId { get; set; }
-        public string Status { get; set; }
-        public DateTime LastModified { get; set; }
+        public long ProductVariantId { get; set; }
+
+        public long ProductId { get; set; }
+
+        [StringLength(50)]
+        public string SkuNumber { get; set; } = string.Empty;
+
+        [Required]
+        [Range(-double.MaxValue, double.MaxValue)]
+        public decimal PriceAdjustment { get; set; }
+
+        [Range(0, int.MaxValue)]
+        public int StockQuantity { get; set; } = 0;
+
+        [StringLength(500)]
+        public string? ImageUrl { get; set; }
+
+        [Required]
+        [Range(0, int.MaxValue)]
+        public int Position { get; set; }
+
+        public long? SupplierId { get; set; }
+
+        [Required]
+        [StringLength(20)]
+        public string Status { get; set; } = "Active";
+
+        public DateTime LastModified { get; set; } = DateTime.UtcNow;
+
+        // For selected attribute value IDs from UI
+        public List<int> AttributeValuesId { get; set; } = new();
+
+        // For image upload from UI
+        public IFormFile? File { get; set; }
+
+        // Optional: For displaying related attribute data in the view
+        public List<ProductVariantAttribute>? ProductVariantAttributes { get; set; }
+        public string AttributeDetailsText { get; set; }
+        public List<AttributteValue> AllAttributeValues { get; set; } = new();
     }
+
 
     public class ProductAttributeDetailViewModel
     {
@@ -79,6 +114,7 @@ namespace Domain.ViewModel
         public int AttributteId { get; set; }
         public int AttributteValueId { get; set; }
         public string AttributteValue { get; set; }
+        public string AttributteName { get; set; }
     }
 
     public class ProductAttributeWithDetailsViewModel
