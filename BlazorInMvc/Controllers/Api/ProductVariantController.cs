@@ -119,7 +119,7 @@ namespace BlazorInMvc.Controllers.Api
 
             try
             {
-                var result = true;//await _productVariantService.Delete(productVariantId);
+                var result =  _productVariantService.DeleteProductAttriVariants(productVariantId);
                 if (result)
                 {
                     return Ok(new { isSuccess = true, message = "Product Variant deleted successfully." });

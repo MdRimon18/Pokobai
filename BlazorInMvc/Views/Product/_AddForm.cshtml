@@ -1208,7 +1208,8 @@
          // Save Product Variant
              function saveProductVariant() {
         const submitButton = $('#SaveProductVariantButton');
-
+     
+         
         // Gather values
         const productId = parseInt($('#ProductId').val());
         if (isNaN(productId) || productId <= 0) {
@@ -1279,9 +1280,26 @@
                     $('#VariantPreviewImage').attr('src', '').hide();
                     $('#ProductVariantId').val(0);
                     $('#VariantImageUrl').val('');
-               
-
+                
                     submitButton.text('Add');
+                        const $dropdown = $('#attributeValueIds');
+                        $dropdown.val(null).trigger('change');
+                  //    const $dropdown = $('#attributeValueIds');
+
+              //   $dropdown.empty(); // Clear existing options
+              //   $dropdown.append('<option disabled>Choose</option>');
+
+              //   attributeValuesFromModel.forEach(function (item) {
+              //     $dropdown.append(
+              //       $('<option>', {
+              //           value: item.value,
+              //           text: item.text
+              //       })
+              //     );
+              //  });
+
+              // $dropdown.trigger('change');
+
 
                 } else {
                     console.error('Server responded with failure:', response);
@@ -1345,7 +1363,7 @@
                     $('#VariantPreviewImage').attr('src', data.imageUrl || '/assets/commonimage/no-image.png').show();
                     $('#VariantSkuNumber').val(data.skuNumber);
                     $('#VariantStockQuantity').val(data.stockQuantity);
-              
+                   $('#VariantPrice').val(data.priceAdjustment);
                     // Hidden inputs
                     $('#VariantId').val(data.productVariantId);
                     $('#VariantImageUrl').val(data.imageUrl);

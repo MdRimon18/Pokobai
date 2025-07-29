@@ -39,7 +39,7 @@ namespace Domain.Services
         {
             try
             {
-                var attributes = await (from pa in _context.ProductVariants.Where(w => w.ProductId == productId)
+                var attributes = await (from pa in _context.ProductVariants.Where(w => w.ProductId == productId&&w.Status== "Active")
                                         join pad in _context.ProductVariantAttributes
                                             on pa.ProductVariantId equals pad.ProductVariantId into detailsGroup
                                         from pad in detailsGroup.DefaultIfEmpty()
@@ -244,6 +244,32 @@ namespace Domain.Services
             }
             catch
             {
+                return false;
+            }
+        }
+
+        public bool DeleteProductAttriVariants(long id)
+        {
+            try
+            {
+                var productVariant = _context.ProductVariants.Find(id);
+                if (productVariant == null)
+                    return false;
+
+                var details = _context.ProductVariantAttributes.Where(d => d.ProductVariantId == id);
+                _context.ProductVariantAttributes.RemoveRange(details);
+                
+                productVariant.Status = "Delete";
+                productVariant.LastModified =DateTime.UtcNow; // Or use DubaiTime if needed
+                _context.Entry(productVariant).State = EntityState.Modified;
+
+                _context.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // TODO: Log exception
+                // Console.WriteLine($"Error in DeleteProductAttribute: {ex.Message}");
                 return false;
             }
         }
