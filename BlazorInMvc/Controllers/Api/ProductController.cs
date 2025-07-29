@@ -6,6 +6,7 @@ using Domain.Helper;
 using Domain.ResponseModel;
 using Domain.Services;
 using Domain.Services.Inventory;
+using Domain.ViewModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
@@ -113,7 +114,7 @@ namespace BlazorInMvc.Controllers.Api
                         ImageUrl = !string.IsNullOrWhiteSpace(item.ImageUrl) && !item.ImageUrl.StartsWith(baseUrl)
                         ? baseUrl + item.ImageUrl
                         : item.ImageUrl,
-                        ProductVariants = item.ProductVariants,
+                        ProductVariantsEcom =new List<ProductVariantDto>(),
                        StockStatus= item.StockStatus
                     };
                     responseList.Add(response);
@@ -146,8 +147,9 @@ namespace BlazorInMvc.Controllers.Api
 
                 foreach (var item in product_list)
                 {
-                    item.ProductVariants = await _productVariantService.ProductVarientsByProductId(productId);
-                    foreach (var variant in item.ProductVariants)
+
+                    item.ProductVariantsEcom = await _productVariantService.GetProductVariantsAsync(productId);
+                    foreach (var variant in item.ProductVariantsEcom)
                     {
                         if (!string.IsNullOrWhiteSpace(variant.ImageUrl) && !variant.ImageUrl.StartsWith(baseUrl))
                         {
@@ -241,7 +243,7 @@ namespace BlazorInMvc.Controllers.Api
                         ImageUrl = !string.IsNullOrWhiteSpace(item.ImageUrl) && !item.ImageUrl.StartsWith(baseUrl)
                         ? baseUrl + item.ImageUrl
                        : item.ImageUrl,
-                        ProductVariants = item.ProductVariants,
+                        ProductVariantsEcom = item.ProductVariantsEcom,
                         Specificationlist = grouped,
                         StockStatus = item.StockStatus
 
@@ -280,7 +282,7 @@ namespace BlazorInMvc.Controllers.Api
                             pageSize)).ToList();
                 foreach (var item in product_list)
                 {
-                    item.ProductVariantV2 = new List<ProductVariant>();// this code is wrong check and update it (await _productVariantService.ProductVarientsByProductId(item.ProductId)).ToList();
+                    item.ProductVariantsEcom = new List<ProductVariantDto>();// this code is wrong check and update it (await _productVariantService.ProductVarientsByProductId(item.ProductId)).ToList();
                 }
                 if (product_list.Count == 0)
                 {

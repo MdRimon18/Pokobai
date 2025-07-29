@@ -151,7 +151,7 @@ namespace Domain.Entity.Settings
         [NotMapped]
         public List<ProductVariantViewModel> ProductVariants { get; set; } = new List<ProductVariantViewModel>();
         [NotMapped]
-        public List<ProductVariant> ProductVariantV2 { get; set; } = new List<ProductVariant>();
+        public List<ProductVariantDto> ProductVariantsEcom { get; set; } = new List<ProductVariantDto>();
 
         [NotMapped]
         public ProductVariants ProductVariant { get; set; } = new ProductVariants();

@@ -273,6 +273,59 @@ namespace Domain.Services
                 return false;
             }
         }
+
+        public async Task<List<ProductVariantDto>> GetProductVariantsAsync(long productId)
+        {
+            try
+            {
+                var productVariants = await _context.ProductVariants
+               .Where(pv => pv.ProductId == productId && pv.Status == "Active")
+               .Include(pv => pv.ProductVariantAttributes)
+                   .ThenInclude(pva => pva.Attributte)
+               .Include(pv => pv.ProductVariantAttributes)
+                   .ThenInclude(pva => pva.AttributeValue)
+               .Select(pv => new ProductVariantDto
+               {
+                   ProductVariantId = pv.ProductVariantId,
+                   ProductId = pv.ProductId,
+                   SkuNumber = pv.SkuNumber,
+                   PriceAdjustment = pv.PriceAdjustment,
+                   StockQuantity = pv.StockQuantity,
+                   ImageUrl = pv.ImageUrl,
+                   Position = pv.Position,
+                   SupplierId = pv.SupplierId,
+                   Status = pv.Status,
+                   LastModified = pv.LastModified,
+                   Attributes = pv.ProductVariantAttributes
+                       .Where(pva => pva.Status == "Active")
+                       .GroupBy(pva => new { pva.AttributeId, pva.Attributte.AttributeName })
+                       .Select(g => new ProductVariantAttributeDto
+                       {
+                           AttributeId = g.Key.AttributeId,
+                           AttributeName = g.Key.AttributeName,
+                           Values = g.Select(pva => new AttributeValueDto
+                           {
+                               AttributeValueId = pva.AttributeValueId,
+                               AttributeValue = pva.AttributeValue.AttrbtValue,
+                               ProductVariantAttributeId = pva.ProductVariantAttributeId,
+                               Status = pva.Status,
+                               LastModified = pva.LastModified
+                           }).ToList()
+                       }).ToList()
+               })
+               //.OrderBy(pv => pv.Position)
+               .ToListAsync();
+
+                return   productVariants;
+            }
+            catch (Exception ex)
+            {
+               
+                return null;
+            }
+        }
+ 
+
         public List<AttributteViewModel> GetAttributes()
         {
             try
