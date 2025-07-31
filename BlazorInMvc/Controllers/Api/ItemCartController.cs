@@ -28,7 +28,7 @@ namespace BlazorInMvc.Controllers.Api
         {
             try
             {
-                CompanyInfo.CompanyId = companyId;
+               // CompanyInfo.CompanyId = companyId;
                 var result = (await _itemCardService.GetItemCartAsync(cartId, browserId, customerId, productId, sku)).ToList();
                 if (result == null || !result.Any())
                 {
@@ -59,6 +59,7 @@ namespace BlazorInMvc.Controllers.Api
 
             try
             {
+                itemCart.CompanyId = itemCart.CompanyId;
                 var successId = await _itemCardService.SaveOrUpdateItemCart(itemCart);
 
                 if (successId > 0)

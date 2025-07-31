@@ -4,6 +4,7 @@ using Domain.Entity.Settings;
 using Domain.Services;
 using Domain.Services.Inventory;
 using Domain.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Caching.Memory;
@@ -11,6 +12,7 @@ using System.Drawing.Printing;
 
 namespace BlazorInMvc.Controllers.Mvc.Products
 {
+    [Authorize]
     public class ProductController : Controller
     {
         private readonly IMemoryCache _cache;
@@ -89,8 +91,14 @@ namespace BlazorInMvc.Controllers.Mvc.Products
             return View("Products");
 
         }
+
+      
         public async Task<IActionResult> Index(bool isPartial = false, long id = 0)
         {
+           
+
+         
+
             var viewModel = new ProductViewModel();
             viewModel.Product = await LoadDDL(new Domain.Entity.Settings.Products());
            
@@ -116,7 +124,7 @@ namespace BlazorInMvc.Controllers.Mvc.Products
             //    GlobalPageConfig.PageNumber,
             //    GlobalPageConfig.PageSize
             //);
-            var list = (await _productService.Get(null, null, null, null, null,
+            var list = (await _productService.Get(User.GetCompanyId(), null, null, null, null, null,
                 null, null, null, null, null, null, null,
                 null, null, null, null, GlobalPageConfig.PageNumber,
                 GlobalPageConfig.PageSize)).ToList();
@@ -140,7 +148,7 @@ namespace BlazorInMvc.Controllers.Mvc.Products
                 model.ImportStatusSettingList = (await _statusSettingService.Get(null, null, null, null, null, null, 1, 1000)).ToList();
                 model.ProductSubCategoryList = (await _productSubCategoryService.Get(null, null, null, null, null, 1, 1000)).ToList();
                 model.BrandList = (await _brandService.Get(null, null, null, 1, 1000)).ToList();
-                model.ProductCategoryList = (await _productCategoryService.Get(null, null, null, null, 1, 1000)).ToList();
+                model.ProductCategoryList = (await _productCategoryService.Get(User.GetCompanyId(), null, null, null, null, 1, 1000)).ToList();
                 model.ProductSizeList = (await _productSizeService.Get(null, null, null, null, 1, 1000)).ToList();
                 model.WarehouseList = (await _warehouseService.Get(null, null, null, null, null, null, null, null, null, 1, 1000)).ToList();
                 model.BodyParts = await _bodyPartService.GetBodyPartsAsync();
@@ -203,7 +211,7 @@ namespace BlazorInMvc.Controllers.Mvc.Products
 
             try
             {
-
+                model.CompanyId = User.GetCompanyId();
                 long responseId = await _productService.SaveOrUpdate(model);
                 if (responseId == -1)
                 {
@@ -260,7 +268,7 @@ namespace BlazorInMvc.Controllers.Mvc.Products
             {
                 return NotFound();
             }
-            Domain.Entity.Settings.Products obj = (await _productService.GetById(id));
+            Domain.Entity.Settings.Products obj = (await _productService.GetById(User.GetCompanyId(),id));
             if (obj == null)
             {
                 return NotFound(); // Handle case where product doesn't exist
@@ -309,7 +317,7 @@ namespace BlazorInMvc.Controllers.Mvc.Products
             {
                 return NotFound();
             }
-            Domain.Entity.Settings.Products obj = (await _productService.GetById(id));
+            Domain.Entity.Settings.Products obj = (await _productService.GetById(User.GetCompanyId(), id));
 
             if (obj == null)
             {
@@ -398,7 +406,7 @@ namespace BlazorInMvc.Controllers.Mvc.Products
             {
                 if (id > 0)
                 {
-                    var isDeleted = await _productService.Delete(id);
+                    var isDeleted = await _productService.Delete(User.GetCompanyId(), id);
 
                 }
 
@@ -450,6 +458,7 @@ namespace BlazorInMvc.Controllers.Mvc.Products
             try
             {
 
+                model.CompanyId = User.GetCompanyId();
                 long responseId = await _productService.SaveOrUpdate(model);
                 if (responseId == -1)
                 {

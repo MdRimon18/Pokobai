@@ -13,7 +13,7 @@ namespace Domain.CommonServices
     public static class CompanyInfo
     {
         public static long BranchId { get; set; } = 1;
-        public static long CompanyId { get; set; } = 1;
+     //   public static long CompanyId { get; set; } = 1;
         public static int LanguageId { get; set; } = 1;
         public static int CurrencyId { get; set; } = 1;
         public static long CountryId { get; set; } = 20012;

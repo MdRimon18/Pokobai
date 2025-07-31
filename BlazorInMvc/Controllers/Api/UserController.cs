@@ -106,14 +106,14 @@ namespace BlazorInMvc.Controllers.Api
                 if (user.UserId > 0)
                 {
                     user.LastModifyDate = DateTime.UtcNow;
-                    user.LastModifyBy = UserInfo.UserId; // Replace this with your logic
-                    user.CompanyId = CompanyInfo.CompanyId;
+                    user.LastModifyBy =User.GetUserId(); // Replace this with your logic
+                    user.CompanyId = User.GetCompanyId();
                 }
                 else
                 {
-                    user.CompanyId = CompanyInfo.CompanyId;
+                    user.CompanyId = User.GetCompanyId();
                     user.EntryDateTime = DateTime.UtcNow;
-                    user.EntryBy = UserInfo.UserId; // Replace this with your logic
+                    user.EntryBy = User.GetUserId(); // Replace this with your logic
 
                    
                 }

@@ -39,7 +39,7 @@ namespace BlazorInMvc.Controllers.Mvc.Ecommerce
         public async Task<List<Domain.Entity.Settings.Products>> FetchModelList(int? pageSize=100)
         {
             
-            var list = (await _productService.Get(null, null, null, null, null,
+            var list = (await _productService.Get(User.GetCompanyId(), null, null, null, null, null,
                 null, null, null, null, null, null, null,
                 null, null, null, null, GlobalPageConfig.PageNumber,
                 pageSize)).ToList();
@@ -59,7 +59,7 @@ namespace BlazorInMvc.Controllers.Mvc.Ecommerce
         }
         public async Task<IActionResult> Details(string key)
         {
-           var product =   await  _productService.GetByKey(key);
+           var product =   await  _productService.GetByKey(User.GetCompanyId(), key);
             if(product is not null)
             {
                 product.ProductVariants = await _productVariantService.ProductVarientsByProductId(product.ProductId);
@@ -75,7 +75,7 @@ namespace BlazorInMvc.Controllers.Mvc.Ecommerce
                     specifications.Select(s => s.SpecificationName + ": " + s.SpecificationDtls));
                 }
 
-              var relatedProducts = (await _productService.Get(null, null, null, product.ProdCtgId, null,
+              var relatedProducts = (await _productService.Get(User.GetCompanyId(),null, null, null, product.ProdCtgId, null,
               null, null, null, null, null, null, null,
               null, null, null, null, GlobalPageConfig.PageNumber,
               50)).ToList();

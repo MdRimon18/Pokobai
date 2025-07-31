@@ -27,7 +27,7 @@ namespace BlazorInMvc.Controllers.Mvc.Products
         }
         public async Task<List<ProductCategories>> FetchModelList()
         {
-            var list = await _productCategoryService.Get(
+            var list = await _productCategoryService.Get(User.GetCompanyId(),
                 null,
                 null,
                 null,
@@ -85,12 +85,14 @@ namespace BlazorInMvc.Controllers.Mvc.Products
 
                 if (model.ProdCtgId > 0)
                 {
+                    model.CompanyId = User.GetCompanyId();
                     await _productCategoryService.Update(model);
                   
 
                 }
                 else
                 {
+                    model.CompanyId = User.GetCompanyId();
                     long responseId = await _productCategoryService.Save(model);
                     if (responseId == -1)
                     {
@@ -123,7 +125,7 @@ namespace BlazorInMvc.Controllers.Mvc.Products
             {
                 return NotFound();
             }
-            ProductCategories obj = (await _productCategoryService.GetById(id));
+            ProductCategories obj = (await _productCategoryService.GetById(User.GetCompanyId(), id));
 
             return PartialView("_AddForm", obj);
         }
@@ -153,7 +155,7 @@ namespace BlazorInMvc.Controllers.Mvc.Products
             {
                 if (id > 0)
                 {
-                    var isDeleted = await _productCategoryService.Delete(id);
+                    var isDeleted = await _productCategoryService.Delete(User.GetCompanyId(), id);
 
                 }
 

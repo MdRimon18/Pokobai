@@ -1,12 +1,12 @@
 ﻿using Dapper;
-using System.Data;
-using Domain.Entity.Settings;
-
-using System.Data;
-using System.Drawing;
+using Domain.CommonServices;
 using Domain.DbContex;
 using Domain.Entity;
-using Domain.CommonServices;
+using Domain.Entity.Settings;
+using System.ComponentModel.Design;
+using System.Data;
+using System.Data;
+using System.Drawing;
 
 namespace Domain.Services.Inventory
 {
@@ -20,7 +20,7 @@ namespace Domain.Services.Inventory
 			_db = db.GetDbConnection();
 
 		}
-		public async Task<IEnumerable<Products>> Get(long? ProductId, string? ProductKey, long? BranchId, long? ProdCtgId,
+		public async Task<IEnumerable<Products>> Get(long? CompanyId,long? ProductId, string? ProductKey, long? BranchId, long? ProdCtgId,
 			string? TagWord, string? ProdName, string? ManufacturarName, string? SerialNmbrOrUPC,
 			string? Sku, string? BarCode,int? SupplirLinkId, int? ColorId, int? SizeId, int? ShippingById, int? Rating, int? ProdStatusId, int? PageNumber, int? PageSize)
 		{
@@ -29,7 +29,7 @@ namespace Domain.Services.Inventory
 				var parameters = new DynamicParameters();
 				parameters.Add("@ProductId", ProductId);
 				parameters.Add("@ProductKey", ProductKey);
-                parameters.Add("@CompanyId", CompanyInfo.CompanyId);
+                parameters.Add("@CompanyId", CompanyId);
                 parameters.Add("@BranchId", BranchId);
 				parameters.Add("@ProdCtgId", ProdCtgId);
 				parameters.Add("@TagWord", TagWord);
@@ -57,14 +57,15 @@ namespace Domain.Services.Inventory
 			}
 		}
 
-		public async Task<IEnumerable<Products>> GetProductWithVariants(long? ProductId, string? ProductKey, long? BranchId, long? ProdCtgId,
+		public async Task<IEnumerable<Products>> GetProductWithVariants(long companyId,long? ProductId, string? ProductKey, long? BranchId, long? ProdCtgId,
 			string? TagWord, string? ProdName, string? ManufacturarName, string? SerialNmbrOrUPC,
 			string? Sku, string? BarCode, int? SupplirLinkId, int? ColorId, int? SizeId, int? ShippingById, int? Rating, int? ProdStatusId, int? PageNumber, int? PageSize)
 		{
 			try
 			{
 				var parameters = new DynamicParameters();
-				parameters.Add("@ProductId", ProductId);
+                parameters.Add("@CompanyId", companyId);
+                parameters.Add("@ProductId", ProductId);
 				parameters.Add("@ProductKey", ProductKey);
 				parameters.Add("@BranchId", BranchId);
 				parameters.Add("@ProdCtgId", ProdCtgId);
@@ -93,17 +94,17 @@ namespace Domain.Services.Inventory
 			}
 		}
 
-		public async Task<Products> GetById(long ProductId)
+		public async Task<Products> GetById(long companyId,long ProductId)
 
 		{
-			var _products = await (Get(ProductId, null, null, null, null, null,null,null,null,null,null,null,null, null, null, null, 1, 1));
+			var _products = await (Get(companyId, ProductId, null, null, null, null, null,null,null,null,null,null,null,null, null, null, null, 1, 1));
 			return _products.FirstOrDefault();
 		}
 
-		public async Task<Products> GetByKey(string ProductKey)
+		public async Task<Products> GetByKey(long companyId,string ProductKey)
 
 		{
-			var _products = await (Get(null,
+			var _products = await (Get(companyId, null,
 				ProductKey,null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1, 1));
 			return _products.FirstOrDefault();
 		}
@@ -195,9 +196,9 @@ namespace Domain.Services.Inventory
 			}
 		}
 
-		public async Task<bool> Delete(long ProductId)
+		public async Task<bool> Delete(long companyId,long ProductId)
 		{
-			var _products = await (Get(ProductId, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1, 1));
+			var _products = await (Get(companyId, ProductId, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1, 1));
 			var deleteObj = _products.FirstOrDefault();
 			long DeletedSatatus = 0;
 			if (deleteObj != null)

@@ -3,10 +3,12 @@ using Domain.Entity.Settings;
 using Domain.Services;
 using Domain.Services.Inventory;
 using Domain.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlazorInMvc.Controllers.Mvc.Sales
 {
+    [Authorize]
     public class InvoiceController : Controller
     {
         private readonly InvoiceService _invoiceService;
@@ -64,7 +66,7 @@ namespace BlazorInMvc.Controllers.Mvc.Sales
             Invoice invoice = new Invoice();
             if (key != null && key != Guid.Empty)
             {
-                  invoice = await _invoiceService.GetByKey(key.ToString());
+                  invoice = await _invoiceService.GetByKey( User.GetCompanyId(),key.ToString());
             }
            
             IEnumerable<InvoiceItems> itemsList = new List<InvoiceItems>();
@@ -110,10 +112,10 @@ namespace BlazorInMvc.Controllers.Mvc.Sales
                 Invoice=invoice,
                 InvoiceTypeList = (await _invoiceTypeService.Get(null, null, null, null, 1, 1000)).ToList(),
                 NotificationByList = (await _notificationByService.Get(null)).ToList(),
-                ProductCategoryList = (await _productCategoryService.Get(null, null, null, null, 1, 1000)).ToList(),
+                ProductCategoryList = (await _productCategoryService.Get(User.GetCompanyId(), null, null, null, null, 1, 1000)).ToList(),
                 ProductSubCategoryList = (await _productSubCategoryService.Get(null, null, null, null, null, 1, 1000)).ToList(),
                 PaymentTypesList = (await _paymentTypesService.Get(null, null, null, null, 1, 1000)).ToList(),
-                Products = (await _productService.Get(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1, 1000)).ToList(),
+                Products = (await _productService.Get(User.GetCompanyId(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1, 1000)).ToList(),
                 CustomersList = (await _customerService.Get(null, null, null, null, null, null, null, 1, 1000)).ToList(),
                 SerialNumbers = (await _productSerialNumbersService.Get(null, null, null, null, null, null, null, null, null, null, null, 1, 5000)).ToList(),
                 OrderStages = await _orderStageService.GetAllAsync()
@@ -150,7 +152,7 @@ namespace BlazorInMvc.Controllers.Mvc.Sales
             {
                 if (id>0)
                 {
-                   var model = await _invoiceService.Delete(id);
+                   var model = await _invoiceService.Delete(User.GetCompanyId(), id);
                     return true;
                    
                 }

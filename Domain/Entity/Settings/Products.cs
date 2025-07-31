@@ -16,7 +16,7 @@ namespace Domain.Entity.Settings
         [Key]
         public long ProductId { get; set; }
         public Guid? ProductKey { get; set; }
-        public long CompanyId { get; set; } = CompanyInfo.CompanyId;
+        public long CompanyId { get; set; }
 
         [Required(ErrorMessage = "Product Category is required")]
         public long? ProdCtgId { get; set; } = null; 

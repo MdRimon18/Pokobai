@@ -17,7 +17,7 @@ namespace Domain.Services.Inventory
             _db = db.GetDbConnection();
 
         }
-        public async Task<IEnumerable<ProductCategories>> Get(long? ProdCtgId, string? ProdCtgKey, long? BranchId, string? ProdCtgName, int? pagenumber, int? pageSize)
+        public async Task<IEnumerable<ProductCategories>> Get(long? CompanyId,long? ProdCtgId, string? ProdCtgKey, long? BranchId, string? ProdCtgName, int? pagenumber, int? pageSize)
         {
             try
             {
@@ -25,7 +25,7 @@ namespace Domain.Services.Inventory
 
                 parameters.Add("@ProdCtgId", ProdCtgId);
                 parameters.Add("@ProdCtgKey", ProdCtgKey);
-                parameters.Add("@CompanyId", CompanyInfo.CompanyId);
+                parameters.Add("@CompanyId", CompanyId);
                 parameters.Add("@BranchId", BranchId);
                 parameters.Add("@ProdCtgName", ProdCtgName);
                 parameters.Add("@page_number", pagenumber);
@@ -40,9 +40,10 @@ namespace Domain.Services.Inventory
                 return Enumerable.Empty<ProductCategories>();
             }
         }
-        public async Task<List<ProductCategories>> FetchModelList()
+        public async Task<List<ProductCategories>> FetchModelList(long CompanyId)
         {
             var list = await Get(
+                CompanyId,
                 null,
                 null,
                 null,
@@ -53,17 +54,17 @@ namespace Domain.Services.Inventory
 
             return list.ToList(); // Convert and return as List<Unit>
         }
-        public async Task<ProductCategories> GetById(long ProdCtgId)
+        public async Task<ProductCategories> GetById(long companyId,long ProdCtgId)
 
         {
-            var productCategories = await (Get(ProdCtgId, null, null, null, 1, 1));
+            var productCategories = await (Get(companyId, ProdCtgId, null, null, null, 1, 1));
             return productCategories.FirstOrDefault();
         }
 
-        public async Task<ProductCategories> GetByKey(string ProdCtgKey)
+        public async Task<ProductCategories> GetByKey(long companyId,string ProdCtgKey)
 
         {
-            var productCategories = await (Get(null, ProdCtgKey, null, null, 1, 1));
+            var productCategories = await (Get(companyId, null, ProdCtgKey, null, null, 1, 1));
             return productCategories.FirstOrDefault();
         }
 
@@ -77,7 +78,7 @@ namespace Domain.Services.Inventory
                var parameters = new DynamicParameters();
 
                 parameters.Add("@ProdCtgId", dbType: DbType.Int64, direction: ParameterDirection.Output);
-                parameters.Add("@CompanyId",CompanyInfo.CompanyId);
+                parameters.Add("@CompanyId",productCategories.CompanyId);
                 parameters.Add("@branchId", productCategories.BranchId);
                 parameters.Add("@ProdCtgName", productCategories.ProdCtgName);
                 parameters.Add("@ImageUrl", productCategories.ImageUrl);
@@ -103,7 +104,7 @@ namespace Domain.Services.Inventory
             EntityHelper.SetUpdateAuditFields(productCategories);
             var parameters = new DynamicParameters();
             parameters.Add("@ProdCtgId", productCategories.ProdCtgId);
-            parameters.Add("@CompanyId", CompanyInfo.CompanyId);
+            parameters.Add("@CompanyId", productCategories.CompanyId);
             parameters.Add("@branchId", productCategories.BranchId);
             parameters.Add("@ProdCtgName", productCategories.ProdCtgName);
             parameters.Add("@ImageUrl", productCategories.ImageUrl);
@@ -117,9 +118,9 @@ namespace Domain.Services.Inventory
         }
 
 
-        public async Task<bool> Delete(long ProdCtgId)
+        public async Task<bool> Delete(long companyId,long ProdCtgId)
         {
-            var productCategories = await (Get(ProdCtgId, null, null, null, 1, 1));
+            var productCategories = await (Get(companyId, ProdCtgId, null, null, null, 1, 1));
             var deleteObj = productCategories.FirstOrDefault();
             bool isDeleted = false;
             if (deleteObj != null)

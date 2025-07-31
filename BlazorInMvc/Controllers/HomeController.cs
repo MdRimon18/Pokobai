@@ -1,8 +1,11 @@
 using BlazorInMvc.Models;
 using Domain.Entity.Settings;
 using Domain.Services.Inventory;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace BlazorInMvc.Controllers
 {
@@ -10,6 +13,7 @@ namespace BlazorInMvc.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly UserService _userService;
+         
 
         public HomeController(ILogger<HomeController> logger,
             UserService userService)
@@ -58,7 +62,72 @@ namespace BlazorInMvc.Controllers
 
             return View();
         }
+ 
+        [HttpPost]
+        public async Task<IActionResult> Login(User user, string returnUrl = null)
+        {
+            if (string.IsNullOrEmpty(user.PhoneNo)|| string.IsNullOrEmpty(user.Password))
+            {
+                return View(user);
+            }
 
+            var existingUser = await _userService.GetByPhone(user.PhoneNo);
+
+            if (existingUser == null)
+            {
+                ViewData["ErrorMessage"] = "Invalid phone number or password, or account is disabled.";
+                return View(user);
+            }
+            if(existingUser.Password != user.Password)
+            {
+                ViewData["ErrorMessage"] = "Invalid phone number or password.";
+                return View(user);
+            }
+
+            // Create claims for the authenticated user
+            var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.NameIdentifier, existingUser.UserId.ToString()),
+            new Claim(ClaimTypes.Name, existingUser.Name),
+            new Claim(ClaimTypes.Role, existingUser.RoleName ?? "User"),
+            new Claim("PhoneNo", existingUser.PhoneNo),
+            new Claim("CompanyId", existingUser.CompanyId==null?"0":existingUser.CompanyId.ToString())
+        };
+
+            var claimsIdentity = new ClaimsIdentity(
+                claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var authProperties = new AuthenticationProperties
+            {
+                IsPersistent = user.RememberMe,
+                ExpiresUtc = user.RememberMe ? DateTimeOffset.UtcNow.AddDays(30) : null
+            };
+
+            // Sign in the user
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                authProperties);
+
+            // Redirect to returnUrl or home page
+            returnUrl = returnUrl ?? Url.Content("/Dashboard/Index");
+            return LocalRedirect(returnUrl);
+
+            // to get access the claim data 
+
+           // var companyId = User.GetCompanyId();
+            //var userId = User.GetUserId();
+            //var userName = User.GetName();
+            //var roleName = User.GetRoleName();
+            //var phoneNo = User.GetPhoneNo();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Login");
+        }
         public IActionResult ThankYou(long? orderId)
         {
             return View();

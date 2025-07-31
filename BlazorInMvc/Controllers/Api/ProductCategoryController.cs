@@ -24,11 +24,11 @@ namespace BlazorInMvc.Controllers.Api
         [Route("api/ProductCategory/GetAll")]
         public async Task<IActionResult> GetAll(long companyId,string? search, int page, int pageSize)
         {
-            CompanyInfo.CompanyId = companyId;
+            
             var request = HttpContext.Request;
             var baseUrl = $"{request.Scheme}://{request.Host}";
             // Sending null for all filters
-            var categories = await _productCategoryService.FetchModelList();
+            var categories = await _productCategoryService.FetchModelList(companyId);
             var response = categories.Select(c => new ProductCategoriesResponse
             {
                 ProdCtgId = c.ProdCtgId,

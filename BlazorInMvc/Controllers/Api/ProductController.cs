@@ -48,9 +48,9 @@ namespace BlazorInMvc.Controllers.Api
             
             try
             {
-                CompanyInfo.CompanyId = companyId;
+                 
 
-                var product_list = (await _productService.Get(null, null, null, categoryId, null,
+                var product_list = (await _productService.Get(companyId, null, null, null, categoryId, null,
                             null, null, null, null, null, null, null,
                             null, null, null, null, pageNumber,
                             pageSize)).ToList();
@@ -133,8 +133,8 @@ namespace BlazorInMvc.Controllers.Api
         {
             try
             {
-                CompanyInfo.CompanyId = companyId;
-                var product_list = (await _productService.Get(productId, null, null, null, null,
+              
+                var product_list = (await _productService.Get(companyId, productId, null, null, null, null,
                             null, null, null, null, null, null, null,
                             null, null, null, null, 1,
                             1)).ToList();
@@ -276,7 +276,7 @@ namespace BlazorInMvc.Controllers.Api
             {
                 if (page <= 0) page = 1;
                 if (pageSize <= 0) pageSize = 10;
-                var product_list = (await _productService.Get(null, null, null, null, null,
+                var product_list = (await _productService.Get(User.GetCompanyId(),null, null, null, null, null,
                             null, null, null, null, null, null, null,
                             null, null, null, null, page,
                             pageSize)).ToList();
@@ -335,7 +335,7 @@ namespace BlazorInMvc.Controllers.Api
         {
             try
             {
-                var product_list = (await _productService.GetProductWithVariants(null, null, null, null, null,
+                var product_list = (await _productService.GetProductWithVariants(User.GetCompanyId(),null, null, null, null, null,
                             null, null, null, null, null, null, null,
                             null, null, null, null, GlobalPageConfig.PageNumber,
                             GlobalPageConfig.PageSize)).ToList();
@@ -625,7 +625,7 @@ namespace BlazorInMvc.Controllers.Api
         [Route("api/Product/filters")]
         public async Task<IActionResult> GetFilters()
         {
-            var product_list = (await _productService.Get(null, null, null, null, null,
+            var product_list = (await _productService.Get(User.GetCompanyId(),null, null, null, null, null,
                             null, null, null, null, null, null, null,
                             null, null, null, null, GlobalPageConfig.PageNumber,
                             GlobalPageConfig.PageSize)).ToList();

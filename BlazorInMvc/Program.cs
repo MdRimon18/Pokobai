@@ -3,6 +3,7 @@ using Domain.DbContex;
 using Domain.Services;
 using Domain.Services.Accounts;
 using Domain.Services.Inventory;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Server;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -29,7 +30,14 @@ var builder = WebApplication.CreateBuilder(args);
 //});
 
 //builder.Services.AddControllers();
-
+// Configure authentication with cookies
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Home/Login"; // Redirect to login page if unauthenticated
+        options.AccessDeniedPath = "/Home/Login"; // Redirect for access denied
+        options.Cookie.Name = "RcellE.Auth"; // Optional: customize cookie name
+    }); 
 
 // Enable detailed exceptions for development
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -42,6 +50,8 @@ builder.Services.Configure<CircuitOptions>(options =>
 });
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+ 
 builder.Services.AddRazorPages(); // Add this line to register Razor Pages services
 //builder.Services.AddServerSideBlazor();
 builder.Services.AddMemoryCache();
@@ -84,10 +94,12 @@ app.UseRouting();
 app.UseAuthorization();
 // Map Razor Pages
 app.MapRazorPages(); // Add this line to enable Razor Pages routing
+//app.MapControllerRoute(
+//    name: "default",
+//    pattern: "{controller=Dashboard}/{action=Index}/{id?}");
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Dashboard}/{action=Index}/{id?}");
-
+    pattern: "{controller=Home}/{action=login}/{id?}");
 //app.MapControllerRoute(
 //    name: "default",
 //    pattern: "{controller=EcomProducts}/{action=Index}/{id?}");

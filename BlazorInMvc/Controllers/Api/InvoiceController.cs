@@ -43,7 +43,8 @@ namespace BlazorInMvc.Controllers.Api
         {
             if (page <= 0) page = 1;
             if (pageSize <= 0) pageSize = 10;
-            var invoices=(await _invoiceService.Get(null, null, null, null, null, null, null, null, search, page, pageSize)).ToList();
+            
+            var invoices=(await _invoiceService.Get(User.GetCompanyId(),null, null, null, null, null, null, null, null, search, page, pageSize)).ToList();
            
             
 
@@ -92,6 +93,7 @@ namespace BlazorInMvc.Controllers.Api
 
                 var invoice = new Invoice
                 {
+                    CompanyId=User.GetCompanyId(),
                     InvoiceId=request.InvoiceSummary.InvoiceId,
                     BranchId = CompanyInfo.BranchId,
                     InvoiceNumber =request.InvoiceSummary.InvoiceNumber,
@@ -190,7 +192,7 @@ namespace BlazorInMvc.Controllers.Api
 
                 // Commit transaction
                 await transaction.CommitAsync();
-                var invoiceObj = await _invoiceService.GetById(newInsertedInvoiceId);
+                var invoiceObj = await _invoiceService.GetById(User.GetCompanyId(),newInsertedInvoiceId);
                 var itemViewList = new List<InvoiceItemViewModel>();
                 foreach (var item in invoiceItems)
                 {

@@ -1,13 +1,14 @@
 ﻿using Domain.Data.Repository;
 using Domain.DbContex;
+using Domain.Helper;
+using Domain.Interface;
+using Domain.Services;
 using Domain.Services.Accounts;
 using Domain.Services.Inventory;
-using Domain.Services;
-using Microsoft.Extensions.DependencyInjection;
-using Domain.Interface;
+using Domain.Services.Settings;
 using Domain.Services.Shared;
 using Microsoft.AspNetCore.Http;
-using Domain.Services.Settings;
+using Microsoft.Extensions.DependencyInjection;
 
 
 public static class ServiceRegistrationExtensions
@@ -77,6 +78,7 @@ public static class ServiceRegistrationExtensions
         services.AddScoped<InvoiceItemSerialsService>();
         services.AddScoped<OrderStageService>();
         services.AddScoped<ProductAttributeService>();
-
+        services.AddHttpContextAccessor();
+        
     }
 }

@@ -74,7 +74,7 @@ namespace Domain.Services
                 return null;
             }
         }
-        public bool SaveAttributteWithDetails(AttributteWithDetailsViewModel model)
+        public bool SaveAttributteWithDetails(AttributteWithDetailsViewModel model,long CompanyId)
         {
             try
             {
@@ -84,7 +84,7 @@ namespace Domain.Services
 
                 if (attribute == null)
                     return false;
-                attribute.CompanyId = CompanyInfo.CompanyId;
+                attribute.CompanyId =CompanyId;
 
                 if (model.AttributteId != 0)
                 {

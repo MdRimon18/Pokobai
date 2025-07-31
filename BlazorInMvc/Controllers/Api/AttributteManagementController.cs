@@ -32,8 +32,8 @@ namespace BlazorInMvc.Controllers.Api
 
         [HttpPost("SaveAttributteWithDetails")]
         public IActionResult SaveAttributteWithDetails([FromBody] AttributteWithDetailsViewModel model)
-        {
-            var success = _roductAttributeService.SaveAttributteWithDetails(model);
+        {    
+            var success = _roductAttributeService.SaveAttributteWithDetails(model,User.GetCompanyId());
             return Ok(new { success, attributteId = model.AttributteId });
         }
 

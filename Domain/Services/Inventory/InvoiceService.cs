@@ -17,7 +17,7 @@ namespace Domain.Services.Inventory
 			_db = db.GetDbConnection();
 
 		}
-		public async Task<IEnumerable<Invoice>> Get(long? InvoiceId, string? InvoiceKey,long? BranchId, 
+		public async Task<IEnumerable<Invoice>> Get(long? CompanyId,long? InvoiceId, string? InvoiceKey,long? BranchId, 
 			string? InvoiceNumber, int? CustomerID, long? InvoiceTypeId,string? SalesByName,			
 			long? OrderStatusId, string VoucherCode,int? PageNumber, int? PageSize)
 		{
@@ -26,7 +26,7 @@ namespace Domain.Services.Inventory
 				var parameters = new DynamicParameters();
 				parameters.Add("@InvoiceId", InvoiceId);
 				parameters.Add("@InvoiceKey", InvoiceKey);
-                parameters.Add("@CompanyId", CompanyInfo.CompanyId);
+                parameters.Add("@CompanyId",CompanyId);
                 parameters.Add("@BranchId", BranchId);
 				parameters.Add("@InvoiceNumber", InvoiceNumber);
 				parameters.Add("@CustomerID", CustomerID);
@@ -47,17 +47,17 @@ namespace Domain.Services.Inventory
 			}
 		}
 
-		public async Task<Invoice> GetById(long InvoiceId)
+		public async Task<Invoice> GetById(long companyId,long InvoiceId)
 
 		{
-			var invoice = await (Get(InvoiceId,null, null, null, null, null, null, null,  null, 1, 1));
+			var invoice = await (Get(companyId,InvoiceId,null, null, null, null, null, null, null,  null, 1, 1));
 			return invoice.FirstOrDefault();
 		}
 
-		public async Task<Invoice> GetByKey(string InvoiceKey)
+		public async Task<Invoice> GetByKey(long companyId,string InvoiceKey)
 
 		{
-			var invoice = await (Get(null,
+			var invoice = await (Get(companyId,null,
 				InvoiceKey, null, null, null, null, null, null, null, 1, 1));
 			return invoice.FirstOrDefault();
 		}
@@ -70,7 +70,7 @@ namespace Domain.Services.Inventory
 				var parameters = new DynamicParameters();
 
 				parameters.Add("@InvoiceId", invoice.InvoiceId);
-                parameters.Add("@CompanyId", CompanyInfo.CompanyId);
+                parameters.Add("@CompanyId", invoice.CompanyId);
                 parameters.Add("@BranchId", invoice.BranchId);
 				parameters.Add("@InvoiceNumber", invoice.InvoiceNumber);
 				parameters.Add("@CustomerID", invoice.CustomerID);
@@ -124,9 +124,9 @@ namespace Domain.Services.Inventory
 			}
 		}
 
-		public async Task<bool> Delete(long InvoiceId)
+		public async Task<bool> Delete(long companyId,long InvoiceId)
 		{
-			var invoice = await (Get(InvoiceId,
+			var invoice = await (Get(companyId,InvoiceId,
 				null, null, null, null, null, null, null, null, 1, 1));
 			var deleteObj = invoice.FirstOrDefault();
 			long DeletedSatatus = 0;

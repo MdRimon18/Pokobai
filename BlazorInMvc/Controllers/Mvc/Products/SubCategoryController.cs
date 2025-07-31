@@ -24,7 +24,7 @@ namespace BlazorInMvc.Controllers.Mvc.Products
         public async Task<IActionResult> Index()
         {
             SubCategoryViewModel viewModel = new SubCategoryViewModel();
-            viewModel.ProductSubCategory.ProductCategory_list= (await _productCategoryService.Get(null, null, null, null, GlobalPageConfig.PageNumber, GlobalPageConfig.PageSize)).ToList();
+            viewModel.ProductSubCategory.ProductCategory_list= (await _productCategoryService.Get(User.GetCompanyId(), null, null, null, null, GlobalPageConfig.PageNumber, GlobalPageConfig.PageSize)).ToList();
             viewModel.ProductSubCategories = await FetchModelList();
             return PartialView("Index", viewModel);
 
@@ -52,7 +52,7 @@ namespace BlazorInMvc.Controllers.Mvc.Products
             if (!ModelState.IsValid)
             {
                 SubCategoryViewModel viewModel = new SubCategoryViewModel();
-                viewModel.ProductSubCategory.ProductCategory_list = (await _productCategoryService.Get(null, null, null, null, GlobalPageConfig.PageNumber, GlobalPageConfig.PageSize)).ToList();
+                viewModel.ProductSubCategory.ProductCategory_list = (await _productCategoryService.Get(User.GetCompanyId(), null, null, null, null, GlobalPageConfig.PageNumber, GlobalPageConfig.PageSize)).ToList();
                 viewModel.ProductSubCategories = await FetchModelList();
                 Response.StatusCode = 400;
                 
@@ -65,7 +65,7 @@ namespace BlazorInMvc.Controllers.Mvc.Products
                 if (responseId == -1)
                 {
                     SubCategoryViewModel viewModel = new SubCategoryViewModel();
-                    viewModel.ProductSubCategory.ProductCategory_list = (await _productCategoryService.Get(null, null, null, null, GlobalPageConfig.PageNumber, GlobalPageConfig.PageSize)).ToList();
+                    viewModel.ProductSubCategory.ProductCategory_list = (await _productCategoryService.Get(User.GetCompanyId(), null, null, null, null, GlobalPageConfig.PageNumber, GlobalPageConfig.PageSize)).ToList();
                     viewModel.ProductSubCategories = await FetchModelList();
                     model.ProdSubCtgId = 0;
                     Response.StatusCode = 409;
@@ -81,7 +81,7 @@ namespace BlazorInMvc.Controllers.Mvc.Products
             {
                 Response.StatusCode = 500;
                 SubCategoryViewModel viewModel = new SubCategoryViewModel();
-                viewModel.ProductSubCategory.ProductCategory_list = (await _productCategoryService.Get(null, null, null, null, GlobalPageConfig.PageNumber, GlobalPageConfig.PageSize)).ToList();
+                viewModel.ProductSubCategory.ProductCategory_list = (await _productCategoryService.Get(User.GetCompanyId(), null, null, null, null, GlobalPageConfig.PageNumber, GlobalPageConfig.PageSize)).ToList();
                 viewModel.ProductSubCategories = await FetchModelList();
                 // In case of an error, render the AddForm partial view again
                 return PartialView("_AddForm", viewModel); // Returning partial view directly

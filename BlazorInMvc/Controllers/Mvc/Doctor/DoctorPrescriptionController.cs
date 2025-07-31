@@ -130,10 +130,10 @@ namespace BlazorInMvc.Controllers.Mvc.Doctor
             {
                 InvoiceTypeList = (await _invoiceTypeService.Get(null, null, null, null, 1, 1000)).ToList(),
                 NotificationByList = (await _notificationByService.Get(null)).ToList(),
-                ProductCategoryList = (await _productCategoryService.Get(null, null, null, null, 1, 1000)).ToList(),
+                ProductCategoryList = (await _productCategoryService.Get(User.GetCompanyId(),null, null, null, null, 1, 1000)).ToList(),
                 ProductSubCategoryList = (await _productSubCategoryService.Get(null, null, null, null, null, 1, 1000)).ToList(),
                 PaymentTypesList = (await _paymentTypesService.Get(null, null, null, null, 1, 1000)).ToList(),
-                Products = (await _productService.Get(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1, 1000)).ToList(),
+                Products = (await _productService.Get(User.GetCompanyId(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1, 1000)).ToList(),
                 CustomersList = (await _customerService.Get(null, null, null, null, null, null, null, 1, 1000)).ToList(),
                 SerialNumbers = (await _productSerialNumbersService.Get(null, null, null, null, null, null, null, null, null, null, null, 1, 5000)).ToList()
             };

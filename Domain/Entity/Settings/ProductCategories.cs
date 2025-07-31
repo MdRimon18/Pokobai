@@ -10,6 +10,7 @@ namespace Domain.Entity.Settings
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long ProdCtgId { get; set; }
         public Guid? ProdCtgKey { get; set; }
+        public long CompanyId { get; set; }
         public long? BranchId { get; set; }
         [Required(ErrorMessage = "Product Category Name is required")]
         [StringLength(100, ErrorMessage = "ProductCategories Name must not exceed 100 characters")]

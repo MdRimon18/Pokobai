@@ -8,7 +8,7 @@ namespace Domain.Entity.Settings
     {
         public long InvoiceId { get; set; }
         public Guid? InvoiceKey { get; set; }
-        public long CompanyId { get; set; } = CompanyInfo.CompanyId;
+        public long CompanyId { get; set; }
         public long BranchId { get; set; }
         [Required(ErrorMessage = "Invoice Number is required")]
         public string InvoiceNumber { get; set; }
