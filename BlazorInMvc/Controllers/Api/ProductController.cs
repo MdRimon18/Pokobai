@@ -134,10 +134,9 @@ namespace BlazorInMvc.Controllers.Api
             try
             {
               
-                var product_list = (await _productService.Get(companyId, productId, null, null, null, null,
-                            null, null, null, null, null, null, null,
-                            null, null, null, null, 1,
-                            1)).ToList();
+                var item = (await _productService.GetProductDetailsAsync(companyId,productId));
+
+                //here filter by productId
 
                 var responseList = new List<EcommerceProductsResponse>();
 
@@ -145,8 +144,10 @@ namespace BlazorInMvc.Controllers.Api
                 var baseUrl = $"{request.Scheme}://{request.Host}";
 
 
-                foreach (var item in product_list)
+                 if(item != null)
                 {
+
+              
 
                     item.ProductVariantsEcom = await _productVariantService.GetProductVariantsAsync(productId);
                     foreach (var variant in item.ProductVariantsEcom)
@@ -245,15 +246,27 @@ namespace BlazorInMvc.Controllers.Api
                        : item.ImageUrl,
                         ProductVariantsEcom = item.ProductVariantsEcom,
                         Specificationlist = grouped,
-                        StockStatus = item.StockStatus
-
+                        StockStatus = item.StockStatus,
+                        SimilarProducts=item.SimilarProducts
                     };
                     responseList.Add(response);
                 }
 
                 if (responseList.Count > 0)
                 {
-                    return SuccessMessage(responseList.FirstOrDefault());
+                    var itemResonse = responseList.FirstOrDefault();
+                    // Update ImageUrl for SimilarProducts
+                    if (itemResonse!=null&& itemResonse.SimilarProducts != null)
+                    {
+                        foreach (var product in itemResonse.SimilarProducts)
+                        {
+                            if (!string.IsNullOrEmpty(product.ImageUrl))
+                            {
+                                product.ImageUrl = $"{baseUrl}{product.ImageUrl}";
+                            }
+                        }
+                    }
+                    return SuccessMessage(itemResonse);
                      
                 }
                 else

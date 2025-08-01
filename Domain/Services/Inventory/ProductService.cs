@@ -3,6 +3,8 @@ using Domain.CommonServices;
 using Domain.DbContex;
 using Domain.Entity;
 using Domain.Entity.Settings;
+using Domain.ResponseModel;
+using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.Design;
 using System.Data;
 using System.Data;
@@ -56,8 +58,50 @@ namespace Domain.Services.Inventory
 				return Enumerable.Empty<Products>();
 			}
 		}
+        public async Task<EcommerceProductsResponse> GetProductDetailsAsync(long companyId,long productId)
+        {
+            if (productId <= 0)
+            {
+				return null;
+            }
 
-		public async Task<IEnumerable<Products>> GetProductWithVariants(long companyId,long? ProductId, string? ProductKey, long? BranchId, long? ProdCtgId,
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@CompanyId", companyId);
+                parameters.Add("@ProductId", productId);
+
+                using (var connection = _db)
+                {
+                    using (var multi = await connection.QueryMultipleAsync(
+                        "Products_GetDetailsWithSimilarSp",
+                        parameters,
+                        commandType: CommandType.StoredProcedure))
+                    {
+                        var product = await multi.ReadFirstOrDefaultAsync<EcommerceProductsResponse>();
+                        if (product == null)
+                        {
+                             
+                            return null; // Return null to indicate not found
+                        }
+
+                        var similarProducts = await multi.ReadAsync<EcommerceProductsResponse>();
+
+
+						product.SimilarProducts = similarProducts ?? null;
+                       return product;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+				return null;
+            }
+        }
+    
+
+
+          public async Task<IEnumerable<Products>> GetProductWithVariants(long companyId,long? ProductId, string? ProductKey, long? BranchId, long? ProdCtgId,
 			string? TagWord, string? ProdName, string? ManufacturarName, string? SerialNmbrOrUPC,
 			string? Sku, string? BarCode, int? SupplirLinkId, int? ColorId, int? SizeId, int? ShippingById, int? Rating, int? ProdStatusId, int? PageNumber, int? PageSize)
 		{

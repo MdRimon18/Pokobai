@@ -82,7 +82,7 @@ namespace Domain.ResponseModel
         public List<ProductVariantDto> ProductVariantsEcom { get; set; } = new List<ProductVariantDto>();
         public List<SpecificationGroupResponse> Specificationlist { get; set; } = new List<SpecificationGroupResponse>();
         public string? StockStatus { get; set; }
-
+        public IEnumerable<EcommerceProductsResponse>? SimilarProducts { get; set; } = new List<EcommerceProductsResponse>();
     }
     public class SpecificationGroupResponse
     {
