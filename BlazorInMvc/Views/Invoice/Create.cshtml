@@ -182,7 +182,10 @@
     <div class="card-header bg-body-tertiary">
         <h5 class="mb-0">
             <a onclick="loadPage('/Invoice/Index')" class="spa-link"> <i class="fas fa-arrow-left"></i></a>
-            @(Model.Invoice.InvoiceId > 0 ? "Update Invoice" : "Create Invoice")
+           
+            @Html.Raw(Model.Invoice.InvoiceId > 0
+                        ? $"Update Invoice (<b>{Model.Invoice.InvoiceNumber}</b>)"
+                        : "Create Invoice")
             </h5>
     </div>
     <div class="card-body">
@@ -435,7 +438,7 @@
 
                             <div class="row align-items-center mt-2">
                                 <div class="col-auto d-flex">
-                                <a class="btn btn-outline-primary btn-sm me-1 mb-1 spa-link" onclick="postItemsToApi()">Create Invoice</a>
+                                <a class="btn btn-outline-primary btn-sm me-1 mb-1 spa-link" onclick="postItemsToApi()"> @(Model.Invoice.InvoiceId > 0 ? $"Update Invoice" : "Create Invoice")  </a>
 
                               @*   <a   class="btn btn-outline-primary btn-sm me-1 mb-1 spa-link"   onclick="ShippingWithPayment()">Shipping</a> *@
 
