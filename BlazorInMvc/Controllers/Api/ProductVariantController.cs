@@ -34,7 +34,7 @@ namespace BlazorInMvc.Controllers.Api
         [Route("api/ProductVariant/SaveOrUpdate")]
         public async Task<IActionResult> SaveOrUpdate([FromForm] ProductVariants model)
         {
-            List<ProductVariantViewModel> productVariants = new List<ProductVariantViewModel>();
+            ProductVariantViewModel productVariant = new ProductVariantViewModel();
             if (model.file != null || model.file?.Length > 0)
             {
                 // Get the base URL
@@ -53,11 +53,11 @@ namespace BlazorInMvc.Controllers.Api
 
             try
             {
-                var isSavedOrUpdated  = await _productVariantService.SaveProductVariantWithProductVariantAttribute(model);
-               // if (isSavedOrUpdated)
-               // {
-                   productVariants= await _productVariantService.ProductVarientsByProductId(model.ProductId);
-                //}
+                var (success, productVariantId) = await _productVariantService.SaveProductVariantWithProductVariantAttribute(model);
+                if (success&&productVariantId>0)
+                {
+                   productVariant= await _productVariantService.ProductVarientsById(productVariantId);
+                }
                 //productVariants = (List<ProductVariant>)await _productVariantService.Get(null, model.ProductId, null, null,null,null,null,GlobalPageConfig.PageNumber,
                 //    GlobalPageConfig.PageSize);
             }
@@ -74,10 +74,7 @@ namespace BlazorInMvc.Controllers.Api
 
             return Ok(new
             {
-                Data = new
-                {
-                    productVariants
-                },
+                productVariant,
                 code = HttpStatusCode.OK,
                 message = "Success",
                 isSuccess = true
@@ -105,6 +102,31 @@ namespace BlazorInMvc.Controllers.Api
                 message = "Success",
                 isSuccess = true,
                 data = productVariant
+            });
+        }
+
+        [HttpGet]
+        [Route("api/GetProductVariantByProductId")]
+        public async Task<IActionResult> GetProductVariantByProductId(long productId)
+        {
+            var productVariants = await _productVariantService.ProductVarientsByProductId(productId);
+            if (productVariants == null)
+            {
+                return NotFound(
+                    new
+                    {
+                        isSuccess = false,
+                        message = "Product Variant not found"
+                    }
+                    );
+            }
+
+            return Ok(new
+            {
+                code = HttpStatusCode.OK,
+                message = "Success",
+                isSuccess = true,
+                productVariants
             });
         }
 

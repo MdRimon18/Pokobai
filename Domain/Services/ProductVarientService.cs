@@ -86,6 +86,57 @@ namespace Domain.Services
                 return new List<ProductVariantViewModel>();
             }
         }
+        public async Task<ProductVariantViewModel> ProductVarientsById(long Id)
+        {
+            try
+            {
+                var attributes = await (from pa in _context.ProductVariants.Where(w => w.ProductVariantId == Id && w.Status == "Active")
+                                        join pad in _context.ProductVariantAttributes
+                                            on pa.ProductVariantId equals pad.ProductVariantId into detailsGroup
+                                        from pad in detailsGroup.DefaultIfEmpty()
+                                        join av in _context.AttributteValues
+                                            on (pad != null ? pad.AttributeValueId : 0) equals av.AttributeValueId into valueGroup
+                                        from av in valueGroup.DefaultIfEmpty()
+                                        join attr in _context.Attributtes
+                                            on (pad != null ? pad.AttributeId : 0) equals attr.AttributteId into attrGroup
+                                        from attr in attrGroup.DefaultIfEmpty()
+                                        select new
+                                        {
+                                            ProductAttribute = pa,
+                                            AttributeName = attr != null ? attr.AttributeName : null,
+                                            AttributeValue = av != null ? av.AttrbtValue : null
+                                        })
+                                        .ToListAsync();
+
+                var result = attributes
+                    .GroupBy(x => x.ProductAttribute)
+                    .Select(g => new ProductVariantViewModel
+                    {
+                        ProductVariantId = g.Key.ProductVariantId,
+                        ProductId = g.Key.ProductId,
+                        SkuNumber = g.Key.SkuNumber,
+                        PriceAdjustment = g.Key.PriceAdjustment,
+                        StockQuantity = g.Key.StockQuantity,
+                        SupplierId = g.Key.SupplierId,
+                        Status = g.Key.Status,
+                        LastModified = g.Key.LastModified,
+                        AttributeDetailsText = g.Any(x => x.AttributeName != null && x.AttributeValue != null)
+                            ? string.Join(", ",
+                                g.Where(x => x.AttributeName != null && x.AttributeValue != null)
+                                 .GroupBy(x => x.AttributeName)
+                                 .Select(ag => $"{ag.Key}: {string.Join(", ", ag.Select(x => x.AttributeValue ?? "None"))}"))
+                            : string.Empty
+                    })
+                    .FirstOrDefault();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                // Log the exception if needed
+                return new ProductVariantViewModel();
+            }
+        }
         public async Task<ProductVariantViewModel?> GetVariantForEditAsync(long productVariantId)
         {
             // Step 1: Get selected AttributeValueIds
@@ -146,7 +197,7 @@ namespace Domain.Services
         //        return null;
         //    }
         //}
-        public async Task<bool> SaveProductVariantWithProductVariantAttribute(ProductVariants model)
+        public async Task<(bool,long)> SaveProductVariantWithProductVariantAttribute(ProductVariants model)
         {
             try
             {
@@ -166,7 +217,7 @@ namespace Domain.Services
                     : await _context.ProductVariants.FindAsync(model.ProductVariantId);
 
                 if (productVariant == null)
-                    return false;
+                    return (false, 0);
 
                 if (model.ProductVariantId > 0)
                 {
@@ -240,11 +291,11 @@ namespace Domain.Services
 
                 await _context.SaveChangesAsync();
                 model.ProductVariantId = productVariant.ProductVariantId;
-                return true;
+                return (true, productVariant.ProductVariantId);
             }
             catch
             {
-                return false;
+                return (false,0);
             }
         }
 
@@ -308,8 +359,8 @@ namespace Domain.Services
                                AttributeValueId = pva.AttributeValueId,
                                AttributeValue = pva.AttributeValue.AttrbtValue,
                                ProductVariantAttributeId = pva.ProductVariantAttributeId,
-                               Status = pva.Status,
-                               LastModified = pva.LastModified
+                              // Status = pva.Status,
+                             //  LastModified = pva.LastModified
                            }).ToList()
                        }).ToList()
                })
@@ -324,8 +375,99 @@ namespace Domain.Services
                 return null;
             }
         }
- 
 
+        public async Task<ProductVariantsResponseDto> GetProductVariantsForEcommerceAsync(long productId,string baseUrl)
+        {
+            try
+            {
+                var productVariants = await _context.ProductVariants
+                    .Where(pv => pv.ProductId == productId && pv.Status == "Active")
+                    .Include(pv => pv.ProductVariantAttributes)
+                        .ThenInclude(pva => pva.Attributte)
+                    .Include(pv => pv.ProductVariantAttributes)
+                        .ThenInclude(pva => pva.AttributeValue)
+                    .ToListAsync();
+
+                var productVariantDtos = productVariants.Select(pv => new ProductVariantDto
+                {
+                    ProductVariantId = pv.ProductVariantId,
+                    ProductId = pv.ProductId,
+                    SkuNumber = pv.SkuNumber,
+                    PriceAdjustment = pv.PriceAdjustment,
+                    StockQuantity = pv.StockQuantity,
+                    ImageUrl = baseUrl + pv.ImageUrl,
+                    Position = pv.Position,
+                    SupplierId = pv.SupplierId,
+                    Status = pv.Status,
+                    LastModified = pv.LastModified,
+                    //AttributeDetailsText = string.Join(", ", pv.ProductVariantAttributes
+                    //    .Where(pva => pva.Status == "Active")
+                    //    .Select(pva => $"{pva.Attributte.AttributeName}: {pva.AttributeValue.AttrbtValue}")),
+                    AttributeGroupDtos = pv.ProductVariantAttributes
+                        .Where(pva => pva.Status == "Active")
+                        .GroupBy(pva => new { pva.AttributeId, pva.Attributte.AttributeName })
+                        .Select(g => new AttributeGroupDto
+                        {
+                            Attribute = g.Key.AttributeName,
+                            Values = g.Select(pva => new AttributeValueDto
+                            {
+                                AttributeValue = pva.AttributeValue.AttrbtValue,
+                                ProductVariantId = pv.ProductVariantId,
+                                Price = pv.PriceAdjustment,
+                                StockQuantity = pv.StockQuantity
+                            })
+                            .DistinctBy(v => v.AttributeValue)
+                            .OrderBy(v => v.AttributeValue)
+                            .ToList()
+                        })
+                        .OrderBy(a => a.Attribute)
+                        .ToList()
+                }).OrderBy(pv => pv.Position).ToList();
+
+                var attributes = productVariants
+                    .SelectMany(pv => pv.ProductVariantAttributes.Select(pva => new { pva, pv }))
+                    .Where(x => x.pva.Status == "Active")
+                    .GroupBy(x => new { x.pva.AttributeId, x.pva.Attributte.AttributeName })
+                    .Select(g => new AttributeGroupDto
+                    {
+                        AttributeId=g.Key.AttributeId,
+                        Attribute = g.Key.AttributeName,
+                        Values = g.Select(x => new AttributeValueDto
+                        {
+                            AttributeValueId=x.pva.AttributeValueId,
+                            AttributeValue = x.pva.AttributeValue.AttrbtValue,
+                            ProductVariantId = x.pv.ProductVariantId,
+                            Price = x.pv.PriceAdjustment,
+                            StockQuantity = x.pv.StockQuantity,
+                            ImageUrl=x.pv.ImageUrl != null ? baseUrl + x.pv.ImageUrl : null
+                        })
+                        .DistinctBy(v => v.AttributeValue)
+                        .OrderBy(v => v.AttributeValue)
+                        .ToList()
+                    })
+                    .OrderBy(a => a.Attribute)
+                    .ToList();
+
+                 
+                return new ProductVariantsResponseDto
+                {
+
+                    //  ProductVariants = productVariantDtos,
+                    AttributeSets = attributes,
+                    DefaultOrFirstVariants = productVariantDtos.FirstOrDefault()
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ProductVariantsResponseDto
+                {
+
+                    // ProductVariants = new List<ProductVariantDto>(),
+                    AttributeSets = new List<AttributeGroupDto>(),
+                   
+                };
+            }
+        }
         public List<AttributteViewModel> GetAttributes()
         {
             try

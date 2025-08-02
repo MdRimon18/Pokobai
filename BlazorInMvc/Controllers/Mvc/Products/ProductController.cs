@@ -296,7 +296,7 @@ namespace BlazorInMvc.Controllers.Mvc.Products
                 obj.ProductImages=(await _productMediaService.Get(null, null, id, null)).ToList();
                 obj.Specification_list =(await _productSpecificationService.Get(null, null, id, null, null, GlobalPageConfig.PageNumber, GlobalPageConfig.PageSize)).ToList();
                 obj.ProductSerialNumbers_list = (await _productSerialNumbersService.Get(null, null, id, null, null, null, null, null, null, null, null, GlobalPageConfig.PageNumber, GlobalPageConfig.PageSize)).ToList();
-                obj.ProductVariants =(await _productVariantService.ProductVarientsByProductId(id));
+                obj.ProductVariants = new List<ProductVariantViewModel>();//(await _productVariantService.ProductVarientsByProductId(id));
                 obj.AttributeValueList = (_productVariantService.GetAttributeValues().Select(a => new SelectListItem
                 {
                     Value = a.AttributeValueId.ToString(),

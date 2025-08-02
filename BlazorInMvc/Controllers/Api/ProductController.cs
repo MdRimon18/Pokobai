@@ -114,7 +114,7 @@ namespace BlazorInMvc.Controllers.Api
                         ImageUrl = !string.IsNullOrWhiteSpace(item.ImageUrl) && !item.ImageUrl.StartsWith(baseUrl)
                         ? baseUrl + item.ImageUrl
                         : item.ImageUrl,
-                        ProductVariantsEcom =new List<ProductVariantDto>(),
+                       // ProductVariantsEcom =new ProductVariantsResponseDto(),
                        StockStatus= item.StockStatus
                     };
                     responseList.Add(response);
@@ -141,24 +141,24 @@ namespace BlazorInMvc.Controllers.Api
                 var responseList = new List<EcommerceProductsResponse>();
 
                 var request = HttpContext.Request;
-                var baseUrl = $"{request.Scheme}://{request.Host}";
+                string baseUrl = $"{request.Scheme}://{request.Host}";
 
 
                  if(item != null)
                 {
 
-              
+                    item.ProductVariantsEcom = await _productVariantService.GetProductVariantsForEcommerceAsync(productId, baseUrl);
+                    
+                    
+                   //foreach (var variant in item.ProductVariantsEcom)
+                   //{
+                   //    if (!string.IsNullOrWhiteSpace(variant.ImageUrl) && !variant.ImageUrl.StartsWith(baseUrl))
+                   //    {
+                   //        variant.ImageUrl = baseUrl + variant.ImageUrl;
+                   //    }
+                   //}
 
-                    item.ProductVariantsEcom = await _productVariantService.GetProductVariantsAsync(productId);
-                    foreach (var variant in item.ProductVariantsEcom)
-                    {
-                        if (!string.IsNullOrWhiteSpace(variant.ImageUrl) && !variant.ImageUrl.StartsWith(baseUrl))
-                        {
-                            variant.ImageUrl = baseUrl + variant.ImageUrl;
-                        }
-                    }
-
-                    var items = (await _productSpecificationService.Get(null, null, item.ProductId, null, null, GlobalPageConfig.PageNumber, GlobalPageConfig.PageSize)).ToList();
+                   var items = (await _productSpecificationService.Get(null, null, item.ProductId, null, null, GlobalPageConfig.PageNumber, GlobalPageConfig.PageSize)).ToList();
                     var grouped = items
                      .GroupBy(x => string.IsNullOrWhiteSpace(x.HeaderName) ? "No Header" : x.HeaderName.Trim())
                      .Select(g => new SpecificationGroupResponse

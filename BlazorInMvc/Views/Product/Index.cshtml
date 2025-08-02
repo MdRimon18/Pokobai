@@ -57,6 +57,7 @@
                 // On success, replace the content of a container with the returned partial view
                 $('#AddContainer').html(result);
                  initializeTinyMCE();
+                 renderProductVariants(id);
             },
             error: function (xhr, status, error) {
                 console.log('Error:', error);

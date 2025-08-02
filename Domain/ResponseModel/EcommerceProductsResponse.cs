@@ -79,7 +79,7 @@ namespace Domain.ResponseModel
         public List<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
         public string? ImageUrl { get; set; }
         //public List<ProductVariantViewModel> ProductVariants { get; set; } = new List<ProductVariantViewModel>();
-        public List<ProductVariantDto> ProductVariantsEcom { get; set; } = new List<ProductVariantDto>();
+        public ProductVariantsResponseDto ProductVariantsEcom { get; set; } = new ProductVariantsResponseDto();
         public List<SpecificationGroupResponse> Specificationlist { get; set; } = new List<SpecificationGroupResponse>();
         public string? StockStatus { get; set; }
         public IEnumerable<EcommerceProductsResponse>? SimilarProducts { get; set; } = new List<EcommerceProductsResponse>();

@@ -429,11 +429,10 @@
  
                                 <div class="col-sm-1">Action</div>
                             </div>
-                        @if (Model.ProductVariants?.Count() > 0)
-                            {
+                     
 
                                 <div id="product-variant-list">
-                                    @foreach (var img in Model.ProductVariants)
+                                    @* @foreach (var img in Model.ProductVariants)
                                     {
                                         <div id="variant-row-@img.ProductVariantId" class="row gx-2 flex-between-center mb-3">
                                             <div class="col-sm-1">
@@ -479,10 +478,10 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    }
+                                    } *@
                                 </div>
 
-                            }
+                          
                        
                       
                         <div class="row gy-3 gx-2">
@@ -1165,6 +1164,8 @@
          $(document).ready(function () {
             populateAttributeValuesDropdowns();
             initializeSelect2();
+           
+
         });
 
         function initializeSelect2() {
@@ -1439,6 +1440,117 @@
             `;
             productVariantsList.innerHTML += row;
         });
+    }
+
+         async function fetchProductVariants(productId) {
+            try {
+                let url =`/api/GetProductVariantByProductId?productId=${productId}`;
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Failed to fetch product variants');
+                return await response.json();
+            } catch (error) {
+                console.error('Error fetching product variants:', error);
+                return null;
+            }
+        }
+
+    function renderVariantRow(variant) {
+        const imageSrc = variant.imageUrl && variant.imageUrl !== ''
+            ? variant.ImageUrl
+            : '/assets/commonimage/no-image.png';
+
+        return `
+            <div id="variant-row-${variant.productVariantId}" class="row gx-2 flex-between-center mb-3">
+                <div class="col-sm-1">
+                    <div class="avatar avatar-4xl">
+                        <img class="rounded-circle" src="${imageSrc}" alt="" />
+                    </div>
+                </div>
+                <div class="col-sm-1">
+                    <div class="d-flex flex-between-center">
+                        <h6 class="mb-0 text-700">${variant.skuNumber || 'N/A'}</h6>
+                    </div>
+                </div>
+                <div class="col-sm-1">
+                    <div class="d-flex flex-between-center">
+                        <h6 class="mb-0 text-700">${variant.priceAdjustment || '0.00'}</h6>
+                    </div>
+                </div>
+                <div class="col-sm-1">
+                    <div class="d-flex flex-between-center">
+                        <h6 class="mb-0 text-700">${variant.stockQuantity || '0'}</h6>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="d-flex flex-between-center">
+                        <h6 class="mb-0 text-700">${variant.attributeDetailsText || 'N/A'}</h6>
+                    </div>
+                </div>
+                <div class="col-sm-1">
+                    <div class="d-flex flex-between-center">
+                        <button class="btn btn-falcon-default btn-sm" type="button" onclick="LoadProductVariantEditModeData('${variant.productVariantId}')">
+                            <span class="fas fa-external-link-alt" data-fa-transform="shrink-3"></span>
+                        </button>
+                        <a class="btn btn-sm btn-link text-danger" onclick="DeleteVariantItem('${variant.productVariantId}')">
+                            <span class="fs-10 fas fa-trash-alt"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+         async function renderProductVariants(productId, obj) {
+        const container = document.getElementById('product-variant-list');
+        if (!container) {
+            console.error('Product variant list container not found');
+            return;
+        }
+
+        // Show loading message only when fetching by productId
+        if (productId) {
+            container.innerHTML = '<div>Loading...</div>';
+        }
+
+        // Handle fetching all variants by productId
+        if (productId) {
+            const data = await fetchProductVariants(productId);
+
+            if (!data.isSuccess) {
+                container.innerHTML = '<div>Error loading variants</div>';
+                return;
+            }
+
+            // Clear container when fetching all variants
+            container.innerHTML = '';
+
+            // Render all variants
+            data.productVariants.forEach(variant => {
+                container.innerHTML += renderVariantRow(variant);
+            });
+        }
+
+        // Handle single object or array of variants (e.g., after save)
+        if (obj) {
+            const variants = Array.isArray(obj) ? obj : [obj];
+
+            variants.forEach(variant => {
+                const existingRow = document.getElementById(`variant-row-${variant.productVariantId}`);
+                if (existingRow) {
+                    // Update existing row
+                    existingRow.outerHTML = renderVariantRow(variant);
+                } else {
+                    // Append new row
+                    container.innerHTML += renderVariantRow(variant);
+                }
+            });
+        }
+
+        // Remove loading message if it exists
+        const loadingDiv = Array.from(container.querySelectorAll('div')).find(div => div.textContent === 'Loading...');
+        if (loadingDiv) {
+            loadingDiv.remove();
+        }
     }
 
 
