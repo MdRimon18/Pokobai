@@ -1,4 +1,5 @@
 using BlazorInMvc.Models;
+using Domain.CommonServices;
 using Domain.Entity.Settings;
 using Domain.Services.Inventory;
 using Microsoft.AspNetCore.Authentication;
@@ -13,13 +14,15 @@ namespace BlazorInMvc.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly UserService _userService;
-         
+        private readonly CompanyService _companyService;
 
         public HomeController(ILogger<HomeController> logger,
-            UserService userService)
+            UserService userService,
+            CompanyService companyService)
         {
             _logger = logger;
             _userService = userService;
+            _companyService = companyService;
         }
 
         public IActionResult Index(string component = null, bool isPartial = false)
@@ -83,6 +86,13 @@ namespace BlazorInMvc.Controllers
                 ViewData["ErrorMessage"] = "Invalid phone number or password.";
                 return View(user);
             }
+            Company company = new Company();
+            if (existingUser.CompanyId>0)
+            {
+                company = await _companyService.GetById((long)existingUser.CompanyId);
+            }
+            var request = HttpContext.Request;
+            string baseUrl = $"{request.Scheme}://{request.Host}";
 
             // Create claims for the authenticated user
             var claims = new List<Claim>
@@ -91,7 +101,11 @@ namespace BlazorInMvc.Controllers
             new Claim(ClaimTypes.Name, existingUser.Name),
             new Claim(ClaimTypes.Role, existingUser.RoleName ?? "User"),
             new Claim("PhoneNo", existingUser.PhoneNo),
-            new Claim("CompanyId", existingUser.CompanyId==null?"0":existingUser.CompanyId.ToString())
+            new Claim("CompanyId", existingUser.CompanyId==null?"0":existingUser.CompanyId.ToString()),
+            new Claim("CompanyLogoImgLink", baseUrl + (company?.CompanyLogoImgLink ?? "")),
+            new Claim("UserImage", baseUrl + (existingUser?.ImgLink ?? "")),
+            new Claim("CompanyName", company?.CompanyName),
+
         };
 
             var claimsIdentity = new ClaimsIdentity(

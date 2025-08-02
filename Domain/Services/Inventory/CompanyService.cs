@@ -16,7 +16,7 @@ namespace Domain.Services.Inventory
             _db = db.GetDbConnection();
 
         }
-        public async Task<IEnumerable<Company>> Get(long? CompanyId, string CompanyKey, string CompanyName, string CompMobileNo, string? CompanyEmail, long? CountryId,string? SearchValue, int? PageNumber, int? PageSize)
+        public async Task<IEnumerable<Company>> Get(long? CompanyId, string? CompanyKey, string? CompanyName, string ?CompMobileNo, string? CompanyEmail, long? CountryId,string? SearchValue, int? PageNumber, int? PageSize)
         {
             try
             {

@@ -29,6 +29,18 @@ public static class ClaimsPrincipalExtensions
         return value != null && long.TryParse(value, out var companyId) ? companyId : 0;
     }
 
+    public static string GetCompanyLogo(this ClaimsPrincipal principal)
+    {
+        return principal.FindFirst("CompanyLogoImgLink")?.Value ?? string.Empty;
+    }
+    public static string GetUserImage(this ClaimsPrincipal principal)
+    {
+        return principal.FindFirst("UserImage")?.Value ?? string.Empty;
+    }
+    public static string GetCompanyName(this ClaimsPrincipal principal)
+    {
+        return principal.FindFirst("CompanyName")?.Value ?? string.Empty;
+    }
     public static bool IsAuthenticated(this ClaimsPrincipal principal)
     {
         return principal.Identity?.IsAuthenticated ?? false;
