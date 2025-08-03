@@ -19,7 +19,7 @@ namespace BlazorInMvc.Controllers.Api
         [HttpGet("GetAttributes")]
         public IActionResult GetAttributes()
         {
-            var attributes = _roductAttributeService.GetAttributes();
+            var attributes = _roductAttributeService.GetAttributes(User.GetCompanyId());
             return Ok(attributes);
         }
 

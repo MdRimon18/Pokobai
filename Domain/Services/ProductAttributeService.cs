@@ -18,11 +18,11 @@ namespace Domain.Services
         {
             _context = context;
         }
-        public List<AttributteViewModel> GetAttributes()
+        public List<AttributteViewModel> GetAttributes(long companyId)
         {
             try
             {
-                return _context.Attributtes
+                return _context.Attributtes.Where(w=>w.CompanyId==companyId)
                     .Select(a => new AttributteViewModel
                     {
                         AttributteId = a.AttributteId,

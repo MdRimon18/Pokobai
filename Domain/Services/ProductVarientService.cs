@@ -490,20 +490,22 @@ namespace Domain.Services
                 return null;
             }
         }
-        public List<AttributteValue> GetAttributeValues()
+        public List<AttributteValue> GetAttributeValues(long companyId)
         {
             try
             {
                 return _context.AttributteValues
+                    .Include(av => av.Attributte)
+                    .Where(av => av.Attributte.CompanyId == companyId&&av.Status== "Active")
                     .ToList();
             }
             catch (Exception ex)
             {
                 // TODO: Log exception
-                // Console.WriteLine($"Error in GetAttributeValues: {ex.Message}");
                 return null;
             }
         }
+
         public List<AttributteValueViewModel> GetAttributeValuesByAttributteId(int attributteId)
         {
             try
