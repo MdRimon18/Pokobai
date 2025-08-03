@@ -6,7 +6,15 @@ namespace BlazorInMvc.Controllers.Mvc
     {
         public IActionResult Index()
         {
-            return View();
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return PartialView("Index"); // Return partial view for AJAX requests
+            }
+
+            return View("Index");
+
         }
+
+
     }
 }

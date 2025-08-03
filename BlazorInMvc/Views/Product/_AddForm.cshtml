@@ -1272,6 +1272,7 @@
             processData: false,
             contentType: false,
             success: function (response) {
+                console.log(response);
                 if (response.isSuccess) {
                     showSuccessToast('Product variant saved successfully.');
                     $('#VariantSkuNumber').val('');
@@ -1285,6 +1286,10 @@
                     submitButton.text('Add');
                         const $dropdown = $('#attributeValueIds');
                         $dropdown.val(null).trigger('change');
+
+                        if (response.isSuccess) {
+                            renderProductVariants(null,response.productVariant);
+                        }
                   //    const $dropdown = $('#attributeValueIds');
 
               //   $dropdown.empty(); // Clear existing options
@@ -1401,47 +1406,7 @@
         });
     }
 
-        function updateProductVariantList(variants) {
-        const productVariantsList = document.getElementById("product-variant-list");
-        productVariantsList.innerHTML = ""; // Clear the existing list
-
-        variants.forEach(variant => {
-            const row = `
-                <div id="variant-row-${variant.productVariantId}" class="row gx-2 flex-between-center mb-3">
-                    <div class="col-sm-1">
-                        <div class="avatar avatar-4xl">
-                            <img class="rounded-circle" src="${variant.imageUrl || '/assets/commonimage/no-image.png'}" alt="" />
-                        </div>
-                    </div>
-                    <div class="col-sm-1">
-                        <div class="d-flex flex-between-center">
-                            <h6 class="mb-0 text-700">${variant.skuNumber || ''}</h6>
-                        </div>
-                    </div>
-                    
-                    
-                    <div class="col-sm-1">
-                        <div class="d-flex flex-between-center">
-                            <h6 class="mb-0 text-700">${variant.stockQuantity || ''}</h6>
-                        </div>
-                    </div>
-                     
-                    <div class="col-sm-1">
-                        <div class="d-flex flex-between-center">
-                            <button class="btn btn-falcon-default btn-sm" type="button" onclick="LoadProductVariantEditModeData('${variant.productVariantId}')">
-                                <span class="fas fa-external-link-alt" data-fa-transform="shrink-3"></span>
-                            </button>
-                            <a class="btn btn-sm btn-link text-danger" onclick="DeleteImagesItem('${variant.productVariantId}')">
-                                <span class="fs-10 fas fa-trash-alt"></span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            `;
-            productVariantsList.innerHTML += row;
-        });
-    }
-
+    
          async function fetchProductVariants(productId) {
             try {
                 let url =`/api/GetProductVariantByProductId?productId=${productId}`;
@@ -1456,7 +1421,7 @@
 
     function renderVariantRow(variant) {
         const imageSrc = variant.imageUrl && variant.imageUrl !== ''
-            ? variant.ImageUrl
+            ? variant.imageUrl
             : '/assets/commonimage/no-image.png';
 
         return `
@@ -1508,12 +1473,12 @@
         }
 
         // Show loading message only when fetching by productId
-        if (productId) {
+        if (productId>0) {
             container.innerHTML = '<div>Loading...</div>';
         }
 
         // Handle fetching all variants by productId
-        if (productId) {
+        if (productId>0) {
             const data = await fetchProductVariants(productId);
 
             if (!data.isSuccess) {
@@ -1531,10 +1496,9 @@
         }
 
         // Handle single object or array of variants (e.g., after save)
-        if (obj) {
-            const variants = Array.isArray(obj) ? obj : [obj];
-
-            variants.forEach(variant => {
+        if (!productId) {
+      
+            [obj].forEach(variant => {
                 const existingRow = document.getElementById(`variant-row-${variant.productVariantId}`);
                 if (existingRow) {
                     // Update existing row
