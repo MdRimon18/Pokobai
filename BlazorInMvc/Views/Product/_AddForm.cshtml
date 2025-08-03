@@ -421,7 +421,7 @@
                     <div class="card-body">
                         
                             <div class="row gx-2 flex-between-center mb-3 ">
-                                <div class="col-sm-1">Images</div>
+                                @* <div class="col-sm-1">Images</div> *@
                                 <div class="col-sm-1">SKU</div>
                                 <div class="col-sm-1">Price</div>
                                 <div class="col-sm-1">Stock Qty.</div>
@@ -485,15 +485,15 @@
                        
                       
                         <div class="row gy-3 gx-2">
-                            <div class="col-sm-2">
-                                <input type="file" class="file-input form-control form-control-sm form-rounded" id="VariantFileInput" />
-                                <div class="image-uploader">
+                            
+                                <input type="hidden" class="file-input form-control form-control-sm form-rounded" id="VariantFileInput" />
+                               @*  <div class="image-uploader">
                                     <div class="image-preview">
                                         <img id="VariantPreviewImage" src="" alt="Selected Image" style="width: 100px; height: 100px;" />
 
                                     </div>
-                                </div>
-                            </div>
+                                </div> *@
+                           
                             <div class="col-sm-2">
                                 
                                 <input class="form-control form-control-sm form-label fw-semi-bold" id="VariantSkuNumber" type="text" placeholder="SKU" />
@@ -513,7 +513,7 @@
                                 <span class="text-left invalid-message-StockQuantity"></span>
                             </div>
 
-                            <div class="col-sm-3">
+                            <div class="col-sm-4">
                                 <select id="attributeValueIds" name="AttributteValueIds" class="form-control" multiple="multiple"></select>
                                 <span class="text-danger invalid-message-AttributeValuesId"></span>
                             </div>
@@ -811,7 +811,25 @@
                             <label class="form-label fw-semi-bold" for="previous-price">Add a keyword:</label>
                             <input class="form-control js-choice" id="product-tags" type="text" asp-for="TagWord"   size="1" data-options='{"removeItemButton":true,"placeholder":false}' />
                         </div>
-                
+                         <div class="col-12">
+                            <label for="productCategoryType" class="form-label fw-bold">Product Type</label>
+                    <select asp-for="ProductCategoryType" name="ProductCategoryType" class="form-select">
+                                <option value="">Select Product Type</option>
+                                <option value="Featured">Featured</option>
+                                <option value="NewArrival">New Arrival</option>
+                                <option value="Trendy">Trendy</option>
+                                <option value="BestSeller">Best Seller</option>
+                                <option value="LimitedEdition">Limited Edition</option>
+                                <option value="Seasonal">Seasonal</option>
+                                <option value="Discounted">Discounted</option>
+                                <option value="Recommended">Recommended</option>
+                                <option value="TopRated">Top Rated</option>
+                                <option value="BackInStock">Back In Stock</option>
+                                <option value="Clearance">Clearance</option>
+                                <option value="Exclusive">Exclusive</option>
+                            </select>
+                        </div>
+
                         </div>
                    
                  
@@ -1218,7 +1236,7 @@
             return;
         }
 
-        const fileInput = $('#VariantFileInput')[0].files[0];
+        //const fileInput = $('#VariantFileInput')[0].files[0];
         const skuNumber = $('#VariantSkuNumber').val();
         const price = $('#VariantPrice').val();
         const stockQuantity = $('#VariantStockQuantity').val();
@@ -1235,7 +1253,7 @@
         // Create FormData
         const formData = new FormData();
         if (fileInput) {
-            formData.append('file', fileInput);
+            formData.append('file', null);
         }
         formData.append('SkuNumber', skuNumber);
         formData.append('PriceAdjustment', price);
@@ -1426,11 +1444,7 @@
 
         return `
             <div id="variant-row-${variant.productVariantId}" class="row gx-2 flex-between-center mb-3">
-                <div class="col-sm-1">
-                    <div class="avatar avatar-4xl">
-                        <img class="rounded-circle" src="${imageSrc}" alt="" />
-                    </div>
-                </div>
+                
                 <div class="col-sm-1">
                     <div class="d-flex flex-between-center">
                         <h6 class="mb-0 text-700">${variant.skuNumber || 'N/A'}</h6>

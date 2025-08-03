@@ -147,6 +147,28 @@ namespace Domain.Helper
             var imageBytes = imageStream.ToArray();
             return imageBytes;
         }
+
+        public static bool DeleteFile(string fileRelativeUrl)
+        {
+            try
+            {
+                // Combine wwwroot and relative path
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", fileRelativeUrl.TrimStart('/'));
+
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                    return true;
+                }
+
+                return false; // File not found
+            }
+            catch
+            {
+                // Log error if needed
+                return false;
+            }
+        }
         private static string GetFileName()
         {
             string extension = ".jpg";

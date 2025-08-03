@@ -1,8 +1,9 @@
 ﻿using Dapper;
-using System.Data;
-using Domain.Entity.Settings;
 using Domain.DbContex;
 using Domain.Entity.Inventory;
+using Domain.Entity.Settings;
+using Domain.Helper;
+using System.Data;
 
 
 namespace Domain.Services.Inventory
@@ -108,7 +109,14 @@ namespace Domain.Services.Inventory
 
                 // Execute the query and get the number of affected rows
                 int rowsAffected = await _db.ExecuteAsync(query, parameters);
+                if (rowsAffected > 0)
+                {
+                    if (!string.IsNullOrEmpty(productImage.ImageUrl))
+                    {
+                        MediaHelper.DeleteFile(productImage.ImageUrl);
 
+                    }
+                }
                 // Return true if the deletion was successful
                 return rowsAffected > 0;
             }

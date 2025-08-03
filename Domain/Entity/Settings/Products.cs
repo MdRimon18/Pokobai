@@ -31,6 +31,7 @@ namespace Domain.Entity.Settings
         [Required(ErrorMessage = "Product name is required")]
         [StringLength(100, ErrorMessage = "Product Name cannot exceed 100 characters")]
         public string ProdName { get; set; }
+        public string? ProdSlug { get; set; }
         public string? ManufacturarName { get; set; }
         public string? SerialNmbrOrUPC { get; set; }
         [Required(ErrorMessage = "SKU is required")]
@@ -97,6 +98,7 @@ namespace Domain.Entity.Settings
         public string? UnitName {  get; set; }
         public string? CurrencySymbol { get; set; }
         public string? StockStatus { get; set; }
+        public string? ProductCategoryType { get; set; }
 
         [NotMapped] 
         public int total_row { get; set; } = 0;

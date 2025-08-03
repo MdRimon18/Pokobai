@@ -3,6 +3,7 @@ using Domain.CommonServices;
 using Domain.DbContex;
 using Domain.Entity;
 using Domain.Entity.Settings;
+using Domain.Helper;
 using Domain.ResponseModel;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.Design;
@@ -179,7 +180,8 @@ namespace Domain.Services.Inventory
 				parameters.Add("@CurrencyId", _products.CurrencyId);
 				parameters.Add("@TagWord", _products.TagWord);
 				parameters.Add("@ProdName", _products.ProdName);
-				parameters.Add("@ManufacturarName", _products.ManufacturarName);
+                parameters.Add("@ProdSlug", _products.ProdSlug);
+                parameters.Add("@ManufacturarName", _products.ManufacturarName);
 				parameters.Add("@SerialNmbrOrUPC", _products.SerialNmbrOrUPC);
 				parameters.Add("@Sku", _products.Sku);
 				parameters.Add("@OpeningQnty", _products.OpeningQnty);
@@ -220,6 +222,7 @@ namespace Domain.Services.Inventory
 				parameters.Add("@ProductHieght", _products.ProductHieght);
 				parameters.Add("@BrandId", _products.BrandId);
                 parameters.Add("@StockStatus",_products.StockStatus);
+                parameters.Add("@ProductCategoryType", _products.ProductCategoryType);
                 //parameters.Add("@EntryDateTime", _products.EntryDateTime);
                 //parameters.Add("@EntryBy", _products.EntryBy);
                 //parameters.Add("@LastModifyDate", _products.LastModifyDate);
@@ -249,6 +252,7 @@ namespace Domain.Services.Inventory
 			{
 				EntityHelper.SetDeleteAuditFields(deleteObj);
 				DeletedSatatus = await SaveOrUpdate(deleteObj);
+				
 			}
 
 			return DeletedSatatus > 0;

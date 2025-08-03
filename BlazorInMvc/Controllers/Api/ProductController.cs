@@ -397,6 +397,13 @@ namespace BlazorInMvc.Controllers.Api
                 //var request = HttpContext.Request;
                 //var baseUrl = $"{request.Scheme}://{request.Host}";
 
+                // Delete old file if it exists
+                if (!string.IsNullOrEmpty(model.ImageUrl))
+                {
+                    MediaHelper.DeleteFile(model.ImageUrl);
+                 
+                }
+
                 string extension = Path.GetExtension(model.file.FileName);
                 var bytes = await new MediaHelper().GetBytes(model.file);
 
