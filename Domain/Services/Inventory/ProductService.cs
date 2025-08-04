@@ -177,7 +177,7 @@ namespace Domain.Services.Inventory
 				parameters.Add("@UnitId", _products.UnitId);
 				parameters.Add("@FinalPrice", _products.FinalPrice);
 				parameters.Add("@PreviousPrice", _products.PreviousPrice);
-				parameters.Add("@CurrencyId", _products.CurrencyId);
+				parameters.Add("@CurrencyId", _products.CurrencyId??0);
 				parameters.Add("@TagWord", _products.TagWord);
 				parameters.Add("@ProdName", _products.ProdName);
                 parameters.Add("@ProdSlug", _products.ProdSlug);

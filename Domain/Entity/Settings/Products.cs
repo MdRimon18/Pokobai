@@ -25,7 +25,7 @@ namespace Domain.Entity.Settings
         public long? UnitId { get; set; } = null;
         public decimal FinalPrice { get; set; }
         public decimal? PreviousPrice { get; set; }
-        [Required(ErrorMessage = "Currency is required")]
+        //[Required(ErrorMessage = "Currency is required")]
         public long? CurrencyId { get; set; } = null; 
         public string? TagWord { get; set; }
         [Required(ErrorMessage = "Product name is required")]
@@ -164,5 +164,8 @@ namespace Domain.Entity.Settings
   
         [NotMapped]
         public List<SelectListItem> AttributeValueList { get; set; } = new();
+        [NotMapped]
+        public List<SelectListItem> ProductCategoryTypeList { get; set; } = new();
+        public List<string> ProductCategoryTypeIds { get; set; } = new();
     }
 }

@@ -109,6 +109,13 @@ namespace BlazorInMvc.Controllers.Mvc.Products
             {
                 return PartialView("Index", viewModel);
             }
+
+
+
+            viewModel.Product.ProductCategoryTypeList = GetProductCategoryTypeList();
+
+
+
             return View("Index", viewModel);
 
         }
@@ -130,6 +137,24 @@ namespace BlazorInMvc.Controllers.Mvc.Products
                 GlobalPageConfig.PageSize)).ToList();
 
             return list.ToList(); // Convert and return as List<Unit>
+        }
+        public List<SelectListItem> GetProductCategoryTypeList()
+        {
+            return new List<SelectListItem>
+    {
+        new SelectListItem { Text = "Featured", Value = "Featured" },
+        new SelectListItem { Text = "New Arrival", Value = "NewArrival" },
+        new SelectListItem { Text = "Trendy", Value = "Trendy" },
+        new SelectListItem { Text = "Best Seller", Value = "BestSeller" },
+        new SelectListItem { Text = "Limited Edition", Value = "LimitedEdition" },
+        new SelectListItem { Text = "Seasonal", Value = "Seasonal" },
+        new SelectListItem { Text = "Discounted", Value = "Discounted" },
+        new SelectListItem { Text = "Recommended", Value = "Recommended" },
+        new SelectListItem { Text = "Top Rated", Value = "TopRated" },
+        new SelectListItem { Text = "Back In Stock", Value = "BackInStock" },
+        new SelectListItem { Text = "Clearance", Value = "Clearance" },
+        new SelectListItem { Text = "Exclusive", Value = "Exclusive" },
+    };
         }
 
         public async Task<Domain.Entity.Settings.Products> LoadDDL(Domain.Entity.Settings.Products model)
@@ -160,8 +185,8 @@ namespace BlazorInMvc.Controllers.Mvc.Products
                 // Store data in the cache with an expiration time
                 _cache.Set("ProductDropdownData", model, new MemoryCacheEntryOptions
                 {
-                    AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(20), // Cache expires after 20 seconds
-                    SlidingExpiration = TimeSpan.FromSeconds(20)                // Resets expiration if accessed within 20 seconds
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(5), // Cache expires after 20 seconds
+                    SlidingExpiration = TimeSpan.FromSeconds(5)                // Resets expiration if accessed within 20 seconds
                 });
             }
 
@@ -390,7 +415,7 @@ namespace BlazorInMvc.Controllers.Mvc.Products
                 // Load dropdown data if cache is not available
                 await LoadDDL(obj);
             }
-
+            obj.ProductCategoryTypeList = GetProductCategoryTypeList();
             // Return the partial view with the populated model
             return PartialView("_AddForm", obj);
         }
@@ -494,5 +519,7 @@ namespace BlazorInMvc.Controllers.Mvc.Products
                 return PartialView("_AddForm", model); // Returning partial view directly
             }
         }
+
+
     }
 }

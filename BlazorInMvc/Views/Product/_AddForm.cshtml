@@ -796,7 +796,7 @@
                             </div>
 
                             <!-- Currency -->
-                            <div class="col-12">
+                          @*   <div class="col-12">
                                 <label class="form-label fw-semi-bold" for="price-currency">Currency:</label>
                                 <select asp-for="CurrencyId" class="form-select">
                                     <option value="">Select Currency</option>
@@ -806,28 +806,23 @@
                                     }
                                 </select>
                                 <span asp-validation-for="CurrencyId" class="text-danger"></span>
-                            </div>
+                            </div> *@
                         <div class="col-12">
                             <label class="form-label fw-semi-bold" for="previous-price">Add a keyword:</label>
                             <input class="form-control js-choice" id="product-tags" type="text" asp-for="TagWord"   size="1" data-options='{"removeItemButton":true,"placeholder":false}' />
                         </div>
                          <div class="col-12">
+
                             <label for="productCategoryType" class="form-label fw-bold">Product Type</label>
-                    <select asp-for="ProductCategoryType" name="ProductCategoryType" class="form-select">
-                                <option value="">Select Product Type</option>
-                                <option value="Featured">Featured</option>
-                                <option value="NewArrival">New Arrival</option>
-                                <option value="Trendy">Trendy</option>
-                                <option value="BestSeller">Best Seller</option>
-                                <option value="LimitedEdition">Limited Edition</option>
-                                <option value="Seasonal">Seasonal</option>
-                                <option value="Discounted">Discounted</option>
-                                <option value="Recommended">Recommended</option>
-                                <option value="TopRated">Top Rated</option>
-                                <option value="BackInStock">Back In Stock</option>
-                                <option value="Clearance">Clearance</option>
-                                <option value="Exclusive">Exclusive</option>
-                            </select>
+                     <select id="productCategoryTypeIds" name="ProductCategoryTypeIds" class="form-control" multiple="multiple"></select>
+                  
+                   @*  <select class="form-select js-choice" id="organizer" multiple="multiple" size="1" name="organizer" data-options='{"removeItemButton":true,"placeholder":true}'>
+                        <option value="">Select organizer...</option>
+                        <option>Massachusetts Institute of Technology</option>
+                        <option>University of Chicago</option>
+                        <option>GSAS Open Labs At Harvard</option>
+                        <option>California Institute of Technology</option>
+                    </select> *@
                         </div>
 
                         </div>
@@ -961,11 +956,18 @@
             success: function (result) {
 
                 $('#AddContainer').html(result);
+                initializeTinyMCE();
+                 //  populateProductCategoryTypesDropdown();
+                 // initializeSelectForProductCategoryType();
             },
             error: function (xhr, status, error) {
                 showDangerToast('Form Reset Faild');
             }
         });
+
+
+      
+
     }
 
    
@@ -1204,7 +1206,7 @@
                 });
             }
         }
-
+        
         function populateAttributeValuesDropdowns() {
             const attributeValuesFromModel = @Html.Raw(Json.Serialize(Model.AttributeValueList));
             console.log(attributeValuesFromModel);
@@ -1956,3 +1958,49 @@
         }
     });
 </script>
+
+
+        <script>
+                $(document).ready(function () {
+                  populateProductCategoryTypesDropdown();
+                  initializeSelectForProductCategoryType();
+
+
+                 });
+                 function initializeSelectForProductCategoryType() {
+                const $dropdown = $('#productCategoryTypeIds');
+
+                // Initialize Select2 if not already initialized
+                if (!$dropdown.hasClass("select2-hidden-accessible")) {
+                    $dropdown.select2({
+                        placeholder: "Select attribute values",
+                        allowClear: true,
+                        multiple: true,
+                        width: '100%'
+                        // dropdownParent: $('#productAttributeModal') // uncomment if inside modal
+                    }).on('select2:open', function () {
+                        console.log('Select2 opened for attributeValueIds');
+                    }).on('select2:select', function () {
+                        console.log('Select2 selection updated:', $dropdown.val());
+                    });
+                }
+            }
+        function populateProductCategoryTypesDropdown() {
+       const productTypesFromModel = @Html.Raw(Json.Serialize(Model.ProductCategoryTypeList));
+                const $dropdown = $('#productCategoryTypeIds');
+
+                $dropdown.empty();
+                $dropdown.append('<option disabled>Select Product Types</option>');
+
+                productTypesFromModel.forEach(function (item) {
+                    $dropdown.append(
+                        $('<option>', {
+                            value: item.value,
+                            text: item.text
+                        })
+                    );
+                });
+
+                $dropdown.trigger('change');
+            }
+        </script>

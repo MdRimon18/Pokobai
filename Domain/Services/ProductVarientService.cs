@@ -448,10 +448,46 @@ namespace Domain.Services
                     .OrderBy(a => a.Attribute)
                     .ToList();
 
-                 
+                // Step 1: Flatten data
+                var attributesDetails = productVariants
+                    .SelectMany(pv => pv.ProductVariantAttributes.DefaultIfEmpty(), (pv, pva) => new
+                    {
+                        pv,
+                        pva
+                    })
+                    .Where(x => x.pva != null && x.pva.Status == "Active")
+                    .Select(x => new AttributeFlatDto
+                    {
+                        AttributeId = x.pva.AttributeId,
+                        AttributeName = x.pva.Attributte?.AttributeName,
+                        AttributeValueId = x.pva.AttributeValueId,
+                        AttributeValueName = x.pva.AttributeValue?.AttrbtValue,
+                        Price = x.pv.PriceAdjustment,
+                        StockQuantity = x.pv.StockQuantity,
+                        ProductVariantId = x.pv.ProductVariantId
+                    })
+                    .ToList();
+
+                //// Step 2: Assume user passed this dynamically
+                //string selectedAttributeName = "Material Type"; // Can be "Size", "Fabric", etc.
+                //string selectedAttributeValue = "cotton";
+
+                //// Step 3: Find variant IDs that match this selection
+                //var selectedVariantIds = attributesDetails
+                //    .Where(x => x.AttributeName == selectedAttributeName && x.AttributeValueName == selectedAttributeValue)
+                //    .Select(x => x.ProductVariantId)
+                //    .Distinct()
+                //    .ToList();
+
+                //// Step 4: From matching variants, get other attribute values (excluding the selected one)
+                //var availableOtherAttributes = attributesDetails
+                //    .Where(x => x.AttributeName != selectedAttributeName && selectedVariantIds.Contains(x.ProductVariantId))
+                //    .DistinctBy(x => new { x.AttributeId, x.AttributeValueId })
+                //    .ToList();
+
                 return new ProductVariantsResponseDto
                 {
-
+                    AttributesDetails= attributesDetails,
                     //  ProductVariants = productVariantDtos,
                     AttributeSets = attributes,
                     DefaultOrFirstVariants = productVariantDtos.FirstOrDefault()
@@ -468,6 +504,59 @@ namespace Domain.Services
                 };
             }
         }
+        public async Task<List<AttributeFlatDto>> GetAvailableAttributesAsync(
+        long productId,
+        string selectedAttributeName,
+        string selectedAttributeValue)
+        {
+            try
+            {
+                var productVariants = await _context.ProductVariants
+                    .Where(pv => pv.ProductId == productId && pv.Status == "Active")
+                    .Include(pv => pv.ProductVariantAttributes)
+                        .ThenInclude(pva => pva.Attributte)
+                    .Include(pv => pv.ProductVariantAttributes)
+                        .ThenInclude(pva => pva.AttributeValue)
+                    .ToListAsync();
+
+                var attributesDetails = productVariants
+                    .SelectMany(pv => pv.ProductVariantAttributes.DefaultIfEmpty(), (pv, pva) => new { pv, pva })
+                    .Where(x => x.pva != null && x.pva.Status == "Active")
+                    .Select(x => new AttributeFlatDto
+                    {
+                        AttributeId = x.pva.AttributeId,
+                        AttributeName = x.pva.Attributte?.AttributeName,
+                        AttributeValueId = x.pva.AttributeValueId,
+                        AttributeValueName = x.pva.AttributeValue?.AttrbtValue,
+                        Price = x.pv.PriceAdjustment,
+                        StockQuantity = x.pv.StockQuantity,
+                        ProductVariantId = x.pv.ProductVariantId
+                    })
+                    .ToList();
+
+                var selectedVariantIds = attributesDetails
+                    .Where(x => x.AttributeName == selectedAttributeName && x.AttributeValueName == selectedAttributeValue)
+                    .Select(x => x.ProductVariantId)
+                    .Distinct()
+                    .ToList();
+
+                var availableOtherAttributes = attributesDetails
+                    .Where(x => x.AttributeName != selectedAttributeName && selectedVariantIds.Contains(x.ProductVariantId))
+                    .DistinctBy(x => new { x.AttributeId, x.AttributeValueId })
+                    .ToList();
+
+                return availableOtherAttributes;
+            }
+            catch (Exception ex)
+            {
+                // Optional: log the exception here using ILogger or any logging service
+                Console.WriteLine($"Error in GetAvailableAttributesAsync: {ex.Message}");
+
+                // Return empty list or throw, depending on your application's error policy
+                return new List<AttributeFlatDto>();
+            }
+        }
+
         public List<AttributteViewModel> GetAttributes()
         {
             try

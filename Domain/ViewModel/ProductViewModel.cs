@@ -1,4 +1,5 @@
 ﻿using Domain.Entity.Settings;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,6 @@ namespace Domain.ViewModel
         //public string DefaultImage { get; set; }
        
         public List<Products> ProductList { get; set; }
+        
     }   
 }

@@ -281,6 +281,21 @@ namespace BlazorInMvc.Controllers.Api
                 return InternalServerError(ex);
             }
         }
+
+        [HttpGet("api/Product/AvailableAttributeValues")]
+        public async Task<IActionResult> GetAvailableAttributes(
+        long productId,
+        string selectedAttributeName,
+        string selectedAttributeValue)
+        {
+            var result = await _productVariantService.GetAvailableAttributesAsync(
+                productId,
+                selectedAttributeName,
+                selectedAttributeValue);
+
+            return Ok(result);
+        }
+
         [HttpGet]
         [Route("api/v1/Product/GetProductsWithExpandingVariants")]
         public async Task<IActionResult> GetProductByExpandingVariants(string? search, int page, int pageSize)

@@ -40,7 +40,8 @@ namespace Domain.ViewModel
 
         //  public List<ProductVariantDto> ProductVariants { get; set; }
         public List<AttributeGroupDto> AttributeSets { get; set; }
-      
+        public List<AttributeFlatDto> AttributesDetails { get; set; }
+
     }
 
     //public class ProductVariantDto
@@ -81,6 +82,15 @@ namespace Domain.ViewModel
         
     }
 
-
+    public class AttributeFlatDto
+    {
+        public int AttributeId { get; set; }
+        public string AttributeName { get; set; }
+        public int AttributeValueId { get; set; }
+        public string AttributeValueName { get; set; }
+        public decimal Price { get; set; }
+        public int StockQuantity { get; set; }
+        public long ProductVariantId { get; set; }
+    }
 
 }
