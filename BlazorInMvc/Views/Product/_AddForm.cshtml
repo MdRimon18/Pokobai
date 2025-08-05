@@ -1209,7 +1209,7 @@
         
         function populateAttributeValuesDropdowns() {
             const attributeValuesFromModel = @Html.Raw(Json.Serialize(Model.AttributeValueList));
-            console.log(attributeValuesFromModel);
+          //  console.log(attributeValuesFromModel);
             const $dropdown = $('#attributeValueIds');
 
             $dropdown.empty(); // Clear existing options
@@ -1397,7 +1397,7 @@
                     // Update button text
                     $('#SaveProductVariantButton').text('Update');
 
-                       const selectedValues = data.attributeValuesId; // e.g., [1, 3]
+                        const selectedValues = data.attributeValuesId; // e.g., [1, 3]
                         const allValues = data.allAttributeValues;     // e.g., [{value:1,text:"Red"}, ...]
 
                         const $dropdown = $('#attributeValueIds');
@@ -1986,7 +1986,7 @@
                 }
             }
         function populateProductCategoryTypesDropdown() {
-       const productTypesFromModel = @Html.Raw(Json.Serialize(Model.ProductCategoryTypeList));
+          const productTypesFromModel = @Html.Raw(Json.Serialize(Model.ProductCategoryTypeList));
                 const $dropdown = $('#productCategoryTypeIds');
 
                 $dropdown.empty();
@@ -2003,4 +2003,26 @@
 
                 $dropdown.trigger('change');
             }
-        </script>
+
+                 function populateDropdownWithProductCategoryTypesSelectedValues() {
+        const allValues = @Html.Raw(Json.Serialize(Model.ProductCategoryTypeList)); // List<SelectListItem>
+        const selectedValues = @Html.Raw(Json.Serialize(Model.ProductCategoryTypeIds)); // List<string> or List<int>
+        console.log(selectedValues);
+        const $dropdown = $('#productCategoryTypeIds');
+        $dropdown.empty();
+
+        allValues.forEach(function (item) {
+            $dropdown.append(
+                $('<option>', {
+                    value: item.Value,
+                    text: item.Text,
+                    selected: selectedValues.includes(item.Value)
+                })
+            );
+        });
+
+        $dropdown.trigger('change');
+    }
+
+
+</script>

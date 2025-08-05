@@ -78,6 +78,8 @@ public static class ServiceRegistrationExtensions
         services.AddScoped<InvoiceItemSerialsService>();
         services.AddScoped<OrderStageService>();
         services.AddScoped<ProductAttributeService>();
+        services.AddScoped<ProductCategoryTypeService>();
+
         services.AddHttpContextAccessor();
         
     }

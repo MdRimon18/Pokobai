@@ -58,7 +58,8 @@
                 $('#AddContainer').html(result);
                  initializeTinyMCE();
                  renderProductVariants(id);
-                
+                 populateDropdownWithProductCategoryTypesSelectedValues();
+                 initializeSelectForProductCategoryType();
             },
             error: function (xhr, status, error) {
                 console.log('Error:', error);
@@ -86,6 +87,7 @@
                             // On success, replace the content of a container with the returned partial view
                             $('#AddContainer').html(result);
                              initializeTinyMCE();
+                             
                         },
                         error: function (xhr, status, error) {
                             console.log('Error:', error);

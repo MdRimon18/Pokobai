@@ -50,7 +50,7 @@ namespace Domain.Migrations
 
                     b.HasKey("AttributteId");
 
-                    b.ToTable("Attributtes");
+                    b.ToTable("Attributtes", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entity.AttributteValue", b =>
@@ -83,7 +83,7 @@ namespace Domain.Migrations
 
                     b.HasIndex("AttributeId");
 
-                    b.ToTable("AttributteValues");
+                    b.ToTable("AttributteValues", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entity.Inventory.InvoiceItemSerials", b =>
@@ -112,7 +112,7 @@ namespace Domain.Migrations
 
                     b.HasKey("InvoiceItemSerialId");
 
-                    b.ToTable("InvoiceItemSerials");
+                    b.ToTable("InvoiceItemSerials", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entity.OrderStage", b =>
@@ -133,7 +133,7 @@ namespace Domain.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("OrderStages");
+                    b.ToTable("OrderStages", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entity.ProductVariantAttribute", b =>
@@ -169,7 +169,7 @@ namespace Domain.Migrations
 
                     b.HasIndex("ProductVariantId");
 
-                    b.ToTable("ProductVariantAttributes");
+                    b.ToTable("ProductVariantAttributes", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entity.ProductVariants", b =>
@@ -214,7 +214,7 @@ namespace Domain.Migrations
 
                     b.HasKey("ProductVariantId");
 
-                    b.ToTable("ProductVariants");
+                    b.ToTable("ProductVariants", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entity.Settings.Customers", b =>
@@ -299,7 +299,7 @@ namespace Domain.Migrations
 
                     b.HasKey("CustomerId");
 
-                    b.ToTable("Customers");
+                    b.ToTable("Customers", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entity.Settings.Suppliers", b =>
@@ -385,7 +385,7 @@ namespace Domain.Migrations
 
                     b.HasKey("SupplierId");
 
-                    b.ToTable("Suppliers");
+                    b.ToTable("Suppliers", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entity.Settings.User", b =>
@@ -463,7 +463,7 @@ namespace Domain.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entity.Settings.UserAddressBook", b =>
@@ -536,7 +536,7 @@ namespace Domain.Migrations
 
                     b.HasKey("AddressID");
 
-                    b.ToTable("UserAddressBooks");
+                    b.ToTable("UserAddressBooks", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entity.Settings.UserDetails", b =>
@@ -597,7 +597,7 @@ namespace Domain.Migrations
 
                     b.HasKey("UserDetailId");
 
-                    b.ToTable("UserDetails");
+                    b.ToTable("UserDetails", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entity.Settings.UserPhoneNumbers", b =>
@@ -641,7 +641,7 @@ namespace Domain.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserPhoneNumbers");
+                    b.ToTable("UserPhoneNumbers", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entity.AttributteValue", b =>

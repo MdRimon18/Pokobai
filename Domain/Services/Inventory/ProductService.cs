@@ -5,7 +5,9 @@ using Domain.Entity;
 using Domain.Entity.Settings;
 using Domain.Helper;
 using Domain.ResponseModel;
+using Domain.ViewModel;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.Design;
 using System.Data;
 using System.Data;
@@ -257,5 +259,40 @@ namespace Domain.Services.Inventory
 
 			return DeletedSatatus > 0;
 		}
-	}
+
+
+        public List<SelectListItem> GetProductCategoryTypeList(long companyId=1)
+        {
+	    	var allCategories = new List<ProductCategoryType>
+				{
+					new ProductCategoryType { CategoryName = "Featured", CategoryCode = "Featured", CompanyId = 1 },
+					new ProductCategoryType { CategoryName = "New Arrival", CategoryCode = "NewArrival", CompanyId = 1 },
+					new ProductCategoryType { CategoryName = "Trendy", CategoryCode = "Trendy", CompanyId = 1 },
+					new ProductCategoryType { CategoryName = "Best Seller", CategoryCode = "BestSeller", CompanyId = 1 },
+					new ProductCategoryType { CategoryName = "Limited Edition", CategoryCode = "LimitedEdition", CompanyId = 1 },
+					new ProductCategoryType { CategoryName = "Seasonal", CategoryCode = "Seasonal", CompanyId = 1 },
+					//new ProductCategoryType { CategoryName = "Discounted", CategoryCode = "Discounted", CompanyId = 3 },
+					new ProductCategoryType { CategoryName = "Recommended", CategoryCode = "Recommended", CompanyId = 1 },
+					//new ProductCategoryType { CategoryName = "Top Rated", CategoryCode = "TopRated", CompanyId = 2 },
+					//new ProductCategoryType { CategoryName = "Back In Stock", CategoryCode = "BackInStock", CompanyId = 3 },
+					//new ProductCategoryType { CategoryName = "Clearance", CategoryCode = "Clearance", CompanyId = 1 },
+					new ProductCategoryType { CategoryName = "Exclusive", CategoryCode = "Exclusive", CompanyId = 1 }
+				};
+
+                return allCategories
+                .Where(c => c.CompanyId == companyId)
+                .Select(c => new SelectListItem
+                {
+                    Text = c.CategoryName,
+                    Value = c.CategoryCode
+                })
+                .ToList();
+        }
+
+
+
+
+
+
+    }
 }

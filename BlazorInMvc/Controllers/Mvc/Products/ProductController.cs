@@ -1,4 +1,5 @@
 ﻿using Domain.CommonServices;
+using Domain.Entity;
 using Domain.Entity.Inventory;
 using Domain.Entity.Settings;
 using Domain.Services;
@@ -35,6 +36,7 @@ namespace BlazorInMvc.Controllers.Mvc.Products
         private readonly ProductSpecificationService _productSpecificationService;
         private readonly ProductSerialNumbersService _productSerialNumbersService;
         private readonly ProductVarientService _productVariantService;
+        private readonly ProductCategoryTypeService _productCategoryTypeService;
         public ProductController(IMemoryCache cache,
             ProductService ProductService,
               UnitService unitService,
@@ -54,7 +56,9 @@ namespace BlazorInMvc.Controllers.Mvc.Products
             ProductMediaService productMediaService,
             ProductSpecificationService productSpecificationService,
             ProductSerialNumbersService productSerialNumbersService,
-            ProductVarientService productVariantService
+            ProductVarientService productVariantService,
+            ProductCategoryTypeService productCategoryTypeService
+
  
           )
         {
@@ -78,6 +82,7 @@ namespace BlazorInMvc.Controllers.Mvc.Products
             _productSpecificationService = productSpecificationService;
             _productSerialNumbersService= productSerialNumbersService;
             _productVariantService = productVariantService;
+            _productCategoryTypeService = productCategoryTypeService;
         }
 
         public async Task<IActionResult> Products()
@@ -112,7 +117,7 @@ namespace BlazorInMvc.Controllers.Mvc.Products
 
 
 
-            viewModel.Product.ProductCategoryTypeList = GetProductCategoryTypeList();
+            viewModel.Product.ProductCategoryTypeList = _productService.GetProductCategoryTypeList();
 
 
 
@@ -138,25 +143,7 @@ namespace BlazorInMvc.Controllers.Mvc.Products
 
             return list.ToList(); // Convert and return as List<Unit>
         }
-        public List<SelectListItem> GetProductCategoryTypeList()
-        {
-            return new List<SelectListItem>
-    {
-        new SelectListItem { Text = "Featured", Value = "Featured" },
-        new SelectListItem { Text = "New Arrival", Value = "NewArrival" },
-        new SelectListItem { Text = "Trendy", Value = "Trendy" },
-        new SelectListItem { Text = "Best Seller", Value = "BestSeller" },
-        new SelectListItem { Text = "Limited Edition", Value = "LimitedEdition" },
-        new SelectListItem { Text = "Seasonal", Value = "Seasonal" },
-        new SelectListItem { Text = "Discounted", Value = "Discounted" },
-        new SelectListItem { Text = "Recommended", Value = "Recommended" },
-        new SelectListItem { Text = "Top Rated", Value = "TopRated" },
-        new SelectListItem { Text = "Back In Stock", Value = "BackInStock" },
-        new SelectListItem { Text = "Clearance", Value = "Clearance" },
-        new SelectListItem { Text = "Exclusive", Value = "Exclusive" },
-    };
-        }
-
+      
         public async Task<Domain.Entity.Settings.Products> LoadDDL(Domain.Entity.Settings.Products model)
         {
             // var model = new Domain.Entity.Settings.Products();
@@ -171,9 +158,12 @@ namespace BlazorInMvc.Controllers.Mvc.Products
                 model.CountryList = (await _countryServiceV2.Get(null, null, null, null, null, null, null, null, null, null, 1, 1000)).ToList();
                 model.StatusSettingList = (await _statusSettingService.Get(null, null, null, null, "Product", null, 1, 1000)).ToList();
                 model.ImportStatusSettingList = (await _statusSettingService.Get(null, null, null, null, null, null, 1, 1000)).ToList();
+                
                 model.ProductSubCategoryList = (await _productSubCategoryService.Get(null, null, null, null, null, 1, 1000)).ToList();
-                model.BrandList = (await _brandService.Get(null, null, null, 1, 1000)).ToList();
                 model.ProductCategoryList = (await _productCategoryService.Get(User.GetCompanyId(), null, null, null, null, 1, 1000)).ToList();
+                
+                model.BrandList = (await _brandService.Get(null, null, null, 1, 1000)).ToList();
+             
                 model.ProductSizeList = (await _productSizeService.Get(null, null, null, null, 1, 1000)).ToList();
                 model.WarehouseList = (await _warehouseService.Get(null, null, null, null, null, null, null, null, null, 1, 1000)).ToList();
                 model.BodyParts = await _bodyPartService.GetBodyPartsAsync();
@@ -238,6 +228,10 @@ namespace BlazorInMvc.Controllers.Mvc.Products
             {
                 model.CompanyId = User.GetCompanyId();
                 long responseId = await _productService.SaveOrUpdate(model);
+                if (responseId > 0) {
+                    
+                   await _productCategoryTypeService.AddOrUpdateAsync(model.CompanyId, responseId,model.ProductCategoryTypeIds);
+                }
                 if (responseId == -1)
                 {
                     //model.rowsAffected = -1;
@@ -293,7 +287,8 @@ namespace BlazorInMvc.Controllers.Mvc.Products
             {
                 return NotFound();
             }
-            Domain.Entity.Settings.Products obj = (await _productService.GetById(User.GetCompanyId(),id));
+            long companyId=User.GetCompanyId();
+            Domain.Entity.Settings.Products obj = (await _productService.GetById(companyId, id));
             if (obj == null)
             {
                 return NotFound(); // Handle case where product doesn't exist
@@ -304,7 +299,7 @@ namespace BlazorInMvc.Controllers.Mvc.Products
             {
                 // Populate dropdown fields from cached data
                 obj.SupplierList = cachedData.SupplierList;
-                obj.UnitList = cachedData.UnitList;
+                //obj.UnitList = cachedData.UnitList;
                 obj.CurrencyList = cachedData.CurrencyList;
                 obj.ShippingByList = cachedData.ShippingByList;
                 obj.ColorList = cachedData.ColorList;
@@ -313,7 +308,7 @@ namespace BlazorInMvc.Controllers.Mvc.Products
                 obj.ImportStatusSettingList = cachedData.ImportStatusSettingList;
                 obj.ProductSubCategoryList = cachedData.ProductSubCategoryList;
                 obj.BrandList = cachedData.BrandList;
-                obj.ProductCategoryList = cachedData.ProductCategoryList;
+               // obj.ProductCategoryList = cachedData.ProductCategoryList;
                 obj.ProductSizeList = cachedData.ProductSizeList;
                 obj.WarehouseList = cachedData.WarehouseList;
                 obj.BodyParts = cachedData.BodyParts;
@@ -328,12 +323,16 @@ namespace BlazorInMvc.Controllers.Mvc.Products
             {
                 await LoadDDL(obj);
             }
-
-            obj.AttributeValueList = (_productVariantService.GetAttributeValues(User.GetCompanyId()).Select(a => new SelectListItem
+            obj.ProductSubCategoryList = (await _productSubCategoryService.Get(null, null, null, null, null, 1, 1000)).ToList();
+            obj.ProductCategoryList = (await _productCategoryService.Get(companyId, null, null, null, null, 1, 1000)).ToList();
+            obj.UnitList = (await _unitService.Get(null, null, null, null, 1, 1000)).ToList();
+            obj.AttributeValueList = (_productVariantService.GetAttributeValues(companyId).Select(a => new SelectListItem
             {
                 Value = a.AttributeValueId.ToString(),
                 Text = a.AttrbtValue
             }).ToList());
+
+            obj.ProductCategoryTypeList = _productService.GetProductCategoryTypeList(companyId);
 
             return PartialView("_AddForm", obj);
         }
@@ -415,7 +414,11 @@ namespace BlazorInMvc.Controllers.Mvc.Products
                 // Load dropdown data if cache is not available
                 await LoadDDL(obj);
             }
-            obj.ProductCategoryTypeList = GetProductCategoryTypeList();
+
+            obj.ProductSubCategoryList = (await _productSubCategoryService.Get(null, null, null, null, null, 1, 1000)).ToList();
+            obj.ProductCategoryList = (await _productCategoryService.Get(User.GetCompanyId(), null, null, null, null, 1, 1000)).ToList();
+            obj.UnitList = (await _unitService.Get(null, null, null, null, 1, 1000)).ToList();
+            obj.ProductCategoryTypeList = _productService.GetProductCategoryTypeList();
             // Return the partial view with the populated model
             return PartialView("_AddForm", obj);
         }
