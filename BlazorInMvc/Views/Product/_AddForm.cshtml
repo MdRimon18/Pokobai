@@ -1414,6 +1414,10 @@
                         });
 
                         $dropdown.trigger('change'); // Refresh Select2 or dropdown
+
+
+
+                       
                      
                 } else {
                     alert('Failed to load product variant details.');
@@ -1963,8 +1967,13 @@
         <script>
                 $(document).ready(function () {
                   populateProductCategoryTypesDropdown();
-                  initializeSelectForProductCategoryType();
+                  if(@Model.ProductId>0){
+                      populateDropdownWithProductCategoryTypesSelectedValues();
+                  }else{
+                      initializeSelectForProductCategoryType();
 
+                  }
+                  
 
                  });
                  function initializeSelectForProductCategoryType() {
@@ -2004,25 +2013,57 @@
                 $dropdown.trigger('change');
             }
 
-                 function populateDropdownWithProductCategoryTypesSelectedValues() {
+    
+           function populateDropdownWithProductCategoryTypesSelectedValues() {
+        // Get data from Model
         const allValues = @Html.Raw(Json.Serialize(Model.ProductCategoryTypeList)); // List<SelectListItem>
-        const selectedValues = @Html.Raw(Json.Serialize(Model.ProductCategoryTypeIds)); // List<string> or List<int>
-        console.log(selectedValues);
+        const selectedString = @Html.Raw(Json.Serialize(Model.CategoryTypeCodes)); // e.g., "Featured,NewArrival" or null
+
+        // Parse selected values with safe fallback
+        const selectedValues = selectedString ? selectedString.split(',').map(val => val.trim()) : [];
+
+        // Log for debugging
+        console.log("All Values:", allValues);
+        console.log("Selected String:", selectedString);
+        console.log("Parsed Selected Values:", selectedValues);
+
+        // Get the dropdown element
         const $dropdown = $('#productCategoryTypeIds');
+
+        // Ensure the dropdown exists
+        if (!$dropdown.length) {
+            console.error("Dropdown #productCategoryTypeIds not found in the DOM");
+            return;
+        }
+
+        // Clear existing options
         $dropdown.empty();
 
+        // Populate dropdown with options
         allValues.forEach(function (item) {
             $dropdown.append(
                 $('<option>', {
-                    value: item.Value,
-                    text: item.Text,
-                    selected: selectedValues.includes(item.Value)
+                    value: item.value, // Use lowercase 'value' based on console output
+                    text: item.text,   // Use lowercase 'text' based on console output
+                    selected: selectedValues.includes(item.value) // Pre-select if in selectedValues
                 })
             );
         });
 
-        $dropdown.trigger('change');
-    }
+        // Destroy existing Select2 instance to avoid conflicts
+        if ($dropdown.data('select2')) {
+            $dropdown.select2('destroy');
+        }
 
+        // Initialize Select2
+        $dropdown.select2({
+            placeholder: "Select Product Types",
+            allowClear: true,
+            width: '100%' // Adjust as needed
+        });
+
+        // Explicitly set selected values for Select2
+        $dropdown.val(selectedValues).trigger('change.select2');
+    }
 
 </script>

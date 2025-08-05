@@ -166,6 +166,11 @@ namespace Domain.Entity.Settings
         public List<SelectListItem> AttributeValueList { get; set; } = new();
         [NotMapped]
         public List<SelectListItem> ProductCategoryTypeList { get; set; } = new();
-        public List<string> ProductCategoryTypeIds { get; set; } = new();
+
+        [NotMapped]
+        public List<string>? ProductCategoryTypeIds { get; set; } = new();
+        [NotMapped]
+        public string? CategoryTypeCodes { get; set; }
+        
     }
 }
