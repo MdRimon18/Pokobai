@@ -16,14 +16,14 @@ namespace Domain.Services.Inventory
             _db = db.GetDbConnection();
         }
 
-        public async Task<IEnumerable<User>> Get(long? userId = null, string? email = null, string? name = null,
+        public async Task<IEnumerable<User>> Get(long? companyId,long? userId = null, string? email = null, string? name = null,
             string? phoneNo = null, string? password = null, long? roleId = null, 
             int? pageNumber = null, int? pageSize = null)
         {
             try
             {
                 var parameters = new DynamicParameters();
-
+                parameters.Add("@CompanyId", companyId);
                 parameters.Add("@UserId", userId);
                 parameters.Add("@Email", email);
                 parameters.Add("@Name", name);
@@ -43,20 +43,20 @@ namespace Domain.Services.Inventory
             }
         }
 
-        public async Task<User?> GetById(long userId)
+        public async Task<User?> GetById(long? companyId,long userId)
         {
-            var users = await Get(userId: userId, pageNumber: 1, pageSize: 1);
+            var users = await Get(companyId:companyId,userId: userId, pageNumber: 1, pageSize: 1);
             return users.FirstOrDefault();
         }
 
         public async Task<User?> GetByEmail(string email)
         {
-            var users = await Get(email: email, pageNumber: 1, pageSize: 1);
+            var users = await Get(companyId: null,email: email, pageNumber: 1, pageSize: 1);
             return users.FirstOrDefault();
         }
         public async Task<User?> GetByPhone(string phone)
         {
-            var users = await Get(phoneNo: phone, pageNumber: 1, pageSize: 1);
+            var users = await Get(companyId: null, phoneNo: phone, pageNumber: 1, pageSize: 1);
             return users.FirstOrDefault();
         }
         public async Task<long> SaveOrUpdate(User user)
@@ -99,9 +99,9 @@ namespace Domain.Services.Inventory
             }
         }
 
-        public async Task<bool> Delete(long userId)
+        public async Task<bool> Delete(long companyId,long userId)
         {
-            var user = await GetById(userId);
+            var user = await GetById(companyId,userId);
             if (user != null)
             {
                 user.DeletedDate = DateTime.UtcNow;

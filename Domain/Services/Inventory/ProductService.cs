@@ -280,7 +280,7 @@ namespace Domain.Services.Inventory
 				};
 
                 return allCategories
-                .Where(c => c.CompanyId == companyId)
+                .Where(c => c.CompanyId == 1)
                 .Select(c => new SelectListItem
                 {
                     Text = c.CategoryName,

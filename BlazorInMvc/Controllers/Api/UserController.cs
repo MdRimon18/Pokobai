@@ -42,7 +42,7 @@ namespace BlazorInMvc.Controllers.Api
         public async Task<IActionResult> GetAllUsers(string? search,long roleId, int page, int pageSize)
         {
             // Sending null for all filters
-            var users = (await _userService.Get(
+            var users = (await _userService.Get(User.GetCompanyId(),
                 userId: null,
                 email: null,
                 name: search,
@@ -79,7 +79,7 @@ namespace BlazorInMvc.Controllers.Api
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetById(long id)
         {
-            var user = await _userService.GetById(id);
+            var user = await _userService.GetById(User.GetCompanyId(),id);
             if (user == null)
                 return NotFound();
             return Ok(user);
