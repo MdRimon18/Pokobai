@@ -703,8 +703,10 @@
                                     <h5 class="fw-bold">Additional Information</h5>
                                     <p class="fs-7">Stock Availability: <span id="stockAvailability" class="fw-bold">In Stock</span></p>
                                     <p class="fs-7">SKU: <span id="sku" class="fw-bold">#12345</span></p>
-                                    <p class="fs-7">Supplier Rating: <span id="supplierRating" class="fw-bold">4.5/5</span></p>
-                                    <p class="fs-7">Shipping Time: <span id="shippingTime" class="fw-bold">3-5 Days</span></p>
+                                    <p class="fs-7">Supplier Rating: <span id="supplierRating" class="fw-bold"></span></p>
+                                    <p class="fs-7">Shipping Time: <span id="shippingTime" class="fw-bold"></span></p>
+                                    <p class="fs-7">Variant: <span id="attributeDetailsText" class="fw-bold"></span></p>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -1160,7 +1162,7 @@
                     </div>
                         <input type="hidden" name="ItemsList[${index}].ProductId" value="${item.productId}" />
                         <input type="hidden" name="ItemsList[${index}].InvoiceItemId" value="${item.invoiceItemId}" />
-                        <input type="hidden" name="ItemsList[${index}].ProductVariantId" value="${item.productVariantId}" />
+                         <input type="hidden" name="ItemsList[${index}].ProductVariantId" value="${item.productVariantId}" />
                         <input type="hidden" name="ItemsList[${index}].imageUrl" value="${item.imageUrl}" />
                             <input type="hidden" name="ItemsList[${index}].buyingPrice" value="${item.buyingPrice}" />
 
@@ -1854,6 +1856,7 @@
         document.getElementById('sku').textContent = item.sku || 'N/A';
         document.getElementById('supplierRating').textContent = item.rating ?? 'N/A';
         document.getElementById('shippingTime').textContent = item.shippingDays || 'N/A';
+         document.getElementById('attributeDetailsText').textContent = item.attributeDetailsText || 'N/A';
      
         const editor = tinymce.get('tinymce-editor');
     if (editor) {

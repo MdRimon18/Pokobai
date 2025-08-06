@@ -34,5 +34,8 @@ namespace Domain.Entity.Settings
 		[NotMapped]
 		public string ImageUrl { get; set; }
 		public int RowIndex { get; set; } //add to database 
-	}
+        [NotMapped]
+        public string? AttributeDetailsText { get; set; }
+
+    }
 }

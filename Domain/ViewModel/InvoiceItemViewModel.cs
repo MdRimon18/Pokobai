@@ -24,6 +24,8 @@ namespace Domain.ViewModel
         public string UnitName { get; set; }
         public string ImageUrl { get; set; }
         public List<InvoiceItemSerials> SelectedSerialNumbers { get; set; } = new();
+        public long? ProductVariantId { get; set; }
+        public string? AttributeDetailsText { get; set; }
     }
 
     //public class SerialNumberViewModel

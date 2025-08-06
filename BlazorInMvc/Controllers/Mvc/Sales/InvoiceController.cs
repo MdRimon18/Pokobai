@@ -97,7 +97,9 @@ namespace BlazorInMvc.Controllers.Mvc.Sales
                     ProdCtgName = item.CategoryName,
                     ProdSubCtgName = item.SubCtgName,
                     UnitName = item.Unit,
-                    SelectedSerialNumbers = serialNumbers?.ToList() ?? new List<InvoiceItemSerials>()
+                    SelectedSerialNumbers = serialNumbers?.ToList() ?? new List<InvoiceItemSerials>(),
+                    ProductVariantId = item.ProductVariantId,
+                    AttributeDetailsText=item.AttributeDetailsText
                 };
 
                 invoiceItemViewModels.Add(viewModel);
