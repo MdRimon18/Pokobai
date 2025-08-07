@@ -74,18 +74,25 @@ namespace BlazorInMvc.Controllers
                 return View(user);
             }
 
-            var existingUser = await _userService.GetByPhone(user.PhoneNo);
+            var existingUser = await _userService.GetByPhone(user.PhoneNo,1);
 
             if (existingUser == null)
             {
                 ViewData["ErrorMessage"] = "Invalid phone number or password, or account is disabled.";
                 return View(user);
             }
-            if(existingUser.Password != user.Password)
+            if(existingUser.Password?.Trim()!= user.Password.Trim())
             {
                 ViewData["ErrorMessage"] = "Invalid phone number or password.";
                 return View(user);
             }
+
+            if (!existingUser.IsAbleToLogin)
+            {
+                ViewData["ErrorMessage"] = "Your account is disabled. Please contact support.";
+                return View(user);
+            }
+            
             Company company = new Company();
             if (existingUser.CompanyId>0)
             {

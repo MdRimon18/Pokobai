@@ -18,7 +18,7 @@ namespace Domain.Services.Inventory
 
         public async Task<IEnumerable<User>> Get(long? companyId,long? userId = null, string? email = null, string? name = null,
             string? phoneNo = null, string? password = null, long? roleId = null, 
-            int? pageNumber = null, int? pageSize = null)
+            int? pageNumber = null, int? pageSize = null,int prioritizeRole=0)
         {
             try
             {
@@ -33,7 +33,8 @@ namespace Domain.Services.Inventory
                
                 parameters.Add("@PageNumber", pageNumber);
                 parameters.Add("@PageSize", pageSize);
-
+                parameters.Add("@PrioritizeRole", prioritizeRole);
+ 
                 return await _db.QueryAsync<User>("Users_Get_SP", parameters, commandType: CommandType.StoredProcedure);
             }
             catch (Exception ex)
@@ -54,9 +55,10 @@ namespace Domain.Services.Inventory
             var users = await Get(companyId: null,email: email, pageNumber: 1, pageSize: 1);
             return users.FirstOrDefault();
         }
-        public async Task<User?> GetByPhone(string phone)
+        public async Task<User?> GetByPhone(string phone,int prioritizeRole=0)
         {
-            var users = await Get(companyId: null, phoneNo: phone, pageNumber: 1, pageSize: 1);
+            
+            var users = await Get(companyId: null, phoneNo: phone.Trim(), pageNumber: 1, pageSize: 1,prioritizeRole: prioritizeRole);
             return users.FirstOrDefault();
         }
         public async Task<long> SaveOrUpdate(User user)
