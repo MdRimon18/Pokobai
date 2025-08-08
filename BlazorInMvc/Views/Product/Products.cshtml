@@ -76,7 +76,7 @@
 <script>
   
     function generateProductRowHtml(product, index) {
-                const hasVariants = product.productVariants && product.productVariants.length > 0;
+                  const hasVariants = product.productVariants && product.productVariants.length > 0;
             console.log(hasVariants)
         const collapseId = `variantCollapse-${index}`;
 
@@ -136,11 +136,10 @@
                                     <tr>
                                          <th>Image</th>
                                          <th>SKU</th>
-                                         <th>Color</th>
-                                         <th>Size</th>
-                                         <th>Weight</th>
-                                         <th>Width</th>
+                                         <th>Price</th>
+            
                                         <th>Stock</th>
+                                          <th>Variant Details</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -156,11 +155,9 @@
                                                     
                                                       </td>
                                               <td>${v.skuNumber}</td>
-                                                <td>${v.color}</td>
-                                                 <td>${v.size}</td>
-                                                 <td>${v.weight}</td>
-                                                 <td>${v.width}</td>
+                                                <td>${v.priceAdjustment}</td>
                                               <td>${v.stockQuantity}</td>
+                                                  <td>${v.attributeDetailsText}</td>
                                             <td>
      
                                                <button class="btn btn-sm btn-primary"
