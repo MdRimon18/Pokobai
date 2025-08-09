@@ -327,8 +327,7 @@
                 <div class="tab-pane fade" id="tab_image" role="tabpanel" aria-labelledby="image_tab">
 
                     <div class="card-body">
-                        @if (Model.ProductImages?.Count() > 0)
-                        {
+                        
                             <div class="row gx-2 flex-between-center mb-3">
                                 <div class="col-sm-3">Images</div>
                                 <div class="col-sm-3">Body Part</div>
@@ -336,6 +335,8 @@
                                 <div class="col-sm-2">Action</div>
                             </div>
                             <div id="product-images-list">
+                                @if (Model.ProductImages?.Count() > 0)
+                        {
                                 @foreach (var img in Model.ProductImages)
                                 {
                                     <div id="image-row-@img.ProductMediaId" class="row gx-2 flex-between-center mb-3">
@@ -373,9 +374,10 @@
                                         </div>
                                     </div>
                                 }
+                        }
                             </div>
                          
-                        }
+                         
                         <div class="row gy-3 gx-2">
                             <div class="col-sm-4">
                                 <input type="file" class="file-input form-control form-control-sm form-rounded" id="fileInput" />
@@ -387,7 +389,7 @@
                                 </div>
                             </div>
                             <div class="col-sm-4">
-                                <select class="form-control form-control-sm form-rounded fw-semi-bold" id="BodyPartName">
+                                <select class="form-control form-control-sm form-rounded fw-semi-bold" id="BodyPartName" >
                                     <option value="">Select Body Part</option>
                                     @foreach (var item in Model.BodyParts)
                                     {
@@ -398,7 +400,7 @@
                             </div>
                             <div class="col-sm-4">
                                 <div class="d-flex gap-2 flex-between-center">
-                                    <input class="form-control form-control-sm form-label fw-semi-bold" id="Position" type="text" placeholder="Position" />
+                                    <input class="form-control form-control-sm form-label fw-semi-bold" id="Position" type="text" placeholder="Position"  />
                                     
                                     <input type="hidden" id="ProductMediaId" value="@Model.ProductImage.ProductMediaId" />
                                     <input type="hidden" id="ProductMediaKey" value="@Model.ProductImage.ProductMediaKey" />
@@ -1042,7 +1044,11 @@
             showDangerToast('Please select a file.');
             return;
         }
+        if (!position) {
 
+             showDangerToast('Please select a Image Position.');
+            return;
+        }
 
         // Create FormData to handle file and other inputs
         const formData = new FormData();
@@ -1053,7 +1059,7 @@
         formData.append('ProductMediaId', productMediaId);
         formData.append('ProductMediaKey', productMediaKey);
         formData.append('ImageUrl', imageUrl);
-
+        console.log('productId',productId)
         // Disable the button to prevent multiple clicks
         submitButton.prop('disabled', true);
 
@@ -1070,14 +1076,14 @@
                     
                     showSuccessToast('@MessageManager.SaveSuccess');
                     const image_list = response.data.productImages;
-
+                    console.log('image_list',image_list);
                     // Update the product image list
                     updateProductImageList(image_list);
 
                     // Clear the input fields
                     $('#BodyPartName').val('');
                     $('#Position').val('');
-                    $('#ProductId').val('');
+                    //$('#ProductId').val('');
                     $('#fileInput').val('');
                     $('#previewImage').attr('src', '').hide();
                     $('#ProductMediaId').val(0);
@@ -1233,6 +1239,7 @@
          
         // Gather values
         const productId = parseInt($('#ProductId').val());
+        console.log(productId)
         if (isNaN(productId) || productId <= 0) {
             showDangerToast('Please select a valid Product.');
             return;

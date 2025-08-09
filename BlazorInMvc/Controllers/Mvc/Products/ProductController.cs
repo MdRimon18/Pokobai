@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Caching.Memory;
+using System.ComponentModel.Design;
 using System.Drawing.Printing;
 
 namespace BlazorInMvc.Controllers.Mvc.Products
@@ -144,44 +145,43 @@ namespace BlazorInMvc.Controllers.Mvc.Products
             return list.ToList(); // Convert and return as List<Unit>
         }
       
-        public async Task<Domain.Entity.Settings.Products> LoadDDL(Domain.Entity.Settings.Products model)
+        public async Task<Domain.Entity.Settings.Products> LoadDDL(Domain.Entity.Settings.Products obj)
         {
-            // var model = new Domain.Entity.Settings.Products();
-            if (!_cache.TryGetValue("ProductDropdownData", out model))
-            {
-                if (model == null) { model = new Domain.Entity.Settings.Products(); }
-                model.SupplierList = (await _supplierService.Get(null, null, null, null, null, null, 1, 1000)).ToList();
-                model.UnitList = (await _unitService.Get(null, null, null, null, 1, 1000)).ToList();
-                model.CurrencyList = (await _currencyService.Get(null, null, null, null, null, null, null, null, 1, 1000)).ToList();
-                model.ShippingByList = (await _shippingByService.Get(null, null, null, null, 1, 1000)).ToList();
-                model.ColorList = (await _colorService.Get(null, null, null, null, 1, 1000)).ToList();
-                model.CountryList = (await _countryServiceV2.Get(null, null, null, null, null, null, null, null, null, null, 1, 1000)).ToList();
-                model.StatusSettingList = (await _statusSettingService.Get(null, null, null, null, "Product", null, 1, 1000)).ToList();
-                model.ImportStatusSettingList = (await _statusSettingService.Get(null, null, null, null, null, null, 1, 1000)).ToList();
-                
-                model.ProductSubCategoryList = (await _productSubCategoryService.Get(null, null, null, null, null, 1, 1000)).ToList();
-                model.ProductCategoryList = (await _productCategoryService.Get(User.GetCompanyId(), null, null, null, null, 1, 1000)).ToList();
-                
-                model.BrandList = (await _brandService.Get(null, null, null, 1, 1000)).ToList();
-             
-                model.ProductSizeList = (await _productSizeService.Get(null, null, null, null, 1, 1000)).ToList();
-                model.WarehouseList = (await _warehouseService.Get(null, null, null, null, null, null, null, null, null, 1, 1000)).ToList();
-                model.BodyParts = await _bodyPartService.GetBodyPartsAsync();
+            long companyId = User.GetCompanyId();
+            var ddl = _productService.GetProductCreateDropdowns(companyId);
+            // Populate dropdown fields from cached data
+            obj.SupplierList = ddl.SupplierList;
+            //obj.UnitList = cachedData.UnitList;
+            // obj.CurrencyList = cachedData.CurrencyList;
+            obj.ShippingByList = ddl.ShippingByList;
+            obj.ColorList = ddl.ColorList;
+            //  obj.CountryList = cachedData.CountryList;
+            // obj.StatusSettingList = ddl.StatusSettingList;
+            //obj.ImportStatusSettingList = cachedData.ImportStatusSettingList;
+            obj.ProductSubCategoryList = ddl.ProductSubCategoryList;
+            obj.BrandList = ddl.BrandList;
+            // obj.ProductCategoryList = cachedData.ProductCategoryList;
+            obj.ProductSizeList = ddl.ProductSizeList;
+            //  obj.WarehouseList = ddl.WarehouseList;
+            obj.BodyParts = ddl.BodyParts;
+            // obj.ProductImages = cachedData.ProductImages.Where(w=>w.ProductId==id).ToList();
+           // obj.ProductImages = (await _productMediaService.Get(null, null, obj.ProductId, null)).ToList();
+            //obj.Specification_list = (await _productSpecificationService.Get(null, null, obj.ProductId, null, null, GlobalPageConfig.PageNumber, GlobalPageConfig.PageSize)).ToList();
+           // obj.ProductSerialNumbers_list = (await _productSerialNumbersService.Get(null, null, obj.ProductId, null, null, null, null, null, null, null, null, GlobalPageConfig.PageNumber, GlobalPageConfig.PageSize)).ToList();
+           // obj.ProductVariants = new List<ProductVariantViewModel>();//(await _productVariantService.ProductVarientsByProductId(id));
 
-                //  model.ProductImage.BodyParts = model.BodyParts;
-                // model.ProductImages =
-                // model.Specification_list = (await _productSpecificationService.Get(null, null, null, null, null, 1, 1000)).ToList();
+            obj.ProductSubCategoryList = ddl.ProductSubCategoryList;
+            obj.ProductCategoryList = ddl.ProductCategoryList;
+            obj.UnitList = ddl.UnitList;
+            //obj.AttributeValueList = (_productVariantService.GetAttributeValues(companyId).Select(a => new SelectListItem
+            //{
+            //    Value = a.AttributeValueId.ToString(),
+            //    Text = a.AttrbtValue
+            //}).ToList());
 
-                // Store data in the cache with an expiration time
-                _cache.Set("ProductDropdownData", model, new MemoryCacheEntryOptions
-                {
-                    AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(5), // Cache expires after 20 seconds
-                    SlidingExpiration = TimeSpan.FromSeconds(5)                // Resets expiration if accessed within 20 seconds
-                });
-            }
-
-
-            return model;
+            obj.ProductCategoryTypeList = _productService.GetProductCategoryTypeList(companyId);
+          
+            return obj;
 
         }
         [HttpPost]
@@ -195,22 +195,20 @@ namespace BlazorInMvc.Controllers.Mvc.Products
             {
                 // ViewData["RenderLayout"] = true; // Flag to include layout
                 // Retrieve dropdown data from the cache
-                var cachedData = _cache.Get<Domain.Entity.Settings.Products>("ProductDropdownData");
-                if (cachedData != null)
-                {
-                    model = cachedData;
-                }
-                else
-                {
-                    await LoadDDL(model);
-                }
+                 
+                await LoadDDL(model);
+                 
                 if (model.ProdCtgId > 0)
                 {
                     var subCategories = await _productSubCategoryService.Get(
                         null, null, null, model.ProdCtgId, null,
                         GlobalPageConfig.PageNumber, GlobalPageConfig.PageSize
                     );
-                    model.ProductSubCategoryList = subCategories?.ToList() ?? new List<Domain.Entity.Settings.ProductSubCategory>();
+                    model.ProductSubCategoryList = subCategories.ToList().Select(s=> new ProductSubCategoryDto
+                    {
+                        ProdSubCtgId = s.ProdSubCtgId,
+                        ProdSubCtgName = s.ProdSubCtgName
+                    }).ToList(); 
                 }
                 Response.StatusCode = 400;
 
@@ -247,23 +245,20 @@ namespace BlazorInMvc.Controllers.Mvc.Products
             catch (Exception ex)
             {
 
-                // Retrieve dropdown data from the cache
-                var cachedData = _cache.Get<Domain.Entity.Settings.Products>("ProductDropdownData");
-                if (cachedData != null)
-                {
-                    model = cachedData;
-                }
-                else
-                {
-                    model = await LoadDDL(model);
-                }
+              
+                 model = await LoadDDL(model);
+               
                 if (model.ProdCtgId > 0)
                 {
                     var subCategories = await _productSubCategoryService.Get(
                         null, null, null, model.ProdCtgId, null,
                         GlobalPageConfig.PageNumber, GlobalPageConfig.PageSize
                     );
-                    model.ProductSubCategoryList = subCategories?.ToList() ?? new List<Domain.Entity.Settings.ProductSubCategory>();
+                    model.ProductSubCategoryList = subCategories.ToList().Select(s => new ProductSubCategoryDto
+                    {
+                        ProdSubCtgId = s.ProdSubCtgId,
+                        ProdSubCtgName = s.ProdSubCtgName
+                    }).ToList();
                 }
 
                 Response.StatusCode = 500;
@@ -287,52 +282,26 @@ namespace BlazorInMvc.Controllers.Mvc.Products
             {
                 return NotFound();
             }
-            long companyId=User.GetCompanyId();
-            Domain.Entity.Settings.Products obj = (await _productService.GetById(companyId, id));
-            if (obj == null)
-            {
-                return NotFound(); // Handle case where product doesn't exist
-            }
-            // Retrieve dropdown data from the cache
-            var cachedData = _cache.Get<Domain.Entity.Settings.Products>("ProductDropdownData");
-            if (cachedData != null)
-            {
-                // Populate dropdown fields from cached data
-                obj.SupplierList = cachedData.SupplierList;
-                //obj.UnitList = cachedData.UnitList;
-                obj.CurrencyList = cachedData.CurrencyList;
-                obj.ShippingByList = cachedData.ShippingByList;
-                obj.ColorList = cachedData.ColorList;
-                obj.CountryList = cachedData.CountryList;
-                obj.StatusSettingList = cachedData.StatusSettingList;
-                obj.ImportStatusSettingList = cachedData.ImportStatusSettingList;
-                obj.ProductSubCategoryList = cachedData.ProductSubCategoryList;
-                obj.BrandList = cachedData.BrandList;
-               // obj.ProductCategoryList = cachedData.ProductCategoryList;
-                obj.ProductSizeList = cachedData.ProductSizeList;
-                obj.WarehouseList = cachedData.WarehouseList;
-                obj.BodyParts = cachedData.BodyParts;
-               // obj.ProductImages = cachedData.ProductImages.Where(w=>w.ProductId==id).ToList();
+               long companyId=User.GetCompanyId();
+                Domain.Entity.Settings.Products obj = (await _productService.GetById(companyId, id));
+                if (obj == null)
+                {
+                    return NotFound(); // Handle case where product doesn't exist
+                }
+
+                await   LoadDDL(obj);
                 obj.ProductImages=(await _productMediaService.Get(null, null, id, null)).ToList();
                 obj.Specification_list =(await _productSpecificationService.Get(null, null, id, null, null, GlobalPageConfig.PageNumber, GlobalPageConfig.PageSize)).ToList();
                 obj.ProductSerialNumbers_list = (await _productSerialNumbersService.Get(null, null, id, null, null, null, null, null, null, null, null, GlobalPageConfig.PageNumber, GlobalPageConfig.PageSize)).ToList();
                 obj.ProductVariants = new List<ProductVariantViewModel>();//(await _productVariantService.ProductVarientsByProductId(id));
-               
-            }
-            else
-            {
-                await LoadDDL(obj);
-            }
-            obj.ProductSubCategoryList = (await _productSubCategoryService.Get(null, null, null, null, null, 1, 1000)).ToList();
-            obj.ProductCategoryList = (await _productCategoryService.Get(companyId, null, null, null, null, 1, 1000)).ToList();
-            obj.UnitList = (await _unitService.Get(null, null, null, null, 1, 1000)).ToList();
-            obj.AttributeValueList = (_productVariantService.GetAttributeValues(companyId).Select(a => new SelectListItem
-            {
-                Value = a.AttributeValueId.ToString(),
-                Text = a.AttrbtValue
-            }).ToList());
+             
+                obj.AttributeValueList = (_productVariantService.GetAttributeValues(companyId).Select(a => new SelectListItem
+                {
+                    Value = a.AttributeValueId.ToString(),
+                    Text = a.AttrbtValue
+                }).ToList());
 
-            obj.ProductCategoryTypeList = _productService.GetProductCategoryTypeList(companyId);
+              obj.ProductCategoryTypeList = _productService.GetProductCategoryTypeList(companyId);
 
             return PartialView("_AddForm", obj);
         }
@@ -350,36 +319,7 @@ namespace BlazorInMvc.Controllers.Mvc.Products
                 return NotFound(); // Handle case where product doesn't exist
             }
             obj.ProductId = 0;
-          //  obj.Sku = "";
-            // Retrieve dropdown data from the cache
-            var cachedData = _cache.Get<Domain.Entity.Settings.Products>("ProductDropdownData");
-            if (cachedData != null)
-            {
-                // Populate dropdown fields from cached data
-                obj.SupplierList = cachedData.SupplierList;
-                obj.UnitList = cachedData.UnitList;
-                obj.CurrencyList = cachedData.CurrencyList;
-                obj.ShippingByList = cachedData.ShippingByList;
-                obj.ColorList = cachedData.ColorList;
-                obj.CountryList = cachedData.CountryList;
-                obj.StatusSettingList = cachedData.StatusSettingList;
-                obj.ImportStatusSettingList = cachedData.ImportStatusSettingList;
-                obj.ProductSubCategoryList = cachedData.ProductSubCategoryList;
-                obj.BrandList = cachedData.BrandList;
-                obj.ProductCategoryList = cachedData.ProductCategoryList;
-                obj.ProductSizeList = cachedData.ProductSizeList;
-                obj.WarehouseList = cachedData.WarehouseList;
-                obj.BodyParts = cachedData.BodyParts;
-                // obj.ProductImages = cachedData.ProductImages.Where(w=>w.ProductId==id).ToList();
-                //obj.ProductImages = //(await _productMediaService.Get(null, null, id, null)).ToList();
-               // obj.Specification_list = (await _productSpecificationService.Get(null, null, id, null, null, GlobalPageConfig.PageNumber, GlobalPageConfig.PageSize)).ToList();
-              //  obj.ProductSerialNumbers_list = (await _productSerialNumbersService.Get(null, null, id, null, null, null, null, null, null, null, null, GlobalPageConfig.PageNumber, GlobalPageConfig.PageSize)).ToList();
-            }
-            else
-            {
-                await LoadDDL(obj);
-            }
-
+            await LoadDDL(obj);
             return PartialView("_AddForm", obj);
         }
         [HttpGet]
@@ -387,38 +327,8 @@ namespace BlazorInMvc.Controllers.Mvc.Products
         {
             // Create a new instance of ProductSze
             Domain.Entity.Settings.Products obj = new();
-
-            // Retrieve dropdown data from the cache
-            var cachedData = _cache.Get<Domain.Entity.Settings.Products>("ProductDropdownData");
-            if (cachedData != null)
-            {
-                // Populate dropdown fields from cached data
-                obj.SupplierList = cachedData.SupplierList;
-                obj.UnitList = cachedData.UnitList;
-                obj.CurrencyList = cachedData.CurrencyList;
-                obj.ShippingByList = cachedData.ShippingByList;
-                obj.ColorList = cachedData.ColorList;
-                obj.CountryList = cachedData.CountryList;
-                obj.StatusSettingList = cachedData.StatusSettingList;
-                obj.ImportStatusSettingList = cachedData.ImportStatusSettingList;
-                obj.ProductSubCategoryList = cachedData.ProductSubCategoryList;
-                obj.BrandList = cachedData.BrandList;
-                obj.ProductCategoryList = cachedData.ProductCategoryList;
-                obj.ProductSizeList = cachedData.ProductSizeList;
-                obj.WarehouseList = cachedData.WarehouseList;
-                obj.BodyParts = cachedData.BodyParts;
-                obj.ProductImage.BodyParts= cachedData.BodyParts;
-            }
-            else
-            {
-                // Load dropdown data if cache is not available
-                await LoadDDL(obj);
-            }
-
-            obj.ProductSubCategoryList = (await _productSubCategoryService.Get(null, null, null, null, null, 1, 1000)).ToList();
-            obj.ProductCategoryList = (await _productCategoryService.Get(User.GetCompanyId(), null, null, null, null, 1, 1000)).ToList();
-            obj.UnitList = (await _unitService.Get(null, null, null, null, 1, 1000)).ToList();
-            obj.ProductCategoryTypeList = _productService.GetProductCategoryTypeList();
+            await LoadDDL(obj);
+          
             // Return the partial view with the populated model
             return PartialView("_AddForm", obj);
         }
@@ -464,15 +374,9 @@ namespace BlazorInMvc.Controllers.Mvc.Products
             {
                 // ViewData["RenderLayout"] = true; // Flag to include layout
                 // Retrieve dropdown data from the cache
-                var cachedData = _cache.Get<Domain.Entity.Settings.Products>("ProductDropdownData");
-                if (cachedData != null)
-                {
-                    model = cachedData;
-                }
-                else
-                {
-                    await LoadDDL(model);
-                }
+               
+                 await LoadDDL(model);
+                
                 Response.StatusCode = 400;
 
                 //viewModel.ProductList = await FetchModelList();

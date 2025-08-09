@@ -8,6 +8,7 @@ using Domain.ResponseModel;
 using Domain.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Data.SqlClient;
 using System.ComponentModel.Design;
 using System.Data;
 using System.Data;
@@ -61,6 +62,31 @@ namespace Domain.Services.Inventory
 				return Enumerable.Empty<Products>();
 			}
 		}
+        public ProductCreateDropdownsViewModel GetProductCreateDropdowns(long companyId)
+        {
+            
+                 
+                var vm = new ProductCreateDropdownsViewModel();
+
+                using (var multi = _db.QueryMultiple(
+                    "GetProductCreateDropdowns",
+                    new { CompanyId = companyId }, // Pass the company ID
+                    commandType: CommandType.StoredProcedure))
+                {
+                    vm.SupplierList = multi.Read<SupplierDto>().ToList();
+                    vm.ColorList = multi.Read<ColorDto>().ToList();
+                    vm.ProductSizeList = multi.Read<SizeDto>().ToList();
+                    vm.ShippingByList = multi.Read<ShippingByDto>().ToList();
+                    vm.BodyParts = multi.Read<BodyPartDto>().ToList();
+                    vm.ProductCategoryList = multi.Read<ProductCategoryDto>().ToList();
+                    vm.ProductSubCategoryList = multi.Read<ProductSubCategoryDto>().ToList();
+                    vm.BrandList = multi.Read<BrandDto>().ToList();
+                    vm.UnitList = multi.Read<UnitDto>().ToList();
+                }
+
+                return vm;
+             
+        }
         public async Task<EcommerceProductsResponse> GetProductDetailsAsync(long companyId,long productId)
         {
             if (productId <= 0)

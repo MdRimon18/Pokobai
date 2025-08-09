@@ -105,33 +105,33 @@ namespace Domain.Entity.Settings
         [NotMapped]
         public long? ProductVariantId { get; set; }
         [NotMapped]
-        public List<Unit> UnitList { get; set; } = new List<Unit>();
+        public List<UnitDto> UnitList { get; set; } = new List<UnitDto>();
         [NotMapped]
-        public List<Suppliers> SupplierList { get; set; } = new List<Suppliers>();
+        public List<SupplierDto> SupplierList { get; set; } = new List<SupplierDto>();
+       // [NotMapped]
+       // public List<Currency> CurrencyList { get; set; } = new List<Currency>();
         [NotMapped]
-        public List<Currency> CurrencyList { get; set; } = new List<Currency>();
+        public List<ShippingByDto> ShippingByList { get; set; } = new List<ShippingByDto>();
         [NotMapped]
-        public List<ShippingBy> ShippingByList { get; set; } = new List<ShippingBy>();
-        [NotMapped]
-        public List<Colors> ColorList { get; set; } = new List<Colors>();
-        [NotMapped]
-        public List<CountryV2> CountryList { get; set; } = new List<CountryV2>();
+        public List<ColorDto> ColorList { get; set; } = new List<ColorDto>();
+        //[NotMapped]
+        //public List<CountryV2> CountryList { get; set; } = new List<CountryV2>();
         [NotMapped]
         public List<StatusSetting> StatusSettingList { get; set; } = new List<StatusSetting>();
+        //[NotMapped]
+        //public List<StatusSetting> ImportStatusSettingList { get; set; } = new List<StatusSetting>();
         [NotMapped]
-        public List<StatusSetting> ImportStatusSettingList { get; set; } = new List<StatusSetting>();
+        public List<ProductSubCategoryDto> ProductSubCategoryList { get; set; }= new List<ProductSubCategoryDto>();
         [NotMapped]
-        public List<ProductSubCategory> ProductSubCategoryList { get; set; }= new List<ProductSubCategory>();
+        public List<BrandDto> BrandList { get; set; } = new List<BrandDto>();
         [NotMapped]
-        public List<Brands> BrandList { get; set; } = new List<Brands>();
+        public List<ProductCategoryDto> ProductCategoryList { get; set; } = new List<ProductCategoryDto>();
         [NotMapped]
-        public List<ProductCategories> ProductCategoryList { get; set; } = new List<ProductCategories>();
-        [NotMapped]
-        public List<ProductSze> ProductSizeList { get; set; } = new List<ProductSze>();
+        public List<SizeDto> ProductSizeList { get; set; } = new List<SizeDto>();
         [NotMapped]
         public List<Warehouse> WarehouseList { get; set; }=new List<Warehouse>();
         [NotMapped]
-        public IEnumerable<BodyPart> BodyParts { get; set; }=new List<BodyPart>();
+        public IEnumerable<BodyPartDto> BodyParts { get; set; }=new List<BodyPartDto>();
 
         [NotMapped]
          public  List<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
