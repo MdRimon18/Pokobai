@@ -319,6 +319,25 @@ namespace Domain.Services.Inventory
 
 
 
+        public async Task<IEnumerable<Products>> GetProductByCategoryType(long? CompanyId, string categoryTypeCode, int? PageNumber, int? PageSize)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                
+                parameters.Add("@CompanyId", CompanyId);
+                parameters.Add("@categoryTypeCode", categoryTypeCode);
+                parameters.Add("@PageNumber", PageNumber);
+                parameters.Add("@PageSize", PageSize);
 
+                return await _db.QueryAsync<Products>("[dbo].[Product_Get_CategoryTypeWise]", parameters, commandType: CommandType.StoredProcedure);
+
+            }
+            catch (Exception ex)
+            {
+
+                return Enumerable.Empty<Products>();
+            }
+        }
     }
 }

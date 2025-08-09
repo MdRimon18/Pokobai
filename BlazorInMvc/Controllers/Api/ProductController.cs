@@ -282,6 +282,91 @@ namespace BlazorInMvc.Controllers.Api
             }
         }
 
+        [HttpGet]
+        [Route("api/v1/Product/GetProductByCategoryType")]
+        public async Task<IActionResult> GetProductByCategoryType(long companyId, string categoryTypeCode, int pageNumber = 1, int pageSize = 15)
+        {
+
+            try
+            {
+                 
+                var product_list = (await _productService.GetProductByCategoryType(companyId, categoryTypeCode, pageNumber,
+                            pageSize)).ToList();
+
+                var responseList = new List<EcommerceProductsResponse>();
+
+                var request = HttpContext.Request;
+                var baseUrl = $"{request.Scheme}://{request.Host}";
+
+                foreach (var item in product_list)
+                {
+                    // Map to response model
+                    var response = new EcommerceProductsResponse
+                    {
+                        ProductId = item.ProductId,
+                        ProductKey = item.ProductKey,
+
+                        FinalPrice = item.FinalPrice,
+                        PreviousPrice = item.PreviousPrice,
+
+                        ProdName = item.ProdName,
+                        ManufacturarName = item.ManufacturarName,
+                        SerialNmbrOrUPC = item.SerialNmbrOrUPC,
+                        Sku = item.Sku,
+
+                        SellingPrice = item.SellingPrice,
+                        VatPercent = item.VatPercent,
+                        VatAmount = item.VatAmount,
+                        DiscountPercentg = item.DiscountPercentg,
+                        DiscountAmount = item.DiscountAmount,
+
+                        WarrentYear = item.WarrentYear,
+                        WarrentyPolicy = item.WarrentyPolicy,
+
+                        ShippingDays = item.ShippingDays,
+                        ShippingDetails = item.ShippingDetails,
+
+                        Rating = item.Rating,
+
+                        Remarks = item.Remarks,
+                        ProdShortDescription = item.ProdShortDescription,
+                        ProdDescription = item.ProdDescription,
+                        ReleaseDate = item.ReleaseDate,
+                        BranchId = item.BranchId,
+                        StockQuantity = item.StockQuantity,
+                        ItemWeight = item.ItemWeight,
+                        WarehouseId = item.WarehouseId,
+
+                        BatchNumber = item.BatchNumber,
+                        PolicyId = item.PolicyId,
+                        ProductCode = item.ProductCode,
+                        ProductHieght = item.ProductHieght,
+
+                        ProdCtgName = item.ProdCtgName,
+                        BrandName = item.BrandName,
+                        ProdSubCtgName = item.ProdSubCtgName,
+                        UnitName = item.UnitName,
+                        CurrencySymbol = item.CurrencySymbol,
+                        total_row = item.total_row,
+                        ProductImages = item.ProductImages,
+                        ImageUrl = !string.IsNullOrWhiteSpace(item.ImageUrl) && !item.ImageUrl.StartsWith(baseUrl)
+                        ? baseUrl + item.ImageUrl
+                        : item.ImageUrl,
+                        // ProductVariantsEcom =new ProductVariantsResponseDto(),
+                        StockStatus = item.StockStatus
+                    };
+                    responseList.Add(response);
+                }
+                return SuccessMessage(responseList);
+
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
+
         [HttpGet("api/Product/AvailableAttributeValues")]
         public async Task<IActionResult> GetAvailableAttributes(
         long productId,
